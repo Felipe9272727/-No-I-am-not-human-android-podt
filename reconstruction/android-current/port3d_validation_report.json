@@ -1,0 +1,107 @@
+{
+  "status": "built_and_verified",
+  "artifact": "deliverables/NINAH-Port-3D.apk",
+  "sha256": "36e7f23247c9fa5c204b486d39fbb6fed7de84e711c736806913ddacb1edd710",
+  "bytes": 298486695,
+  "zip_crc_check": "passed",
+  "package_name": "org.reconstruction.port.preview",
+  "launch_activity": "org.reconstruction.current.MainActivity",
+  "version_code": 2,
+  "version_name": "0.2-port-3d",
+  "min_sdk": 23,
+  "target_sdk": 35,
+  "abis": [
+    "arm64-v8a",
+    "x86_64"
+  ],
+  "native_libraries": [
+    "lib/arm64-v8a/libgdx.so",
+    "lib/arm64-v8a/libninah_current.so",
+    "lib/x86_64/libgdx.so",
+    "lib/x86_64/libninah_current.so"
+  ],
+  "elf_machines": {
+    "arm64-v8a/libninah_current": 183,
+    "arm64-v8a/libgdx": 183,
+    "x86_64/libninah_current": 62,
+    "x86_64/libgdx": 62
+  },
+  "elf_load_segment_max_alignment_bytes": {
+    "arm64-v8a/libninah_current": 16384,
+    "arm64-v8a/libgdx": 16384,
+    "x86_64/libninah_current": 16384,
+    "x86_64/libgdx": 16384
+  },
+  "native_zip_data_offset_mod_16384": {
+    "lib/arm64-v8a/libninah_current.so": 0,
+    "lib/arm64-v8a/libgdx.so": 0,
+    "lib/x86_64/libninah_current.so": 0,
+    "lib/x86_64/libgdx.so": 0
+  },
+  "unresolved_direct_android_dependencies": [],
+  "intro_video": {
+    "asset": "assets/intro/Intro_Final_2_NO_SUBTITLES.mp4",
+    "bytes": 44542868,
+    "sha256": "67d32bc7e28e5bbb528c7553650d8c594138031f358e249ec011db559b54b9d2",
+    "zip_stored": true
+  },
+  "jni_exports": [
+    "Java_org_reconstruction_current_MainActivity_nativeCreate",
+    "Java_org_reconstruction_current_MainActivity_nativeAction"
+  ],
+  "native_game_cpp_modules": [
+    "arrivals.cpp",
+    "characters.cpp",
+    "command_input.cpp",
+    "core.cpp",
+    "courier.cpp",
+    "dialogue_commands.cpp",
+    "dialogue_services.cpp",
+    "dialogue_session.cpp",
+    "emotions.cpp",
+    "endings.cpp",
+    "inventory.cpp",
+    "occupants.cpp",
+    "options.cpp",
+    "phone.cpp",
+    "presentation.cpp",
+    "progression.cpp",
+    "rooms.cpp",
+    "scene_commands.cpp",
+    "story_state.cpp",
+    "current_game.cpp"
+  ],
+  "assets": {
+    "png_count": 1210,
+    "menu_png_count_including_native_alias": 15,
+    "character_sprite_texture_exports": 1200,
+    "supplemental_scene_sprites": 10,
+    "image_reference_mappings": 1210,
+    "exported_image_objects_mapped": 1210,
+    "bundled_license_files": 31,
+    "room_backgrounds": 7,
+    "room_character_layouts": 61,
+    "pt_br_localization_texts_by_line_key": 16358,
+    "pt_br_localization_texts_by_numeric_id": 32464,
+    "line_metadata_keys_validated": 15693,
+    "standalone_audio_assets_included": false,
+    "intro_video_original_audio_channels": 2,
+    "world_meshes": 100,
+    "world_textures": 42,
+    "world_texture_bytes": 37806081,
+    "world_texture_max_edge": 1024,
+    "original_game_ui_sprites": 119,
+    "original_game_ui_fonts": 5
+  },
+  "embedded_windows_executable_extensions": [],
+  "embedded_mz_magic_entries": [],
+  "permissions": [],
+  "original_game_or_native_library_executed": false,
+  "full_campaign_implemented": false,
+  "android_device_execution_tested": false,
+  "notes": [
+    "This preview opens the recovered intro and current reconstructed campaign renderer; it is not a complete campaign port.",
+    "The intro MP4 retains its recovered stereo soundtrack; no standalone game audio is packaged.",
+    "APK signing uses the stable local preview debug key for repeatable test installation."
+  ]
+}

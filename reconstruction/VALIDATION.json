@@ -17,7 +17,7 @@
     }
   },
   "current_cpp_rust_validation": "native-game/VALIDATION.json",
-  "current_android_test_apk_report": "android-current/port_validation_report.json",
+  "current_android_test_apk_report": "android-current/port3d_validation_report.json",
   "current_test_host": "android-current/host_validation.json",
   "legacy_apk_validation": "mobile-runtime/LEGACY_VALIDATION.json",
   "full_campaign_implemented": false,
@@ -25,5 +25,7 @@
   "previous_android_core_apk_report": "android-current/validation_report.json",
   "opening_source_evidence": "reverse-bootstrap/intro_evidence.json",
   "first_night_source_evidence": "reverse-bootstrap/first-night-continuation.json",
-  "image_layout_source_evidence": "reverse-bootstrap/image_layout_evidence.json"
+  "image_layout_source_evidence": "reverse-bootstrap/image_layout_evidence.json",
+  "previous_opening_apk_report": "android-current/port_validation_report.json",
+  "current_world_renderer_report": "android-current/world_validation.json"
 }

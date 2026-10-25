@@ -1,0 +1,13 @@
+{
+  "version": "0.2-port-3d",
+  "version_code": 2,
+  "package": "org.reconstruction.port.preview",
+  "artifact": "NINAH-Port-3D.apk",
+  "bytes": 298486695,
+  "sha256": "36e7f23247c9fa5c204b486d39fbb6fed7de84e711c736806913ddacb1edd710",
+  "validation_report": "reconstruction/android-current/port3d_validation_report.json",
+  "host_report": "reconstruction/android-current/host_validation.json",
+  "world_report": "reconstruction/android-current/world_validation.json",
+  "android_device_execution_tested": false,
+  "full_campaign_implemented": false
+}
