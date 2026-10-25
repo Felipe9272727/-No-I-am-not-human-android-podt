@@ -28,7 +28,7 @@ ASSET_DIR = ANDROID_APP / "assets"
 NATIVE_ROOT = ROOT / "reconstruction/native-game"
 BRIDGE_MANIFEST = NATIVE_ROOT / "bridge/Cargo.toml"
 BRIDGE_ROOT = NATIVE_ROOT / "bridge"
-DEFAULT_APK = ROOT / "deliverables/NINAH-Port-3D-UI.apk"
+DEFAULT_APK = ROOT / "deliverables/NINAH-Port-3D-Musicas.apk"
 REPORT = ANDROID_ROOT / "port3d_validation_report.json"
 PACKAGE_NAME = "org.reconstruction.port.preview"
 JNI_ACTIVITY = "org.reconstruction.current.MainActivity"
@@ -447,7 +447,7 @@ def compile_resources(build_tools: Path, android_jar: Path, work: Path,
         "--target-sdk-version", ANDROID_API,
         "--version-code", str(version_code), "--version-name", version_name,
         "--rename-manifest-package", PACKAGE_NAME,
-        "--auto-add-overlay", "-0", "mp4",
+        "--auto-add-overlay", "-0", "mp4", "-0", "ogg", "-0", "wav", "-0", "mp3",
     ]
     for resource in compiled_resources:
         command.extend(["-R", resource])
@@ -585,6 +585,46 @@ def package_apk(build_tools: Path, base_apk: Path,
     run([build_tools / "zipalign", "-c", "-P", "16", "-v", "4", output], cwd=ROOT)
 
 
+def validate_png_bytes(data: bytes, label: str) -> tuple[int,int]:
+    try:
+        with Image.open(io.BytesIO(data)) as image:
+            image.verify()
+        with Image.open(io.BytesIO(data)) as image:
+            image.load()
+            return image.size
+    except Exception as failure:
+        raise RuntimeError(f"Invalid PNG data: {label}: {failure}") from failure
+
+
+def validate_music_assets(apk: zipfile.ZipFile, version_code: int) -> list[dict]:
+    manifest_path="assets/music_manifest.json"
+    if manifest_path not in apk.namelist():
+        if version_code>=5:
+            raise RuntimeError("Music manifest is required for version 5+")
+        return []
+    manifest=json.loads(apk.read(manifest_path))
+    if manifest.get("errors"):
+        raise RuntimeError("Music export contains unresolved errors")
+    tracks=manifest["tracks"]
+    if not {"main_menu","night1","ambience_house"}.issubset({row["key"] for row in tracks}):
+        raise RuntimeError("Opening music routes are incomplete")
+    result=[]
+    for row in tracks:
+        relative=Path(row["asset"])
+        if relative.is_absolute() or ".." in relative.parts or not relative.parts:
+            raise RuntimeError(f"Unsafe music asset path: {relative}")
+        member="assets/"+relative.as_posix()
+        data=apk.read(member)
+        digest=hashlib.sha256(data).hexdigest()
+        if not data.startswith(b"OggS") or digest!=row["ogg"]["sha256"]:
+            raise RuntimeError(f"Music bytes do not match validated export: {member}")
+        if apk.getinfo(member).compress_type!=zipfile.ZIP_STORED:
+            raise RuntimeError(f"MediaPlayer openFd requires stored OGG: {member}")
+        result.append({"key":row["key"],"asset":member,"bytes":len(data),"sha256":digest,
+                       "duration_seconds":row["ogg"].get("duration_seconds")})
+    return result
+
+
 def collect_report(output: Path, build_tools: Path, source_modules: list[str],
                    unresolved_dependencies: list[str], version_code: int,
                    version_name: str, native_reuse: dict | None = None) -> dict:
@@ -602,6 +642,13 @@ def collect_report(output: Path, build_tools: Path, source_modules: list[str],
         if bad_member:
             raise RuntimeError(f"APK ZIP CRC check failed at {bad_member}")
         names = apk.namelist()
+        temporary_assets=[name for name in names if ".pending." in name or ".stage-tmp" in name]
+        if temporary_assets:
+            raise RuntimeError(f"Unfinished staged assets in APK: {temporary_assets}")
+        all_pngs=[name for name in names if name.lower().endswith(".png")]
+        for name in all_pngs:
+            validate_png_bytes(apk.read(name),name)
+        music_tracks=validate_music_assets(apk,version_code)
         java_resources = validate_gdx_java_resources(apk)
         libraries = sorted(name for name in names if re.fullmatch(
             r"lib/[^/]+/(?:libninah_current|libgdx)\.so", name))
@@ -640,9 +687,12 @@ def collect_report(output: Path, build_tools: Path, source_modules: list[str],
             asset = row.get("android_asset")
             if not asset or f"assets/{asset}" not in names:
                 raise RuntimeError(f"APK missing world texture asset: {asset}")
-            image = Image.open(io.BytesIO(apk.read(f"assets/{asset}")))
-            if max(image.size) > 1024:
-                raise RuntimeError(f"Android world texture exceeds 1024px: {asset} ({image.size})")
+            data=apk.read(f"assets/{asset}")
+            if hashlib.sha256(data).hexdigest()!=row["android_sha256"]:
+                raise RuntimeError(f"Android world texture hash mismatch: {asset}")
+            dimensions=validate_png_bytes(data,asset)
+            if max(dimensions)>1024:
+                raise RuntimeError(f"Android world texture exceeds 1024px: {asset} ({dimensions})")
             world_texture_bytes += apk.getinfo(f"assets/{asset}").file_size
         if world_texture_bytes > 64 * 1024 * 1024:
             raise RuntimeError(f"APK world texture budget exceeds 64 MiB: {world_texture_bytes}")
@@ -762,7 +812,9 @@ def collect_report(output: Path, build_tools: Path, source_modules: list[str],
             "pt_br_localization_texts_by_line_key": len(localization["texts"]),
             "pt_br_localization_texts_by_numeric_id": len(localization["ids"]),
             "line_metadata_keys_validated": len(line_metadata),
-            "standalone_audio_assets_included": False,
+            "standalone_audio_assets_included": bool(music_tracks),
+            "fully_decoded_png_count": len(all_pngs),
+            "music_tracks": music_tracks,
             "intro_video_original_audio_channels": assets_json["intro"]["audio_channel_count"],
             "world_meshes": len(world_meshes), "world_textures": len(world_textures),
             "world_texture_bytes": world_texture_bytes, "world_texture_max_edge": 1024,
@@ -775,7 +827,7 @@ def collect_report(output: Path, build_tools: Path, source_modules: list[str],
         "reused_native_from_apk": native_reuse,
         "notes": [
             "This preview opens the recovered intro and current reconstructed campaign renderer; it is not a complete campaign port.",
-            "The intro MP4 retains its recovered stereo soundtrack; no standalone game audio is packaged.",
+            "The intro MP4 retains its soundtrack; original source music is packaged separately when listed in assets.music_tracks.",
             "APK signing uses the stable local preview debug key for repeatable test installation.",
         ],
     }
@@ -787,8 +839,8 @@ def main() -> None:
     parser.add_argument("--skip-assets", action="store_true", help="reuse an existing staged asset tree")
     parser.add_argument("--reference-apk", type=Path,
                         help="reuse JNI libraries only from the exact hash-locked current APK")
-    parser.add_argument("--version-code", type=int, default=4)
-    parser.add_argument("--version-name", default="0.4-shaders-ui")
+    parser.add_argument("--version-code", type=int, default=5)
+    parser.add_argument("--version-name", default="0.5-render-music")
     parser.add_argument("--rebuild-rust", action="store_true", help="force locked release builds for both Rust targets")
     args = parser.parse_args()
 

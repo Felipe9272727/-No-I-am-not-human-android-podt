@@ -12,6 +12,9 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
+import java.text.DateFormat;
+import java.util.Date;
+import android.content.SharedPreferences;
 
 /** Private, bounded diagnostics. No network, permissions, or automatic sharing. */
 final class CrashDiagnostics {
@@ -29,7 +32,7 @@ final class CrashDiagnostics {
             try {
                 StringWriter stack = new StringWriter();
                 failure.printStackTrace(new PrintWriter(stack));
-                String report = header(app) + "\nStage: " + stage + "\nThread: " + thread.getName() + "\n" + stack;
+                String report = header(app) + "\nCaptured at: " + System.currentTimeMillis() + "\nStage: " + stage + "\nThread: " + thread.getName() + "\n" + stack;
                 write(app, report);
             } catch (Throwable ignored) { }
             if (original != null) original.uncaughtException(thread, failure);
@@ -38,6 +41,7 @@ final class CrashDiagnostics {
     }
 
     static void stage(Context context, String value) {
+        if (value.equals(stage)) return;
         stage = value;
         if (Build.VERSION.SDK_INT >= 30) {
             try {
@@ -57,44 +61,85 @@ final class CrashDiagnostics {
             "\nABIs: " + Arrays.toString(Build.SUPPORTED_ABIS);
     }
 
-    static String previous(Context app) {
-        String report = "";
-        try (InputStream input = app.openFileInput(FILE); ByteArrayOutputStream output = new ByteArrayOutputStream()) {
-            byte[] buffer = new byte[4096]; int count;
-            while (output.size() < LIMIT && (count = input.read(buffer)) != -1)
-                output.write(buffer, 0, Math.min(count, LIMIT - output.size()));
-            report = new String(output.toByteArray(), StandardCharsets.UTF_8);
+    static final class History {
+        final String text, id;
+        final long timestamp;
+        final boolean shouldNotify;
+        History(String text, String id, long timestamp, boolean notify) {
+            this.text=text; this.id=id; this.timestamp=timestamp; this.shouldNotify=notify;
+        }
+    }
+
+    static History previous(Context app) {
+        String captured="";
+        long capturedAt=0;
+        try (InputStream input=app.openFileInput(FILE); ByteArrayOutputStream output=new ByteArrayOutputStream()) {
+            byte[] buffer=new byte[4096]; int count;
+            while (output.size()<LIMIT && (count=input.read(buffer))!=-1)
+                output.write(buffer,0,Math.min(count,LIMIT-output.size()));
+            captured=new String(output.toByteArray(),StandardCharsets.UTF_8);
+            capturedAt=app.getFileStreamPath(FILE).lastModified();
         } catch (Exception ignored) { }
-        if (Build.VERSION.SDK_INT >= 30) {
+        String report=captured, eventId=captured.isEmpty()?"":"java:"+digest(captured);
+        long eventTime=capturedAt;
+        if (Build.VERSION.SDK_INT>=30) {
             try {
-                ActivityManager manager = (ActivityManager) app.getSystemService(Context.ACTIVITY_SERVICE);
-                List<ApplicationExitInfo> exits = manager.getHistoricalProcessExitReasons(null, 0, 5);
-                for (ApplicationExitInfo exit : exits) {
-                    int reason = exit.getReason();
-                    if (reason != ApplicationExitInfo.REASON_CRASH && reason != ApplicationExitInfo.REASON_CRASH_NATIVE &&
-                        reason != ApplicationExitInfo.REASON_ANR && reason != ApplicationExitInfo.REASON_LOW_MEMORY &&
-                        reason != ApplicationExitInfo.REASON_SIGNALED) continue;
-                    String description = "\nPrevious Android exit at " + exit.getTimestamp() + ": reason=" + reason +
-                        " status=" + exit.getStatus() + "\n" + exit.getDescription() +
-                        "\nPSS/RSS KiB: " + exit.getPss() + "/" + exit.getRss();
-                    byte[] summary = exit.getProcessStateSummary();
-                    if (summary != null) description += "\nLast stage: " + new String(summary, StandardCharsets.UTF_8);
-                    if (Build.VERSION.SDK_INT >= 31 && reason == ApplicationExitInfo.REASON_CRASH_NATIVE) {
-                        try (InputStream trace=exit.getTraceInputStream(); ByteArrayOutputStream output=new ByteArrayOutputStream()) {
-                            if (trace != null) {
+                ActivityManager manager=(ActivityManager)app.getSystemService(Context.ACTIVITY_SERVICE);
+                List<ApplicationExitInfo> exits=manager.getHistoricalProcessExitReasons(null,0,10);
+                ApplicationExitInfo latest=null;
+                for (ApplicationExitInfo exit:exits) {
+                    int reason=exit.getReason();
+                    if (reason!=ApplicationExitInfo.REASON_CRASH && reason!=ApplicationExitInfo.REASON_CRASH_NATIVE &&
+                        reason!=ApplicationExitInfo.REASON_ANR && reason!=ApplicationExitInfo.REASON_LOW_MEMORY &&
+                        reason!=ApplicationExitInfo.REASON_SIGNALED) continue;
+                    if (latest==null || exit.getTimestamp()>latest.getTimestamp()) latest=exit;
+                }
+                if (latest!=null && (latest.getTimestamp()>=capturedAt ||
+                    CrashHistoryPolicy.matchesJavaCapture(latest.getTimestamp(),latest.getReason()==ApplicationExitInfo.REASON_CRASH,capturedAt))) {
+                    int reason=latest.getReason();
+                    eventTime=latest.getTimestamp();
+                    eventId="android:"+eventTime+":"+reason+":"+latest.getStatus();
+                    report="Registro histórico do Android (não é um erro da sessão atual)"+
+                        "\nData: "+DateFormat.getDateTimeInstance().format(new Date(eventTime))+
+                        "\nTimestamp: "+eventTime+" reason="+reason+" status="+latest.getStatus()+
+                        "\n"+latest.getDescription()+"\nPSS/RSS KiB: "+latest.getPss()+"/"+latest.getRss();
+                    byte[] summary=latest.getProcessStateSummary();
+                    if (summary!=null) report+="\nÚltima etapa registrada: "+new String(summary,StandardCharsets.UTF_8);
+                    if (CrashHistoryPolicy.matchesJavaCapture(eventTime,reason==ApplicationExitInfo.REASON_CRASH,capturedAt))
+                        report+="\n\nCaptura Java da mesma execução:\n"+captured;
+                    if (Build.VERSION.SDK_INT>=31 && reason==ApplicationExitInfo.REASON_CRASH_NATIVE) {
+                        try (InputStream trace=latest.getTraceInputStream(); ByteArrayOutputStream output=new ByteArrayOutputStream()) {
+                            if (trace!=null) {
                                 byte[] buffer=new byte[8192]; int count;
                                 while (output.size()<4*1024*1024 && (count=trace.read(buffer))!=-1)
                                     output.write(buffer,0,Math.min(count,4*1024*1024-output.size()));
-                                description += TombstoneSummary.read(output.toByteArray());
+                                report+=TombstoneSummary.read(output.toByteArray());
                             }
-                        } catch (Exception unavailable) { description += "\nNative trace unavailable."; }
+                        } catch (Exception unavailable) { report+="\nNative trace unavailable."; }
                     }
-                    report = (report.isEmpty() ? header(app) : report) + description;
-                    break;
                 }
             } catch (RuntimeException ignored) { }
         }
-        return report;
+        long installedAt=Long.MAX_VALUE;
+        try { installedAt=app.getPackageManager().getPackageInfo(app.getPackageName(),0).lastUpdateTime; }
+        catch (Exception ignored) { }
+        SharedPreferences notices=app.getSharedPreferences("crash-notices",Context.MODE_PRIVATE);
+        return new History(report,eventId,eventTime,CrashHistoryPolicy.shouldNotify(eventTime,installedAt,
+            notices.getLong("last-time",0),eventId,notices.getString("last-id","")));
+    }
+
+    static void markShown(Context app, History history) {
+        app.getSharedPreferences("crash-notices",Context.MODE_PRIVATE).edit()
+            .putLong("last-time",history.timestamp).putString("last-id",history.id).apply();
+    }
+
+    private static String digest(String value) {
+        try {
+            byte[] bytes=java.security.MessageDigest.getInstance("SHA-256").digest(value.getBytes(StandardCharsets.UTF_8));
+            StringBuilder result=new StringBuilder();
+            for (byte part:bytes) result.append(String.format(java.util.Locale.ROOT,"%02x",part & 255));
+            return result.toString();
+        } catch (Exception unavailable) { return value; }
     }
 
     static void write(Context app, String report) throws java.io.IOException {

@@ -92,10 +92,15 @@ public final class MainActivity extends AndroidApplication {
     private volatile boolean nativeBusy;
     private String loadError;
     private String previousCrashReport = "";
+    private CrashDiagnostics.History previousCrashHistory;
+    private boolean previousCrashNoticeShown;
     private String rendererStatus = "";
     private boolean rendererStatusPolling;
     private float uiScale = 1f;
     private boolean muteIntro;
+    private boolean muteMusic;
+    private MusicPlayer musicPlayer, ambiencePlayer;
+    private String selectedMusic = "", selectedAmbience = "";
     private boolean toolsMode;
     private String lastPhase = "";
     private long campaignClockOrigin;
@@ -113,6 +118,9 @@ public final class MainActivity extends AndroidApplication {
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         CrashDiagnostics.install(this);
+        muteMusic=getSharedPreferences("audio-options",MODE_PRIVATE).getBoolean("mute-music",false);
+        musicPlayer=new MusicPlayer(this); ambiencePlayer=new MusicPlayer(this);
+        musicPlayer.setMuted(muteMusic); ambiencePlayer.setMuted(muteMusic);
         Window window = getWindow();
         window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
             View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
@@ -121,6 +129,7 @@ public final class MainActivity extends AndroidApplication {
 
         host = new FrameLayout(this);
         AndroidApplicationConfiguration cfg = new AndroidApplicationConfiguration();
+        cfg.depth = 24;
         cfg.useAccelerometer = false; cfg.useCompass = false; cfg.useGyroscope = false;
         roomEngine = new RoomEngine();
         roomEngineView = initializeForView(roomEngine, cfg);
@@ -148,7 +157,8 @@ public final class MainActivity extends AndroidApplication {
 
         nativeBusy = true;
         nativeWorker.execute(() -> {
-            previousCrashReport = CrashDiagnostics.previous(this);
+            previousCrashHistory=CrashDiagnostics.previous(this);
+            previousCrashReport=previousCrashHistory.text;
             JSONObject initial;
             try {
                 JSONObject assets = new JSONObject(readAssetText("presentation/assets.json"));
@@ -165,7 +175,7 @@ public final class MainActivity extends AndroidApplication {
                 try { initial.put("error", loadError); } catch (JSONException ignored) { }
             }
             final JSONObject result = initial;
-            runOnUiThread(() -> { applyState(result); if (!previousCrashReport.isEmpty()) showDiagnosticReport("Falha na execução anterior", previousCrashReport); });
+            runOnUiThread(() -> { applyState(result); maybeShowPreviousCrash(); });
         });
     }
 
@@ -247,6 +257,7 @@ public final class MainActivity extends AndroidApplication {
         updateCampaignClock();
         updateEngine();
         updateIntro();
+        updateMusic();
         if (canvas != null) canvas.invalidate();
         advanceIntroCompletion();
     }
@@ -359,8 +370,10 @@ public final class MainActivity extends AndroidApplication {
 
     private void showRendererDiagnostic() {
         String detail=roomEngine==null?rendererStatus:roomEngine.getRendererDiagnostic();
-        showDiagnosticReport("Diagnóstico da cena 3D",CrashDiagnostics.header(this)+"\n"+detail+
-            (previousCrashReport.isEmpty()?"":"\n\nExecução anterior:\n"+previousCrashReport));
+        showDiagnosticReport("Diagnóstico da cena 3D",CrashDiagnostics.header(this)+
+            "\n\nEXECUÇÃO ATUAL\nFase: "+state.optString("phase","")+" vista: "+viewMode()+"\n"+detail+
+            "\nMúsica: "+audioStatus(musicPlayer)+"\nAmbiência: "+audioStatus(ambiencePlayer)+
+            (previousCrashReport.isEmpty()?"":"\n\nHISTÓRICO (não indica uma falha atual):\n"+previousCrashReport));
     }
 
     private void resetWorldInput() {
@@ -411,6 +424,47 @@ public final class MainActivity extends AndroidApplication {
             ui.postDelayed(this, 250L);
         }
     };
+
+    private void maybeShowPreviousCrash() {
+        if (!activityResumed || !initialized || isFinishing() || previousCrashNoticeShown ||
+            previousCrashHistory==null || !previousCrashHistory.shouldNotify) return;
+        previousCrashNoticeShown=true;
+        showDiagnosticReport("Registro da execução anterior",previousCrashHistory.text);
+        CrashDiagnostics.markShown(this,previousCrashHistory);
+    }
+
+    private String audioStatus(MusicPlayer player) {
+        return player==null?"indisponível":player.getStatus()+" "+player.getCurrentAsset()+
+            (player.getLastError().isEmpty()?"":" erro="+player.getLastError());
+    }
+
+    private void updateMusic() {
+        if (musicPlayer==null || ambiencePlayer==null) return;
+        String phase=state.optString("phase","");
+        String music="", ambience="";
+        // The recovered opening is source day 0, night. Later campaign days are not implemented.
+        if (toolsMode || "tools".equals(phase)) ambience="ambience_house";
+        else if ("menu".equals(phase)) music="main_menu";
+        else if ("playing".equals(phase) || "boundary".equals(phase)) {
+            music="night1"; ambience="ambience_house";
+        }
+        // Intro MP4 already contains its original soundtrack.
+        if (!music.equals(selectedMusic)) {
+            selectedMusic=music;
+            if (music.isEmpty()) musicPlayer.stop(); else musicPlayer.playConfigured("music_manifest.json",music);
+        }
+        if (!ambience.equals(selectedAmbience)) {
+            selectedAmbience=ambience;
+            if (ambience.isEmpty()) ambiencePlayer.stop(); else ambiencePlayer.playConfigured("music_manifest.json",ambience);
+        }
+    }
+
+    private void toggleMusic() {
+        muteMusic=!muteMusic;
+        getSharedPreferences("audio-options",MODE_PRIVATE).edit().putBoolean("mute-music",muteMusic).apply();
+        musicPlayer.setMuted(muteMusic); ambiencePlayer.setMuted(muteMusic);
+        if (canvas!=null) canvas.invalidate();
+    }
 
     private void updateIntro() {
         JSONObject intro = state.optJSONObject("intro");
@@ -491,17 +545,25 @@ public final class MainActivity extends AndroidApplication {
         if (roomEngine != null) roomEngine.setInputEnabled(false); resetWorldInput();
         lastPhase = "";
         if (introPlayer != null && introPlayer.isPlaying()) introPlayer.pause();
+        if (musicPlayer!=null) musicPlayer.onHostPause();
+        if (ambiencePlayer!=null) ambiencePlayer.onHostPause();
         super.onPause();
     }
 
     @Override protected void onResume() {
         activityResumed = true;
-        super.onResume(); updateIntro(); updateCampaignClock(); updateEngine();
+        super.onResume();
+        if (musicPlayer!=null) musicPlayer.onHostResume();
+        if (ambiencePlayer!=null) ambiencePlayer.onHostResume();
+        updateIntro(); updateCampaignClock(); updateEngine(); updateMusic(); maybeShowPreviousCrash();
         if ("intro".equals(state.optString("phase", "")) && introPrepared) { ui.removeCallbacks(introTicker); ui.post(introTicker); }
     }
 
     @Override protected void onDestroy() {
-        ui.removeCallbacks(campaignTicker); ui.removeCallbacks(rendererStatusTicker); rendererStatusPolling=false; releaseIntro(); nativeWorker.shutdown(); super.onDestroy();
+        ui.removeCallbacks(campaignTicker); ui.removeCallbacks(rendererStatusTicker); rendererStatusPolling=false; releaseIntro();
+        if (musicPlayer!=null) musicPlayer.close();
+        if (ambiencePlayer!=null) ambiencePlayer.close();
+        nativeWorker.shutdown(); super.onDestroy();
     }
 
     private String translatedText(JSONObject event) {
@@ -581,7 +643,7 @@ public final class MainActivity extends AndroidApplication {
                 drawMenuLabel(c,labels[i],rect,22,i==1&&!canContinue?0xFF929292:Color.WHITE);
                 final int action=i;hits.add(new Hit(new RectF(rect[0],rect[1],rect[2],rect[3]),()->menuChoice(action,canContinue)));
             }
-            drawMobileSourceButton(c,"Ferramentas",1685,26,1885,88,0xCCFFFFFF,()->{toolsMode=true;updateEngine();invalidate();});
+            drawMobileSourceButton(c,"Ferramentas",1685,26,1885,88,0xCCFFFFFF,()->{toolsMode=true;updateEngine();updateMusic();invalidate();});
         }
 
         private void drawMenuBackdrop(Canvas c) {
@@ -786,11 +848,12 @@ public final class MainActivity extends AndroidApplication {
                 if(bg!=null&&rect!=null)drawUiImage(c,bg,rect);else c.drawColor(0xFF101414);
             }
             drawMenuLabel(c,"OPÇÕES DA PRÉVIA",new float[]{610,220,1310,310},30,Color.WHITE);
-            button(c,uiScale>1f?"Interface ampliada":"Ampliar interface",680,350,1240,435,0xFFFFFFFF,0,()->{uiScale=1.15f;invalidate();});
-            button(c,uiScale==1f?"Interface padrão":"Usar interface padrão",680,465,1240,550,0xFFFFFFFF,0,()->{uiScale=1f;invalidate();});
-            button(c,muteIntro?"Som da introdução desligado":"Som da introdução ligado",680,580,1240,665,0xFFFFFFFF,0,()->{muteIntro=!muteIntro;if(introPlayer!=null)introPlayer.setVolume(muteIntro?0f:1f,muteIntro?0f:1f);invalidate();});
-            button(c,"Diagnóstico",680,695,1240,780,0xFFFFFFFF,0,MainActivity.this::showRendererDiagnostic);
-            button(c,"Voltar",680,810,1240,895,0xFFFFFFFF,0,()->{settingsOpen=false;updateEngine();invalidate();});
+            button(c,uiScale>1f?"Interface ampliada":"Ampliar interface",680,330,1240,410,0xFFFFFFFF,0,()->{uiScale=1.15f;invalidate();});
+            button(c,uiScale==1f?"Interface padrão":"Usar interface padrão",680,430,1240,510,0xFFFFFFFF,0,()->{uiScale=1f;invalidate();});
+            button(c,muteMusic?"Músicas desligadas":"Músicas ligadas",680,530,1240,610,0xFFFFFFFF,0,MainActivity.this::toggleMusic);
+            button(c,muteIntro?"Som da introdução desligado":"Som da introdução ligado",680,630,1240,710,0xFFFFFFFF,0,()->{muteIntro=!muteIntro;if(introPlayer!=null)introPlayer.setVolume(muteIntro?0f:1f,muteIntro?0f:1f);invalidate();});
+            button(c,"Diagnóstico",680,730,1240,810,0xFFFFFFFF,0,MainActivity.this::showRendererDiagnostic);
+            button(c,"Voltar",680,830,1240,910,0xFFFFFFFF,0,()->{settingsOpen=false;updateEngine();invalidate();});
         }
 
         private void drawPausePanel(Canvas c) {

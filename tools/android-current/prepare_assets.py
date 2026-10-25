@@ -26,6 +26,7 @@ INTRO_EVIDENCE = ROOT / "reconstruction/reverse-bootstrap/intro_evidence.json"
 MENU_DIR = ROOT / "reconstruction/reverse-bootstrap/exported_menu"
 MENU_EVIDENCE = ROOT / "reconstruction/reverse-bootstrap/menu_evidence.json"
 WORLD_SOURCE = ROOT / "reconstruction/reverse-world"
+MUSIC_SOURCE = ROOT / "reconstruction/reverse-music"
 UI_SOURCE = ROOT / "reconstruction/reverse-ui"
 INTRO_NAME = "Intro_Final_2_NO_SUBTITLES.mp4"
 INTRO_SHA256 = "67d32bc7e28e5bbb528c7553650d8c594138031f358e249ec011db559b54b9d2"
@@ -234,13 +235,41 @@ def stage_third_party_notices(destination: Path) -> dict:
 def clean_owned_outputs(destination: Path) -> None:
     # These four generated outputs belong to this script. Other assets in the
     # app tree, if any, are preserved.
-    for name in ("narrative", "presentation", "sprites", "licenses", "intro", "menu", "world", "ui"):
+    for name in ("narrative", "presentation", "sprites", "licenses", "intro", "menu", "world", "ui", "music"):
         path = destination / name
         if path.exists():
             shutil.rmtree(path)
+    (destination / "music_manifest.json").unlink(missing_ok=True)
     assets_json = destination / "assets.json"
     if assets_json.exists():
         assets_json.unlink()
+
+
+def stage_music_assets(destination: Path) -> dict:
+    source_manifest=MUSIC_SOURCE / "music_manifest.json"
+    manifest=read_json(source_manifest)
+    if manifest.get("errors"):
+        raise RuntimeError("Music export contains errors")
+    tracks=manifest["tracks"]
+    if not {"main_menu","night1","ambience_house"}.issubset({row["key"] for row in tracks}):
+        raise RuntimeError("Opening music export is incomplete")
+    total=0
+    for row in tracks:
+        relative=Path(row["extracted_asset"])
+        target_relative=Path(row["asset"])
+        if any(path.is_absolute() or ".." in path.parts or not path.parts for path in (relative,target_relative)):
+            raise RuntimeError("Unsafe music source or target path")
+        source=MUSIC_SOURCE / relative
+        if sha256_file(source)!=row["ogg"]["sha256"]:
+            raise RuntimeError(f"Music source hash mismatch: {relative}")
+        target=destination / target_relative
+        target.parent.mkdir(parents=True,exist_ok=True)
+        temporary=target.with_suffix(".ogg.stage-tmp")
+        shutil.copyfile(source,temporary)
+        temporary.replace(target)
+        total+=target.stat().st_size
+    minified_json(source_manifest,destination / "music_manifest.json",manifest)
+    return {"manifest":"music_manifest.json","track_count":len(tracks),"bytes":total}
 
 
 def stage_world_assets(destination: Path) -> dict:
@@ -294,7 +323,13 @@ def stage_world_assets(destination: Path) -> dict:
         target_relative = Path("textures_android") / f"{index:03d}_{relative.stem}.png"
         target = world_out / target_relative
         target.parent.mkdir(parents=True, exist_ok=True)
-        image.save(target, format="PNG", optimize=False, compress_level=9)
+        temporary=target.with_suffix(".png.stage-tmp")
+        image.save(temporary, format="PNG", optimize=False, compress_level=9)
+        with Image.open(temporary) as check:
+            check.verify()
+        with Image.open(temporary) as check:
+            check.load()
+        temporary.replace(target)
         row.update({
             "source_asset": relative.as_posix(), "source_sha256": digest,
             "source_dimensions": source_size,
@@ -415,6 +450,7 @@ def prepare(destination: Path) -> dict:
     destination.mkdir(parents=True, exist_ok=True)
     clean_owned_outputs(destination)
     world_summary = stage_world_assets(destination)
+    music_summary = stage_music_assets(destination)
     ui_summary = stage_ui_assets(destination)
 
     intro_evidence = read_json(INTRO_EVIDENCE)
@@ -625,6 +661,7 @@ def prepare(destination: Path) -> dict:
         },
         "world_manifest": "world/world_manifest.json",
         "world": world_summary,
+        "music": music_summary,
         "game_ui": ui_summary,
     }
     minified_json(PROGRAM, destination / "presentation/assets.json", manifest)
