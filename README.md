@@ -6,9 +6,12 @@ A versão 0.2 acrescentou a casa 3D original, colisões, joystick e câmera por 
 
 A versão 0.4 corrige a ausência dos shaders do libGDX dentro do APK, identificada pelo diagnóstico do aparelho. Menu, diálogos e interação usam artes/fontes recuperadas, substituindo os principais controles genéricos. O botão **DEBUG: pular intro** e o diagnóstico copiável permanecem. Há adaptações para celular e escolhas de fonte ainda inferidas; a interface não é apresentada como uma cópia idêntica do original.
 
+A versão 0.5 acrescenta músicas originais ao menu e à abertura na casa, com ambiência e opção de silenciar. Repara duas texturas danificadas, ajusta transparência/profundidade e a renderização de objetos espelhados. O histórico de falhas antigas deixa de gerar avisos automáticos após uma atualização. Os próximos dias continuam fora do port; a UI e os efeitos ainda têm diferenças em relação ao original.
+
 ## Controles no celular
 
 - Durante o vídeo: **DEBUG: pular intro** entra na casa sem esperar 72 segundos.
+- Opções → Músicas ligadas/desligadas: controla a trilha e a ambiência; a escolha fica salva.
 - Opções → Diagnóstico: copia ou compartilha o registro, por ação do usuário.
 - Joystick à esquerda: andar.
 - Arrastar à direita: olhar ao redor.
@@ -38,4 +41,4 @@ Esses resultados não equivalem a execução em um aparelho Android. O desempenh
 A verificação atual remove os recursos do JAR de desenvolvimento: os shaders
 são carregados exclusivamente do APK entregue. A versão 0.3 reproduz a falha,
 enquanto a versão 0.4 carrega todos os arquivos e renderiza 120 frames em GLES2.
-A validação desta correção no aparelho ainda depende do próximo teste do usuário.
+O usuário confirmou que a versão 0.4 entra na casa no Xiaomi, mas relatou falhas visuais. As mudanças da versão 0.5 passaram por compilação e testes de gráficos no host; seu funcionamento no aparelho ainda precisa de teste.

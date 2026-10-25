@@ -53,3 +53,31 @@ UI work replaces generic buttons/cards with recovered menu/HUD/dialogue art,
 uses recovered fonts, and wraps long Portuguese choices without truncating them.
 Menu font selection and some mobile sizing remain explicitly inferred.
 The physical-device fix is not yet verified.
+
+
+## v0.5: source music and rendering corrections
+
+The user confirmed v0.4 enters the 3D house, then supplied screenshots of white
+objects, open/black surfaces and a persistent renderer warning. Two world PNGs
+in that APK differed from their staged-manifest hashes and failed full PNG
+verification. The source media bundle reproduces their expected Android bytes;
+all 1,387 staged PNGs now verify and fully decode.
+
+The renderer reverses culling for 33 mirrored instances among 109 active source
+renderers, respects blend/depth-write/alpha-clip settings, avoids using normal
+maps as diffuse maps, and uses source camera near/far planes. It requests a
+24-bit depth buffer. Java geometry/material regression tests, normal and
+injected-fallback Mesa GLES2 renders pass. Other camera angles still expose
+incomplete scene coverage, so this is not a claim of finished visual parity.
+
+The original menu, night1 and house-ambient AudioSources identify the three
+tracks used by this opening. Fourteen original music clips are recovered with
+static Unity extraction and trusted ffmpeg conversion. Later-day music routing
+is explicitly unresolved, and the campaign still ends at its existing boundary.
+The Android player pauses with the activity, preserves track position on resume,
+releases previous players on switches and provides a persistent mute option.
+The original intro movie retains its own soundtrack.
+
+Crash-history policy regression checks suppress the user's old timestamp after
+an APK update, avoid repeated notices and keep unrelated Java/native reports
+separate. v0.5 has not been executed on a physical Android device.

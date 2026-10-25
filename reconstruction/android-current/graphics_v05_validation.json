@@ -1,0 +1,30 @@
+{
+  "status": "passed",
+  "renderer_source_facts": {
+    "active_enabled_renderers": 109,
+    "negative_determinant_renderers": 33,
+    "source_materials": 57,
+    "source_materials_alpha_clip_enabled": 0,
+    "source_materials_zwrite_disabled": 4,
+    "source_main_camera_near_clip": 0.1,
+    "source_main_camera_far_clip": 1000.0
+  },
+  "renderer_fixes": [
+    "Flip FRONT/BACK culling for negative determinant instances while preserving NONE and positive determinant behavior",
+    "Map Unity blend factors and use straight-alpha equivalent for ONE / ONE_MINUS_SRC_ALPHA stock shader output",
+    "Honor per-material ZWrite, including transparent materials defaulting to no depth writes when absent",
+    "Honor AlphaClip and Cutoff through libGDX stock FloatAttribute alpha test",
+    "Prefer base/albedo maps and exclude normal, bump, refraction, height, and parallax maps from fallback selection",
+    "Use source camera near/far clips and report GL depth-buffer bits"
+  ],
+  "tests": {
+    "java_compile": "passed",
+    "WorldGeometryTest": "passed; 109 active renderers, 33 reflected; culling and alpha-zero/no-properties material fixtures",
+    "WorldMathTest": "passed",
+    "TombstoneSummaryTest": "passed",
+    "mesa_gles2_normal": "passed; llvmpipe ES 2.0; depthBits=24; logs in qa/gles2.log",
+    "mesa_gles2_shader_fallback": "passed; injected shader compile failure; logs in qa/gles2-fallback.log",
+    "apk_classpath_shader_resources": "passed; reference APK classpath check and 120-frame isolated GLES2 render; APK is from recovered input, not a new Android execution"
+  },
+  "android_device_execution_tested": false
+}

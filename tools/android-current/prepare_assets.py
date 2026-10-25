@@ -699,8 +699,19 @@ def main() -> None:
         "--output-dir", type=Path, default=DEFAULT_DESTINATION,
         help=f"Android assets staging directory (default: {DEFAULT_DESTINATION})",
     )
+    parser.add_argument("--music-only", action="store_true",
+                        help="stage validated music into an existing asset tree without rebuilding other assets")
     args = parser.parse_args()
-    result = prepare(args.output_dir.resolve())
+    destination = args.output_dir.resolve()
+    if args.music_only:
+        result = stage_music_assets(destination)
+        presentation = destination / "presentation/assets.json"
+        if presentation.is_file():
+            metadata = read_json(presentation)
+            metadata["music"] = result
+            minified_json(presentation, presentation, metadata)
+    else:
+        result = prepare(destination)
     print(json.dumps(result, indent=2, ensure_ascii=False))
 
 

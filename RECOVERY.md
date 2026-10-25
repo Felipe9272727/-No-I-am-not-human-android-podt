@@ -36,7 +36,7 @@ unchanged native libraries and staged assets. Restore its assets/ members under
 `reconstruction/android-current/app/src/main/assets`, then run:
 
 ```sh
-python3 tools/android-current/build_apk.py --skip-assets --reference-apk <current-apk> --version-code 4 --version-name 0.4-shaders-ui --output deliverables/NINAH-Port-3D-UI.apk
+python3 tools/android-current/build_apk.py --skip-assets --reference-apk <current-apk> --version-code 5 --version-name 0.5-render-music --output deliverables/NINAH-Port-3D-Musicas.apk
 ```
 
 The reference APK must match LATEST_BUILD.json and its 52-file C++/Rust source
@@ -46,6 +46,27 @@ including the narrowly scoped shader-compiler fallback. This does not replace
 Android execution or the user phone crash report.
 
 Before delivering, run `python3 tools/android-current/qa/check_apk_shaders.py
-deliverables/NINAH-Port-3D-UI.apk --render`. The 12 namespaced GDX resources
+deliverables/NINAH-Port-3D-Musicas.apk --render`. The 12 namespaced GDX resources
 (including six GLSL files) must be packaged in the APK, not supplied by a
 development jar. See `shader_v04_validation.json` for the isolated check.
+
+
+## Music and texture recovery
+
+The v0.5 APK includes the staged music and its provenance manifest, so extracting
+its assets/ entries restores these inputs too. To migrate staged v0.4 data,
+restore and verify the original three-part archive and the private
+NINAH-Recursos-3D-UI.zip bundle, then run:
+
+```sh
+python3 tools/android-current/repair_staged_textures.py /path/to/NINAH-Recursos-3D-UI.zip
+python3 tools/reverse-music/export_original_music.py /path/to/original.zip
+python3 tools/android-current/prepare_assets.py --music-only
+python3 tools/reverse-music/validate_music_export.py --assets-root reconstruction/android-current/app/src/main/assets
+```
+
+Use trusted UnityPy, ffmpeg and ffprobe. Original executables/libraries are never
+loaded. The repair requires the exact source-bundle hash and reproduces the
+existing world_manifest.android_sha256 values. Generated music, FSB chunks,
+world textures, APKs and signing keys stay outside Git. The music manifest and
+extractor are tracked; new encodes record their actual OGG hashes.

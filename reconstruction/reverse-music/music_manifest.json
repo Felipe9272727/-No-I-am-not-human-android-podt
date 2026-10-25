@@ -1,0 +1,656 @@
+{
+  "schema_version": 1,
+  "source_archive": {
+    "sha256": "f8e6a46efbd41452266790a1350bbec3cfd6027470282171b912df80b08489f1",
+    "size_bytes": 1042955341
+  },
+  "transcode": {
+    "tool": "ffmpeg",
+    "codec": "libvorbis",
+    "quality": 4
+  },
+  "tracks": [
+    {
+      "key": "main_menu",
+      "asset": "music/main_menu.ogg",
+      "extracted_asset": "exported_music/main_menu.ogg",
+      "source": {
+        "unity_file": "sharedassets0.assets",
+        "unity_type": "AudioClip",
+        "path_id": 1110,
+        "name": "main_menu",
+        "compression_format": 1,
+        "channels": 2,
+        "sample_rate": 44100,
+        "unity_length_seconds": 65.45455932617188,
+        "resource": {
+          "file": "sharedassets0.resource",
+          "offset": 159636928,
+          "size": 3776736,
+          "sha256": "87f0080b423dc18f77097b7352be07024d0a5697d69a662afd19d2d331b1dc3d",
+          "extracted_fsb": "exported_music/original_fsb/main_menu.fsb"
+        },
+        "audio_source": {
+          "unity_file": "level0",
+          "audio_source_path_id": 678,
+          "game_object": "MusicSource",
+          "clip_pointer": {
+            "file_id": 2,
+            "path_id": 1110
+          },
+          "loop": true,
+          "play_on_awake": true,
+          "volume": 1.0
+        }
+      },
+      "ogg": {
+        "sha256": "a9d7e14c401db24fd666bfa6649fc2bef51ccfec244c91de49beaa86b8f0acc2",
+        "duration_seconds": 65.454558,
+        "size_bytes": 967285,
+        "codec": "vorbis",
+        "quality": 4
+      },
+      "loop": true,
+      "source_volume": 1.0
+    },
+    {
+      "key": "ambience_house",
+      "asset": "music/ambience_house.ogg",
+      "extracted_asset": "exported_music/ambience_house.ogg",
+      "source": {
+        "unity_file": "sharedassets0.assets",
+        "unity_type": "AudioClip",
+        "path_id": 1099,
+        "name": "ambience_house",
+        "compression_format": 1,
+        "channels": 2,
+        "sample_rate": 44100,
+        "unity_length_seconds": 38.0,
+        "resource": {
+          "file": "sharedassets0.resource",
+          "offset": 153150016,
+          "size": 2108160,
+          "sha256": "ce5f261fa9b3cdc46f0daf15fd2c53570cb47800539a3b712e3c2fb26e9de0d5",
+          "extracted_fsb": "exported_music/original_fsb/ambience_house.fsb"
+        },
+        "audio_source": {
+          "unity_file": "level1",
+          "audio_source_path_id": 2467,
+          "game_object": "2DMusicSourceAmbient",
+          "clip_pointer": {
+            "file_id": 3,
+            "path_id": 1099
+          },
+          "loop": true,
+          "play_on_awake": true,
+          "volume": 1.0
+        }
+      },
+      "ogg": {
+        "sha256": "76d034cc9bdd068a3fe5e7c6649f66cfb9df0698f26b21903adf8c73a92b57ab",
+        "duration_seconds": 38.0,
+        "size_bytes": 537687,
+        "codec": "vorbis",
+        "quality": 4
+      },
+      "loop": true,
+      "source_volume": 1.0
+    },
+    {
+      "key": "day",
+      "asset": "music/day.ogg",
+      "extracted_asset": "exported_music/day.ogg",
+      "source": {
+        "unity_file": "sharedassets0.assets",
+        "unity_type": "AudioClip",
+        "path_id": 840,
+        "name": "day",
+        "compression_format": 1,
+        "channels": 2,
+        "sample_rate": 44100,
+        "unity_length_seconds": 182.85714721679688,
+        "resource": {
+          "file": "sharedassets0.resource",
+          "offset": 29935328,
+          "size": 1616064,
+          "sha256": "a540e7bea24531ce6e4f3076a93de61338208c6225094ba6d031fad963137311",
+          "extracted_fsb": "exported_music/original_fsb/day.fsb"
+        },
+        "audio_source": null
+      },
+      "ogg": {
+        "sha256": "604c0375eaedac8bffb922bd5aba96cbba437eca5082d08986c18f0bf36abca1",
+        "duration_seconds": 182.857143,
+        "size_bytes": 2186554,
+        "codec": "vorbis",
+        "quality": 4
+      }
+    },
+    {
+      "key": "night1",
+      "asset": "music/night1.ogg",
+      "extracted_asset": "exported_music/night1.ogg",
+      "source": {
+        "unity_file": "sharedassets0.assets",
+        "unity_type": "AudioClip",
+        "path_id": 1013,
+        "name": "night1",
+        "compression_format": 1,
+        "channels": 2,
+        "sample_rate": 44100,
+        "unity_length_seconds": 244.14285278320312,
+        "resource": {
+          "file": "sharedassets0.resource",
+          "offset": 117662272,
+          "size": 2400096,
+          "sha256": "73a3d739d9e7405bcd380ec00195165d93aa983d813ddd13ac62114240cb7548",
+          "extracted_fsb": "exported_music/original_fsb/night1.fsb"
+        },
+        "audio_source": {
+          "unity_file": "level1",
+          "audio_source_path_id": 2471,
+          "game_object": "2DMusicSourceNight",
+          "clip_pointer": {
+            "file_id": 3,
+            "path_id": 1013
+          },
+          "loop": true,
+          "play_on_awake": true,
+          "volume": 1.0
+        }
+      },
+      "ogg": {
+        "sha256": "170f29fc7e25f34dd3e5652c79dbbed52c8ca62b0aaad7684b2d212e9c70e3f7",
+        "duration_seconds": 244.142857,
+        "size_bytes": 2935747,
+        "codec": "vorbis",
+        "quality": 4
+      },
+      "loop": true,
+      "source_volume": 1.0
+    },
+    {
+      "key": "day_02",
+      "asset": "music/day_02.ogg",
+      "extracted_asset": "exported_music/day_02.ogg",
+      "source": {
+        "unity_file": "sharedassets0.assets",
+        "unity_type": "AudioClip",
+        "path_id": 843,
+        "name": "day_02",
+        "compression_format": 1,
+        "channels": 2,
+        "sample_rate": 44100,
+        "unity_length_seconds": 183.82980346679688,
+        "resource": {
+          "file": "sharedassets0.resource",
+          "offset": 32133696,
+          "size": 10518208,
+          "sha256": "ca70ddbc1cd47ad6b6e60136578684aabd3634de15d3fce0fb8acdae6f178c7a",
+          "extracted_fsb": "exported_music/original_fsb/day_02.fsb"
+        },
+        "audio_source": null
+      },
+      "ogg": {
+        "sha256": "ea92e655cabb0e965aa42353be72178fecff4b5cf5188f7335a1d0102defe872",
+        "duration_seconds": 183.829796,
+        "size_bytes": 2570814,
+        "codec": "vorbis",
+        "quality": 4
+      }
+    },
+    {
+      "key": "night_02_01",
+      "asset": "music/night_02_01.ogg",
+      "extracted_asset": "exported_music/night_02_01.ogg",
+      "source": {
+        "unity_file": "sharedassets0.assets",
+        "unity_type": "AudioClip",
+        "path_id": 944,
+        "name": "night_02_01",
+        "compression_format": 1,
+        "channels": 2,
+        "sample_rate": 44100,
+        "unity_length_seconds": 219.8512420654297,
+        "resource": {
+          "file": "sharedassets0.resource",
+          "offset": 80653440,
+          "size": 13167072,
+          "sha256": "b2dd3c0be0c69940d64b7627bafff460aaacba156dce8798e91ad02e0480ae49",
+          "extracted_fsb": "exported_music/original_fsb/night_02_01.fsb"
+        },
+        "audio_source": null
+      },
+      "ogg": {
+        "sha256": "ed65ea95718ff537d4211a96d9a52c175dd81c9ba2f75e5833535bc8668fd021",
+        "duration_seconds": 219.851247,
+        "size_bytes": 3314485,
+        "codec": "vorbis",
+        "quality": 4
+      }
+    },
+    {
+      "key": "night_02_02",
+      "asset": "music/night_02_02.ogg",
+      "extracted_asset": "exported_music/night_02_02.ogg",
+      "source": {
+        "unity_file": "sharedassets0.assets",
+        "unity_type": "AudioClip",
+        "path_id": 816,
+        "name": "night_02_02",
+        "compression_format": 1,
+        "channels": 2,
+        "sample_rate": 44100,
+        "unity_length_seconds": 247.10105895996094,
+        "resource": {
+          "file": "sharedassets0.resource",
+          "offset": 1347200,
+          "size": 13277344,
+          "sha256": "2ddef3ac0e3fccf021e67406d6c15db24dddfc5d13fb0c7cd495f048f553a7e9",
+          "extracted_fsb": "exported_music/original_fsb/night_02_02.fsb"
+        },
+        "audio_source": null
+      },
+      "ogg": {
+        "sha256": "86025b21b39dfb4836c7c194d29df8118d716cdad4af3a2993e390fd21311e2e",
+        "duration_seconds": 247.101066,
+        "size_bytes": 3199270,
+        "codec": "vorbis",
+        "quality": 4
+      }
+    },
+    {
+      "key": "night3",
+      "asset": "music/night3.ogg",
+      "extracted_asset": "exported_music/night3.ogg",
+      "source": {
+        "unity_file": "sharedassets0.assets",
+        "unity_type": "AudioClip",
+        "path_id": 898,
+        "name": "night3",
+        "compression_format": 1,
+        "channels": 2,
+        "sample_rate": 44100,
+        "unity_length_seconds": 274.0,
+        "resource": {
+          "file": "sharedassets0.resource",
+          "offset": 60784480,
+          "size": 2301312,
+          "sha256": "870c6eb84e29d4ca80ba097c7dea283a8c318ec057baf38e37094b8717158ec0",
+          "extracted_fsb": "exported_music/original_fsb/night3.fsb"
+        },
+        "audio_source": null
+      },
+      "ogg": {
+        "sha256": "de8cccd608f0a2ba9ecc5815b49a94daf5baf4c428799c5d7a465c9d4dbdfc17",
+        "duration_seconds": 274.0,
+        "size_bytes": 2805532,
+        "codec": "vorbis",
+        "quality": 4
+      }
+    },
+    {
+      "key": "burning_light",
+      "asset": "music/burning_light.ogg",
+      "extracted_asset": "exported_music/burning_light.ogg",
+      "source": {
+        "unity_file": "sharedassets0.assets",
+        "unity_type": "AudioClip",
+        "path_id": 1034,
+        "name": "burning_light",
+        "compression_format": 1,
+        "channels": 2,
+        "sample_rate": 44100,
+        "unity_length_seconds": 88.27587127685547,
+        "resource": {
+          "file": "sharedassets0.resource",
+          "offset": 129811104,
+          "size": 4630912,
+          "sha256": "04ca049303a2e16971e71caf2a40903f4dde38e7892ca539b000ec62f9b958f2",
+          "extracted_fsb": "exported_music/original_fsb/burning_light.fsb"
+        },
+        "audio_source": null
+      },
+      "ogg": {
+        "sha256": "a995d5df26e8f186d4f45c9521f0eaab30d1565d62e9766f8f8fbe70af851ca8",
+        "duration_seconds": 88.275873,
+        "size_bytes": 1226775,
+        "codec": "vorbis",
+        "quality": 4
+      }
+    },
+    {
+      "key": "noise_1_loop",
+      "asset": "music/noise_1_loop.ogg",
+      "extracted_asset": "exported_music/noise_1_loop.ogg",
+      "source": {
+        "unity_file": "sharedassets0.assets",
+        "unity_type": "AudioClip",
+        "path_id": 951,
+        "name": "noise_1_loop",
+        "compression_format": 1,
+        "channels": 2,
+        "sample_rate": 44100,
+        "unity_length_seconds": 58.0,
+        "resource": {
+          "file": "sharedassets0.resource",
+          "offset": 95361888,
+          "size": 1345024,
+          "sha256": "37d207e8dbf08886c822e8f53ba5fa9e49ec73b6a5025e5fe5462f8b81e9ad83",
+          "extracted_fsb": "exported_music/original_fsb/noise_1_loop.fsb"
+        },
+        "audio_source": null
+      },
+      "ogg": {
+        "sha256": "f13df2a6d86bf715c47714a28c881602c0286dc0e4f7f73c56af5e4ba1d95d7f",
+        "duration_seconds": 58.0,
+        "size_bytes": 640768,
+        "codec": "vorbis",
+        "quality": 4
+      }
+    },
+    {
+      "key": "noise_2_loop",
+      "asset": "music/noise_2_loop.ogg",
+      "extracted_asset": "exported_music/noise_2_loop.ogg",
+      "source": {
+        "unity_file": "sharedassets0.assets",
+        "unity_type": "AudioClip",
+        "path_id": 824,
+        "name": "noise_2_loop",
+        "compression_format": 1,
+        "channels": 2,
+        "sample_rate": 44100,
+        "unity_length_seconds": 58.0,
+        "resource": {
+          "file": "sharedassets0.resource",
+          "offset": 27062816,
+          "size": 1631904,
+          "sha256": "b949c8ff9c487bcfdab8ecc74e65830fcb0a71ed889e9128267e85a05b8c9f89",
+          "extracted_fsb": "exported_music/original_fsb/noise_2_loop.fsb"
+        },
+        "audio_source": null
+      },
+      "ogg": {
+        "sha256": "bc86c96fd46b9c76da2a522db8c2d28f176acf3eb83a2f9db618866b2ed9ee2b",
+        "duration_seconds": 58.0,
+        "size_bytes": 647858,
+        "codec": "vorbis",
+        "quality": 4
+      }
+    },
+    {
+      "key": "noise_3_loop",
+      "asset": "music/noise_3_loop.ogg",
+      "extracted_asset": "exported_music/noise_3_loop.ogg",
+      "source": {
+        "unity_file": "sharedassets0.assets",
+        "unity_type": "AudioClip",
+        "path_id": 1150,
+        "name": "noise_3_loop",
+        "compression_format": 1,
+        "channels": 2,
+        "sample_rate": 44100,
+        "unity_length_seconds": 58.0,
+        "resource": {
+          "file": "sharedassets0.resource",
+          "offset": 185438720,
+          "size": 1516128,
+          "sha256": "d4d28d86123b95ff3f9fb629f9598eac901f7486ccbcfd10ad63b883805dd6a6",
+          "extracted_fsb": "exported_music/original_fsb/noise_3_loop.fsb"
+        },
+        "audio_source": null
+      },
+      "ogg": {
+        "sha256": "b21cbc9682982e49e6151102be7060489ac4009081e55b0159aa25074d8cea83",
+        "duration_seconds": 58.0,
+        "size_bytes": 686538,
+        "codec": "vorbis",
+        "quality": 4
+      }
+    },
+    {
+      "key": "noise_4_loop",
+      "asset": "music/noise_4_loop.ogg",
+      "extracted_asset": "exported_music/noise_4_loop.ogg",
+      "source": {
+        "unity_file": "sharedassets0.assets",
+        "unity_type": "AudioClip",
+        "path_id": 1144,
+        "name": "noise_4_loop",
+        "compression_format": 1,
+        "channels": 2,
+        "sample_rate": 44100,
+        "unity_length_seconds": 58.0,
+        "resource": {
+          "file": "sharedassets0.resource",
+          "offset": 181040384,
+          "size": 1620672,
+          "sha256": "b9be55ea321ce5008a9ea47c76531b2ccb76c6cc7e2c3f0b316133e3e7638968",
+          "extracted_fsb": "exported_music/original_fsb/noise_4_loop.fsb"
+        },
+        "audio_source": null
+      },
+      "ogg": {
+        "sha256": "fe6d4abbcf23d4921503ca675b376ecb978e83f63b2ad1a9fce385a63f00a839",
+        "duration_seconds": 58.0,
+        "size_bytes": 711840,
+        "codec": "vorbis",
+        "quality": 4
+      }
+    },
+    {
+      "key": "gun_music",
+      "asset": "music/gun_music.ogg",
+      "extracted_asset": "exported_music/gun_music.ogg",
+      "source": {
+        "unity_file": "sharedassets0.assets",
+        "unity_type": "AudioClip",
+        "path_id": 964,
+        "name": "gun_music",
+        "compression_format": 1,
+        "channels": 2,
+        "sample_rate": 44100,
+        "unity_length_seconds": 91.42857360839844,
+        "resource": {
+          "file": "sharedassets0.resource",
+          "offset": 107454816,
+          "size": 1154304,
+          "sha256": "3a1b0708c25490c724f2d8b9bcfcd7a560845d3befbe02a32fc3718e13027c32",
+          "extracted_fsb": "exported_music/original_fsb/gun_music.fsb"
+        },
+        "audio_source": null
+      },
+      "ogg": {
+        "sha256": "3b80f8c094a86b5c42867ed84dc9fbfb3723b7c8035f7d50f4191ea5070d062c",
+        "duration_seconds": 91.428571,
+        "size_bytes": 1166218,
+        "codec": "vorbis",
+        "quality": 4
+      }
+    }
+  ],
+  "routing_evidence": {
+    "scriptable_objects": [
+      {
+        "unity_file": "sharedassets0.assets",
+        "unity_type": "MonoBehaviour",
+        "path_id": 2718,
+        "name": "SoundData",
+        "source_script_path_id": 261,
+        "rows": 19,
+        "day_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18
+        ]
+      },
+      {
+        "unity_file": "sharedassets0.assets",
+        "unity_type": "MonoBehaviour",
+        "path_id": 2719,
+        "name": "SoundList",
+        "source_script_path_id": 2812
+      }
+    ],
+    "known_scene_routes": {
+      "menu": {
+        "clip": "main_menu",
+        "source": "level0:MusicSource",
+        "loop": true,
+        "volume": 1.0
+      },
+      "day_0_night": {
+        "clips": [
+          "night1",
+          "ambience_house"
+        ],
+        "sources": [
+          "level1:2DMusicSourceNight",
+          "level1:2DMusicSourceAmbient"
+        ]
+      }
+    },
+    "days": [
+      {
+        "day": 0,
+        "classification": "NIGHT",
+        "tracks": [
+          "night1",
+          "ambience_house"
+        ],
+        "status": "verified"
+      },
+      {
+        "day": 1,
+        "classification": null,
+        "tracks": [],
+        "status": "unresolved_stripped_typetree"
+      },
+      {
+        "day": 2,
+        "classification": null,
+        "tracks": [],
+        "status": "unresolved_stripped_typetree"
+      },
+      {
+        "day": 3,
+        "classification": null,
+        "tracks": [],
+        "status": "unresolved_stripped_typetree"
+      },
+      {
+        "day": 4,
+        "classification": null,
+        "tracks": [],
+        "status": "unresolved_stripped_typetree"
+      },
+      {
+        "day": 5,
+        "classification": null,
+        "tracks": [],
+        "status": "unresolved_stripped_typetree"
+      },
+      {
+        "day": 6,
+        "classification": null,
+        "tracks": [],
+        "status": "unresolved_stripped_typetree"
+      },
+      {
+        "day": 7,
+        "classification": null,
+        "tracks": [],
+        "status": "unresolved_stripped_typetree"
+      },
+      {
+        "day": 8,
+        "classification": null,
+        "tracks": [],
+        "status": "unresolved_stripped_typetree"
+      },
+      {
+        "day": 9,
+        "classification": null,
+        "tracks": [],
+        "status": "unresolved_stripped_typetree"
+      },
+      {
+        "day": 10,
+        "classification": null,
+        "tracks": [],
+        "status": "unresolved_stripped_typetree"
+      },
+      {
+        "day": 11,
+        "classification": null,
+        "tracks": [],
+        "status": "unresolved_stripped_typetree"
+      },
+      {
+        "day": 12,
+        "classification": null,
+        "tracks": [],
+        "status": "unresolved_stripped_typetree"
+      },
+      {
+        "day": 13,
+        "classification": null,
+        "tracks": [],
+        "status": "unresolved_stripped_typetree"
+      },
+      {
+        "day": 14,
+        "classification": null,
+        "tracks": [],
+        "status": "unresolved_stripped_typetree"
+      },
+      {
+        "day": 15,
+        "classification": null,
+        "tracks": [],
+        "status": "unresolved_stripped_typetree"
+      },
+      {
+        "day": 16,
+        "classification": null,
+        "tracks": [],
+        "status": "unresolved_stripped_typetree"
+      },
+      {
+        "day": 17,
+        "classification": null,
+        "tracks": [],
+        "status": "unresolved_stripped_typetree"
+      },
+      {
+        "day": 18,
+        "classification": null,
+        "tracks": [],
+        "status": "unresolved_stripped_typetree"
+      }
+    ],
+    "note": "The MonoBehaviour script type trees are stripped from these Unity assets; source PPtrs and scene AudioSources are recorded directly. Day-index routing beyond the known day-0 NIGHT route remains unexpanded here."
+  },
+  "extraction": {
+    "tool": "UnityPy",
+    "version": "1.25.4",
+    "audio_payload": "FSB5"
+  }
+}

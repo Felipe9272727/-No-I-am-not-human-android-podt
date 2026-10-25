@@ -35,7 +35,7 @@ Build from the source root:
 python3 tools/android-current/build_apk.py
 ```
 
-The intended output is `deliverables/NINAH-Port-3D-UI.apk`. The build report
+The intended output is `deliverables/NINAH-Port-3D-Musicas.apk`. The build report
 records the actual output, signatures, native libraries, assets and validation
 limits. No original EXE, DLL or installer is executed or included. The preserved
 source reports are static reverse engineering evidence, not a certification
@@ -57,10 +57,33 @@ mobile debug adaptation releases the movie and follows the existing serialized
 fake campaign phase or alter the native rules. The normal movie completion
 path remains available. Diagnostics stay private until the user copies or
 shares them from Options. A native Android exit/tombstone summary is available
-on supported system versions; the missing-shader cause is now confirmed. The physical-device fix still needs validation.
+on supported system versions; the missing-shader cause is now confirmed. The user confirmed v0.4 opens the house on the Xiaomi, while reporting missing/white/flickering surfaces. v0.5 device playback and rendering are not yet verified.
 
 The manual packager preserves the GDX Java resources at APK root, where
 Classpath FileHandle expects them. D8 alone does not carry GLSL resources from
 its input jars into classes.dex. `qa/check_apk_shaders.py` reproduces the v0.3
 missing-file failure and verifies v0.4 with a classes-only GDX jar, checking
 that the shader URL resolves inside the delivered APK.
+
+## v0.5 rendering and music
+
+The original menu AudioSource selects main_menu; the recovered level-1 night and
+ambient AudioSources select night1 and ambience_house. The host uses two independent
+lifecycle-gated MediaPlayers for the bounded opening. The intro keeps its embedded
+soundtrack and does not overlap these OGG tracks. Options includes a persistent
+music mute setting. All OGG assets must be ZIP_STORED for AssetManager.openFd;
+the manual packager enforces this and validates hashes in the delivered APK.
+Fourteen original music AudioClips are bundled, but later-day routing and campaign
+progression are not enabled by their presence. See reverse-music for extraction.
+
+Two damaged PNGs in the recovered v0.4 APK are restored from the hash-locked
+3D/UI source bundle. Validation now verifies PNG CRCs and fully decodes every
+PNG, checks each world texture hash, and rejects staging temporary files.
+Renderer changes honor source blend/depth settings, reverse culling for mirrored
+instances and request 24-bit depth with source camera clipping planes. Stock
+libGDX lighting/shaders still approximate the source; uncovered areas, bright
+source Window materials and incomplete effects remain under investigation.
+
+Historical Android exits are labeled separately from the current renderer status.
+Only a previously unseen exit from the currently installed version triggers an
+automatic notice; older records remain available through manual diagnostics.

@@ -142,6 +142,7 @@ public final class MusicPlayer implements AutoCloseable {
     private synchronized void onPrepared(long request, MediaPlayer prepared) {
         if (closed || request != generation || player != prepared) { safeRelease(prepared); return; }
         status = "ready";
+        updateVolumeLocked();
         startIfAllowedLocked();
     }
 
@@ -172,7 +173,7 @@ public final class MusicPlayer implements AutoCloseable {
     }
 
     private void updateVolumeLocked() {
-        if (player == null) return;
+        if (player == null || "preparing".equals(status)) return;
         try {
             float gain = effectiveGainLocked();
             player.setVolume(gain, gain);
