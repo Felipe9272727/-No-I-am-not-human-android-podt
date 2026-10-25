@@ -29,5 +29,8 @@ intro skip, guarded MediaPlayer callbacks and a conditional shader fallback.
 Current Java passes 120 GLES2 frames normally and another 120 frames after a
 simulated shader compile exception. Native tombstone parsing and geometry tests
 pass. The APK is signed with the same certificate as v0.2 and contains no new
-permissions. Android emulator validation is in progress.
+permissions. The unaccelerated API35 emulator exposed ADB and eventually completed first
+boot, but its package/activity services were unusable: installation returned
+Broken pipe (32), and no app launched. This is an environment blocker, not an
+Android gameplay pass. Physical Redmi validation remains outstanding.
 The precise device crash cause is still unconfirmed.

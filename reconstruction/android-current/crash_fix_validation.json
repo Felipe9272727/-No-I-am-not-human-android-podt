@@ -156,6 +156,19 @@
     "reconstruction/android-current/app/src/main/java/org/reconstruction/current/CrashDiagnostics.java": "588cda5430a64c827568c240c157e3a8959e674308b79bad7baae9bd01764144",
     "reconstruction/android-current/app/src/main/java/org/reconstruction/current/TombstoneSummary.java": "64b2307dc65d0437f7d394ae4cfedc88aeae61a38f9fd575f05dd976b6e8fd6f"
   },
-  "android_emulator_test": "pending; no device claim",
+  "android_emulator_test": {
+    "status": "blocked_before_app_install",
+    "api": 35,
+    "adb_transport_connected": true,
+    "boot_completed": true,
+    "package_install_error": "cmd: Failure calling service package: Broken pipe (32)",
+    "activity_manager_available": false,
+    "app_launched": false,
+    "gameplay_tested": false,
+    "hardware_acceleration": false,
+    "attempted_apk": "NINAH-Port-3D.apk (v0.2 baseline)",
+    "candidate_v03_installed": false,
+    "attempt_report": "reconstruction/android-current/android_emulator_attempt.json"
+  },
   "physical_device_test": false
 }

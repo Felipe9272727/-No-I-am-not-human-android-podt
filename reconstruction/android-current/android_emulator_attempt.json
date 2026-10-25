@@ -1,0 +1,39 @@
+{
+  "status": "blocked_before_app_execution",
+  "android_device_execution_tested": false,
+  "gameplay_frame_verified": false,
+  "candidate_v3_apk_installed": false,
+  "attempted_apk": "recovery-inputs/NINAH-Port-3D.apk",
+  "attempted_apk_sha256": "36e7f23247c9fa5c204b486d39fbb6fed7de84e711c736806913ddacb1edd710",
+  "emulator": {
+    "source": "official Android SDK emulator package",
+    "version": "37.2.12.0 (build_id 16428233)",
+    "system_image": "Android 15 API 35 Google APIs x86_64",
+    "device_serial": "emulator-5554",
+    "acceleration": "CPU emulation (TCG) and SwiftShader GLES; no /dev/kvm or /dev/dri",
+    "adb_device_online_elapsed_seconds": 68,
+    "sys_boot_completed_observed_elapsed_seconds": 358,
+    "emulator_reported_boot_completed_ms": 641507,
+    "display_size": "320x640",
+    "processes_stopped": true
+  },
+  "installation": {
+    "command": "adb install -r -t recovery-inputs/NINAH-Port-3D.apk",
+    "result": "failed",
+    "output": "Performing Streamed Install\nadb: failed to install: cmd: Failure calling service package: Broken pipe (32)"
+  },
+  "launch": {
+    "attempted": true,
+    "result": "failed",
+    "output": "Error: Unable to connect to activity manager; is the system running?"
+  },
+  "input_service": "cmd: Can't find service: input",
+  "app_pid_after_attempt": "",
+  "screen_capture": "qa/android-emulator-attempt/black-screen.png",
+  "screen_capture_observation": "Black 320x640 frame; app was not installed or launched.",
+  "logcat": "qa/android-emulator-attempt/logcat.txt",
+  "emulator_log": "qa/android-emulator-attempt/emulator.log",
+  "repeatable_script": "../../tools/android-current/qa/run_android_emulator_smoke.py",
+  "interpretation": "The unaccelerated emulator exposed adb but did not provide a usable PackageManager or ActivityManager during the six-minute first-boot window. This attempt provides no evidence about APK behavior or the reported gameplay crash.",
+  "raw_artifacts_saved_in_git": false
+}
