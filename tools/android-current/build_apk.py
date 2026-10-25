@@ -28,7 +28,7 @@ ASSET_DIR = ANDROID_APP / "assets"
 NATIVE_ROOT = ROOT / "reconstruction/native-game"
 BRIDGE_MANIFEST = NATIVE_ROOT / "bridge/Cargo.toml"
 BRIDGE_ROOT = NATIVE_ROOT / "bridge"
-DEFAULT_APK = ROOT / "deliverables/NINAH-Port-3D.apk"
+DEFAULT_APK = ROOT / "deliverables/NINAH-Port-3D-UI.apk"
 REPORT = ANDROID_ROOT / "port3d_validation_report.json"
 PACKAGE_NAME = "org.reconstruction.port.preview"
 JNI_ACTIVITY = "org.reconstruction.current.MainActivity"
@@ -47,6 +47,12 @@ ABIS = {
     "x86_64": "x86_64-linux-android",
 }
 ANDROID_NS = "http://schemas.android.com/apk/res/android"
+GDX_SHADER_ROOT = "com/badlogic/gdx/graphics/g3d/"
+REQUIRED_GDX_SHADERS = tuple(GDX_SHADER_ROOT + name for name in (
+    "shaders/default.vertex.glsl", "shaders/default.fragment.glsl",
+    "shaders/depth.vertex.glsl", "shaders/depth.fragment.glsl",
+    "particles/particles.vertex.glsl", "particles/particles.fragment.glsl",
+))
 
 
 def run(command: list[str], *, cwd: Path | None = None, env=None, capture=False) -> str:
@@ -509,10 +515,48 @@ def compile_java(build_tools: Path, android_jar: Path, work: Path,
     return dex, classes_jar, unresolved
 
 
+def gdx_java_resources(jars: list[Path]) -> dict[str, bytes]:
+    """DEX contains classes only; preserve GDX's classpath shaders and font resources."""
+    resources = {}
+    for jar in jars:
+        with zipfile.ZipFile(jar) as archive:
+            for member in archive.infolist():
+                name = member.filename
+                if member.is_dir() or not name.startswith("com/badlogic/gdx/") or name.endswith(".class"):
+                    continue
+                if ".." in Path(name).parts:
+                    raise RuntimeError(f"invalid Java resource path in {jar.name}: {name}")
+                content = archive.read(member)
+                if name in resources and resources[name] != content:
+                    raise RuntimeError(f"conflicting GDX Java resource: {name}")
+                resources[name] = content
+    missing = sorted(set(REQUIRED_GDX_SHADERS) - resources.keys())
+    if missing:
+        raise RuntimeError(f"libGDX runtime jars miss required shader resources: {missing}")
+    return resources
+
+
+def validate_gdx_java_resources(apk: zipfile.ZipFile) -> list[dict]:
+    """Validate the delivered ZIP bytes, not just resources on the compiler classpath."""
+    expected = gdx_java_resources([GDX_ROOT / "gdx-1.14.2.jar"])
+    result = []
+    for name, content in sorted(expected.items()):
+        if apk.namelist().count(name) != 1:
+            raise RuntimeError(f"APK must contain one classpath resource: {name}")
+        if apk.read(name) != content:
+            raise RuntimeError(f"APK classpath resource differs from pinned GDX: {name}")
+        result.append({"path": name, "bytes": len(content), "sha256": hashlib.sha256(content).hexdigest()})
+    return result
+
+
 def package_apk(build_tools: Path, base_apk: Path,
                 native_libs: dict[str, Path], gdx_native_libs: dict[str, Path],
-                dex: Path, work: Path, output: Path) -> None:
+                dex: Path, work: Path, output: Path, engine_jars: list[Path]) -> None:
     with zipfile.ZipFile(base_apk, "a", compression=zipfile.ZIP_DEFLATED) as apk:
+        for name, content in sorted(gdx_java_resources(engine_jars).items()):
+            if name in apk.namelist():
+                raise RuntimeError(f"base APK already contains Java resource: {name}")
+            apk.writestr(name, content)
         apk.write(dex, "classes.dex")
         for abi, library in native_libs.items():
             apk.write(library, f"lib/{abi}/libninah_current.so", compress_type=zipfile.ZIP_STORED)
@@ -558,6 +602,7 @@ def collect_report(output: Path, build_tools: Path, source_modules: list[str],
         if bad_member:
             raise RuntimeError(f"APK ZIP CRC check failed at {bad_member}")
         names = apk.namelist()
+        java_resources = validate_gdx_java_resources(apk)
         libraries = sorted(name for name in names if re.fullmatch(
             r"lib/[^/]+/(?:libninah_current|libgdx)\.so", name))
         staged_pngs = [name for name in names if name.startswith("assets/sprites/") and name.endswith(".png")]
@@ -705,6 +750,7 @@ def collect_report(output: Path, build_tools: Path, source_modules: list[str],
         "jni_exports": ["Java_org_reconstruction_current_MainActivity_nativeCreate",
                         "Java_org_reconstruction_current_MainActivity_nativeAction"],
         "native_game_cpp_modules": source_modules,
+        "gdx_java_classpath_resources": java_resources,
         "assets": {
             "png_count": len(staged_pngs), "menu_png_count_including_native_alias": len(menu_pngs),
             "character_sprite_texture_exports": 1200, "supplemental_scene_sprites": 10,
@@ -740,9 +786,9 @@ def main() -> None:
     parser.add_argument("--output", type=Path, default=DEFAULT_APK)
     parser.add_argument("--skip-assets", action="store_true", help="reuse an existing staged asset tree")
     parser.add_argument("--reference-apk", type=Path,
-                        help="reuse JNI libraries only from the exact hash-locked v2 APK")
-    parser.add_argument("--version-code", type=int, default=2)
-    parser.add_argument("--version-name", default="0.2-port-3d")
+                        help="reuse JNI libraries only from the exact hash-locked current APK")
+    parser.add_argument("--version-code", type=int, default=4)
+    parser.add_argument("--version-name", default="0.4-shaders-ui")
     parser.add_argument("--rebuild-rust", action="store_true", help="force locked release builds for both Rust targets")
     args = parser.parse_args()
 
@@ -793,7 +839,7 @@ def main() -> None:
         )
         output = args.output.resolve()
         package_apk(build_tools, base_apk, native_libs, gdx_native_libs,
-                    dex, work, output)
+                    dex, work, output, engine_jars)
         report = collect_report(output, build_tools, source_modules, unresolved_dependencies,
                                 args.version_code, args.version_name, native_reuse)
     report_path = output.with_name(output.stem + "_validation_report.json")

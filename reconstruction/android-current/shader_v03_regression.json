@@ -1,0 +1,10 @@
+{
+  "apk": "/workspace/scratch/ad0b61c5ef81/deliverables/NINAH-Port-3D-Correcao.apk",
+  "package_resource_validation_error": "APK must contain one classpath resource: com/badlogic/gdx/graphics/g3d/particles/particles.fragment.glsl",
+  "classpath_probe_exit_code": 1,
+  "classpath_probe_output": "Exception in thread \"main\" com.badlogic.gdx.utils.GdxRuntimeException: File not found: com/badlogic/gdx/graphics/g3d/shaders/default.vertex.glsl (Classpath)\n\tat com.badlogic.gdx.files.FileHandle.read(FileHandle.java:142)\n\tat com.badlogic.gdx.files.FileHandle.length(FileHandle.java:641)\n\tat com.badlogic.gdx.files.FileHandle.estimateLength(FileHandle.java:239)\n\tat com.badlogic.gdx.files.FileHandle.readString(FileHandle.java:204)\n\tat com.badlogic.gdx.files.FileHandle.readString(FileHandle.java:197)\n\tat com.badlogic.gdx.graphics.g3d.shaders.DefaultShader.getDefaultVertexShader(DefaultShader.java:397)\n\tat ClasspathShaderProbe.main(ClasspathShaderProbe.java:19)\n",
+  "resources": [],
+  "desktop_gdx_resources_on_classpath": false,
+  "android_execution_tested": false,
+  "status": "reported_device_failure_reproduced"
+}

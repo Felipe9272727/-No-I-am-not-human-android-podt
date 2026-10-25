@@ -34,3 +34,17 @@ boot, but its package/activity services were unusable: installation returned
 Broken pipe (32), and no app launched. This is an environment blocker, not an
 Android gameplay pass. Physical Redmi validation remains outstanding.
 The precise device crash cause is still unconfirmed.
+
+## v0.4: confirmed shader packaging regression
+
+The device report identifies a missing libGDX classpath resource,
+`com/badlogic/gdx/graphics/g3d/shaders/default.vertex.glsl`, on the first
+3D draw. v0.3 contains no GLSL resources. D8 kept library classes while the
+manual APK builder dropped the accompanying Java resources. Earlier host
+rendering accidentally supplied these files from the development GDX jar.
+
+The builder now preserves 12 namespaced GDX resources at the APK root and
+verifies their exact bytes against the pinned library. A separate probe runs
+with a classes-only GDX jar and the APK as its only shader source. It reproduces
+the exact v0.3 FileNotFound failure; final-v0.4 validation is pending. UI work
+also replaces remaining generic controls with recovered styling.
