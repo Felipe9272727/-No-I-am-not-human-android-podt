@@ -1,0 +1,126 @@
+{
+  "status": "read_only_source_audit",
+  "provenance": "Static world_manifest/world model bins plus v0.5 Mesa diagnostic logs. Values are source/render-load estimates, not Xiaomi profiling results.",
+  "active_scene_geometry": {
+    "active_enabled_renderers": 109,
+    "unique_active_meshes": 91,
+    "active_instanced_triangles": 128495,
+    "unique_active_mesh_triangles": 121553,
+    "active_mesh_source_bytes": 13127724,
+    "estimated_unique_mesh_vbo_ibo_bytes": 12400592,
+    "render_items_logged": 114,
+    "triangles_from_renderer_centers_within_160m": 33269,
+    "triangles_passing_center_distance_plus_aabb_radius_test": 43567
+  },
+  "largest_meshes": [
+    {
+      "renderer_path_id": 2071,
+      "name": "Sphere",
+      "triangles": 73728,
+      "camera_bounds_center_distance_m": 255.01,
+      "bounds_radius_m": 15.24,
+      "max_draw_range_test": "fails 160m + radius at spawn"
+    },
+    {
+      "renderer_path_id": 2198,
+      "name": "Запаска.003",
+      "triangles": 4860,
+      "camera_bounds_center_distance_m": 370.6,
+      "bounds_radius_m": 56.62,
+      "max_draw_range_test": "fails at spawn"
+    },
+    {
+      "renderer_path_id": 2146,
+      "name": "Забор (длинный) кривой.001",
+      "triangles": 4048,
+      "camera_bounds_center_distance_m": 378.18,
+      "bounds_radius_m": 41.99,
+      "max_draw_range_test": "fails at spawn"
+    },
+    {
+      "renderer_path_id": 2206,
+      "name": "Тоннели",
+      "triangles": 3652,
+      "camera_bounds_center_distance_m": 10.5,
+      "bounds_radius_m": 41.5,
+      "max_draw_range_test": "passes; near/interior asset"
+    },
+    {
+      "renderer_path_id": 2125,
+      "name": "Проводка",
+      "triangles": 3421,
+      "camera_bounds_center_distance_m": 3.28,
+      "bounds_radius_m": 5.71,
+      "max_draw_range_test": "passes; near/interior asset"
+    },
+    {
+      "renderer_path_id": 2105,
+      "name": "Земля",
+      "triangles": 1906,
+      "camera_bounds_center_distance_m": 428.17,
+      "bounds_radius_m": 812.63,
+      "max_draw_range_test": "passes by oversized AABB radius; exact near-camera terrain vertex is 40.294m and yaw270 ray hit is 45.002m"
+    },
+    {
+      "renderer_path_id": 2095,
+      "name": "NothernLightPlane (3)",
+      "triangles": 2048,
+      "camera_bounds_center_distance_m": 583.23,
+      "bounds_radius_m": 982.45,
+      "max_draw_range_test": "passes by oversized AABB radius"
+    },
+    {
+      "renderer_path_id": 2096,
+      "name": "NothernLightPlane",
+      "triangles": 2048,
+      "camera_bounds_center_distance_m": 612.02,
+      "bounds_radius_m": 564.11,
+      "max_draw_range_test": "passes by oversized AABB radius"
+    },
+    {
+      "renderer_path_id": 2100,
+      "name": "NothernLightPlane (1)",
+      "triangles": 2048,
+      "camera_bounds_center_distance_m": 438.15,
+      "bounds_radius_m": 806.23,
+      "max_draw_range_test": "passes by oversized AABB radius"
+    },
+    {
+      "renderer_path_id": 2101,
+      "name": "NothernLightPlane (2)",
+      "triangles": 2048,
+      "camera_bounds_center_distance_m": 600.57,
+      "bounds_radius_m": 814.7,
+      "max_draw_range_test": "passes by oversized AABB radius"
+    }
+  ],
+  "texture_memory": {
+    "android_textures": 42,
+    "total_rgba_decoded_size_mib": 133.378967,
+    "compressed_png_size_mb": 38.003,
+    "cache_budget_mib": 64,
+    "v05_spawn_log": {
+      "cache_mib": 24.0,
+      "visible_textures": 6
+    },
+    "v05_yaw90_log": {
+      "cache_mib": 58.25,
+      "visible_textures": 17
+    },
+    "v05_yaw180_log": {
+      "cache_mib": 53.0,
+      "visible_textures": 16
+    },
+    "v05_yaw270_log": {
+      "cache_mib": 29.25,
+      "visible_textures": 9
+    },
+    "assessment": "The tested steady viewpoints stay under the 64 MiB cache limit, so logs do not support sustained same-view texture eviction/decode thrash. Yaw90 is close to the cap; movement between texture sets can evict and later reload old textures. Entire Android texture set would decode to about 133 MiB if all were resident."
+  },
+  "performance_assessment": [
+    "Active source geometry is modest for a static room (128,495 triangle instances; 33,269 have renderer centers within 160 m of the spawn). The largest 73,728-triangle mesh is outside the draw-distance test at the spawn.",
+    "The oversized outdoor terrain and four NothernLightPlane bounds pass the current center-distance-plus-radius gate despite centers hundreds of metres away. Collectively those candidates contribute 10,098 triangles before frustum rejection; terrain itself is only 1,906 triangles, so this is more a visibility/overdraw candidate than raw geometry-volume explanation.",
+    "A 10 FPS report cannot be attributed to triangle volume or steady texture thrash from these source facts alone. Root profiling should include CPU allocation/sorting, GL draw calls, shader time, fill/overdraw and texture upload/eviction counters on the Xiaomi device."
+  ],
+  "android_profiled": false
+}

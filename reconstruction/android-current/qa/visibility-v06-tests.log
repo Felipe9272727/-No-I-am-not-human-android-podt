@@ -1,0 +1,10 @@
+WorldMathTest: PASS
+
+WORLD_RENDERER_PARITY active=109 reflected=33 determinant=PASS
+WORLD_MATERIAL_SOURCE zwriteOff=4 alphaClip=0 transparentSurface=4 fixture=PASS
+WORLD_GEOMETRY_MOVEMENT start=(-3.985,1.584,6.998) stop=(-3.985,1.4472716,4.623) travelled=2.3789325
+WorldGeometryTest: PASS (7 source ray targets, room actions, mesh/OBB collision)
+
+WorldVisibilityTest: PASS (12 source wall/ceiling/floor camera turns)
+
+Tombstone summary: signal, crashing-thread selection, backtrace, unknown fields and malformed input passed

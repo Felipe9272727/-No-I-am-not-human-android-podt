@@ -406,6 +406,8 @@ public final class RoomEngine extends ApplicationAdapter {
         if (worldStatus.startsWith("error:") || worldStatus.startsWith("loading:")) return worldStatus;
         return rendererStatus;
     }
+    public int getFrameRate() { WorldRenderer world=worldRenderer; return world==null?0:world.getFrameRate(); }
+
     public String getRendererDiagnostic() {
         if (rendererStatus.startsWith("error:") && !rendererDiagnostic.isEmpty()) return rendererDiagnostic;
         WorldRenderer world = worldRenderer;

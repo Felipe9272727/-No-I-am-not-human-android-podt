@@ -1,0 +1,127 @@
+{
+  "status": "source_audit_complete",
+  "method": "UnityPy static parsing of source-inputs/v06-camera/level1 plus numerical ray/triangle tests against exported manifest raw mesh bins; original game binaries were not executed",
+  "renderer_inventory": {
+    "source_mesh_renderers": 153,
+    "static_batch_nonempty": 0,
+    "static_batch_root_nonzero": 0,
+    "lod_group_objects": 0,
+    "inactive_ground_renderers": [
+      2137,
+      2154,
+      2197
+    ],
+    "other_inactive_structural_wall_or_ceiling_renderers": 0
+  },
+  "mesh_filter_matches": [
+    {
+      "renderer_path_id": 2105,
+      "gameobject_path_id": 572,
+      "mesh_filter_path_id": 2247,
+      "mesh_path_id": 341,
+      "name": "Земля"
+    },
+    {
+      "renderer_path_id": 2124,
+      "gameobject_path_id": 856,
+      "mesh_filter_path_id": 2266,
+      "mesh_path_id": 247,
+      "name": "Потолок"
+    },
+    {
+      "renderer_path_id": 2129,
+      "gameobject_path_id": 951,
+      "mesh_filter_path_id": 2229,
+      "mesh_path_id": 323,
+      "name": "Стены"
+    }
+  ],
+  "ray_and_winding_tests": [
+    {
+      "renderer_path_id": 2129,
+      "mesh_path_id": 323,
+      "triangle": 315,
+      "camera_yaw_pitch_degrees": [
+        270,
+        0
+      ],
+      "source_ray_distance_m": 2.368532,
+      "source_normalized_cross_dot_vertex_normal": 0.999997854,
+      "source_normalized_world_cross_dot_ray": -0.999988325,
+      "simulated_gdx_cross_dot_normal": 0.999993301,
+      "simulated_gdx_cross_dot_ray": -0.999988325
+    },
+    {
+      "renderer_path_id": 2129,
+      "mesh_path_id": 323,
+      "triangle": 199,
+      "camera_yaw_pitch_degrees": [
+        180,
+        0
+      ],
+      "source_ray_distance_m": 4.884779,
+      "source_normalized_cross_dot_vertex_normal": 1.0,
+      "source_normalized_world_cross_dot_ray": -1.0,
+      "simulated_gdx_cross_dot_normal": 1.0,
+      "simulated_gdx_cross_dot_ray": -1.0
+    },
+    {
+      "renderer_path_id": 2129,
+      "mesh_path_id": 323,
+      "triangle": 109,
+      "camera_yaw_pitch_degrees": [
+        90,
+        0
+      ],
+      "source_ray_distance_m": 1.036247,
+      "source_normalized_cross_dot_vertex_normal": 1.0,
+      "source_normalized_world_cross_dot_ray": -1.0,
+      "simulated_gdx_cross_dot_normal": 1.0,
+      "simulated_gdx_cross_dot_ray": -1.0
+    },
+    {
+      "renderer_path_id": 2124,
+      "mesh_path_id": 247,
+      "triangle": 1,
+      "camera_yaw_pitch_degrees": [
+        180,
+        15
+      ],
+      "source_ray_distance_m": 4.392792,
+      "source_normalized_cross_dot_vertex_normal": 1.0,
+      "source_normalized_world_cross_dot_ray": -0.258819175,
+      "simulated_gdx_cross_dot_normal": 1.0,
+      "simulated_gdx_cross_dot_ray": -0.258819175
+    }
+  ],
+  "terrain_geometry": {
+    "renderer_path_id": 2105,
+    "gameobject_path_id": 572,
+    "mesh_path_id": 341,
+    "material": "Трава",
+    "nearest_transformed_vertex_from_camera_m": 40.2940135567,
+    "yaw270_ray_first_hit_m": 45.002303,
+    "yaw270_hit_triangle": 190,
+    "yaw180_ray_first_hit_m": 177.506658,
+    "yaw180_hit_triangle": 115,
+    "assessment": "Terrain AABB is very large, but actual terrain triangles do not intersect the interior near the spawn. Terrain can appear through a missing/culled wall but is not an overlapping interior surface."
+  },
+  "surface_facts": {
+    "camera_source_position": [
+      -3.985,
+      1.584,
+      -6.998
+    ],
+    "wall_renderer_2129": "active/enabled, layer 0, material index 32 (Стены (Обои), Unity _Cull=2), face triangles exist at the tested interior rays and point toward the camera",
+    "ceiling_renderer_2124": "active/enabled, layer 0, material index 28 (Потолок, Unity _Cull=2), plane y=2.7209387; six triangles face downward and are camera-facing at yaw180/pitch15"
+  },
+  "conclusion": "Static batching, LOD inventory, MeshFilter references, source winding, and source triangle coverage are not the cause. Confirmed cause is undersized frustum bounds from passing half-extents to the GDX Vector3-dimensions overload; this culls real wall/ceiling renderers and exposes distant terrain/background.",
+  "confirmed_runtime_cause": {
+    "site": "WorldRenderer.visible(Bounds)",
+    "bug": "Passes bounds half-extents (hx,hy,hz) to LibGDX Frustum.boundsInFrustum(Vector3 center, Vector3 dimensions); pinned GDX implementation treats dimensions as full size and halves them internally, so structural bounds are tested at half their proper size.",
+    "impact": "Near wall/ceiling triangles exist and face the camera, but their renderer can be rejected by the undersized frustum AABB. At yaw270 this can expose the terrain whose exact first intersection is 45.002303m behind the wall hit at 2.368532m.",
+    "fix_owner": "root",
+    "fix": "Use the scalar boundsInFrustum(centerX,centerY,centerZ,halfWidth,halfHeight,halfDepth) overload with existing hx/hy/hz, or pass full dimensions to the Vector3 overload.",
+    "basis": "Pinned GDX Frustum source audit by root; independent source ray/triangle evidence above confirms the wall and ceiling geometry exists and is front-facing."
+  }
+}

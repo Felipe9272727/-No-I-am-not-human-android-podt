@@ -1,0 +1,3 @@
+Exception in thread "main" java.lang.AssertionError: Unity Cull enum 1 was not converted to GL before transform parity
+	at org.reconstruction.current.WorldGeometryTest.verifyRendererParity(WorldGeometryTest.java:74)
+	at org.reconstruction.current.WorldGeometryTest.main(WorldGeometryTest.java:28)

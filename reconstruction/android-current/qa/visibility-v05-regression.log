@@ -1,0 +1,2 @@
+Exception in thread "main" java.lang.AssertionError: Visible source Стены renderer=2129 rejected at yaw=270; check full-size vs half-extents API
+	at org.reconstruction.current.WorldVisibilityTest.main(WorldVisibilityTest.java:43)

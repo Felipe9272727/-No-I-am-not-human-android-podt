@@ -99,6 +99,8 @@ public final class MainActivity extends AndroidApplication {
     private float uiScale = 1f;
     private boolean muteIntro;
     private boolean muteMusic;
+    private int renderQuality, lastRenderWidth, lastRenderHeight;
+    private boolean showFrameRate;
     private MusicPlayer musicPlayer, ambiencePlayer;
     private String selectedMusic = "", selectedAmbience = "";
     private boolean toolsMode;
@@ -118,6 +120,8 @@ public final class MainActivity extends AndroidApplication {
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         CrashDiagnostics.install(this);
+        renderQuality=Math.max(0,Math.min(2,getSharedPreferences("graphics-options",MODE_PRIVATE).getInt("quality",0)));
+        showFrameRate=getSharedPreferences("graphics-options",MODE_PRIVATE).getBoolean("show-fps",true);
         muteMusic=getSharedPreferences("audio-options",MODE_PRIVATE).getBoolean("mute-music",false);
         musicPlayer=new MusicPlayer(this); ambiencePlayer=new MusicPlayer(this);
         musicPlayer.setMuted(muteMusic); ambiencePlayer.setMuted(muteMusic);
@@ -135,6 +139,7 @@ public final class MainActivity extends AndroidApplication {
         roomEngineView = initializeForView(roomEngine, cfg);
         if (roomEngineView instanceof GLSurfaceView) ((GLSurfaceView) roomEngineView).setZOrderMediaOverlay(true);
         roomEngineView.setVisibility(View.VISIBLE);
+        roomEngineView.addOnLayoutChangeListener((view,l,t,r,b,ol,ot,oright,ob)->applyRenderResolution());
         introView = new TextureView(this);
         introView.setVisibility(View.GONE);
         introView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
@@ -350,6 +355,7 @@ public final class MainActivity extends AndroidApplication {
             if (!activityResumed || !"playing".equals(state.optString("phase", "")) || !"world".equals(viewMode())) { rendererStatusPolling=false; return; }
             String next = roomEngine == null ? "error: renderer unavailable" : roomEngine.getRendererStatus();
             if (!next.equals(rendererStatus)) { rendererStatus=next; canvas.invalidate(); }
+            else if(showFrameRate)canvas.invalidate();
             ui.postDelayed(this, 500L);
         }
     };
@@ -371,9 +377,33 @@ public final class MainActivity extends AndroidApplication {
     private void showRendererDiagnostic() {
         String detail=roomEngine==null?rendererStatus:roomEngine.getRendererDiagnostic();
         showDiagnosticReport("Diagnóstico da cena 3D",CrashDiagnostics.header(this)+
-            "\n\nEXECUÇÃO ATUAL\nFase: "+state.optString("phase","")+" vista: "+viewMode()+"\n"+detail+
+            "\n\nEXECUÇÃO ATUAL\n"+renderQualityLabel()+" alvo="+lastRenderWidth+"x"+lastRenderHeight+"\nFase: "+state.optString("phase","")+" vista: "+viewMode()+"\n"+detail+
             "\nMúsica: "+audioStatus(musicPlayer)+"\nAmbiência: "+audioStatus(ambiencePlayer)+
             (previousCrashReport.isEmpty()?"":"\n\nHISTÓRICO (não indica uma falha atual):\n"+previousCrashReport));
+    }
+
+    private void applyRenderResolution() {
+        if(!(roomEngineView instanceof GLSurfaceView))return;
+        int[] target=RenderResolution.target(roomEngineView.getWidth(),roomEngineView.getHeight(),renderQuality);
+        if(target[0]<=0||target[1]<=0||(target[0]==lastRenderWidth&&target[1]==lastRenderHeight))return;
+        lastRenderWidth=target[0];lastRenderHeight=target[1];
+        ((GLSurfaceView)roomEngineView).getHolder().setFixedSize(target[0],target[1]);
+    }
+
+    private void cycleRenderQuality() {
+        renderQuality=(renderQuality+1)%3;
+        getSharedPreferences("graphics-options",MODE_PRIVATE).edit().putInt("quality",renderQuality).apply();
+        applyRenderResolution();canvas.invalidate();
+    }
+
+    private void toggleFrameRate() {
+        showFrameRate=!showFrameRate;
+        getSharedPreferences("graphics-options",MODE_PRIVATE).edit().putBoolean("show-fps",showFrameRate).apply();
+        canvas.invalidate();
+    }
+
+    private String renderQualityLabel() {
+        return "Renderização: "+(renderQuality==1?"leve":renderQuality==2?"nativa":"equilibrada");
     }
 
     private void resetWorldInput() {
@@ -555,6 +585,7 @@ public final class MainActivity extends AndroidApplication {
         super.onResume();
         if (musicPlayer!=null) musicPlayer.onHostResume();
         if (ambiencePlayer!=null) ambiencePlayer.onHostResume();
+        if(roomEngineView!=null)roomEngineView.post(this::applyRenderResolution);
         updateIntro(); updateCampaignClock(); updateEngine(); updateMusic(); maybeShowPreviousCrash();
         if ("intro".equals(state.optString("phase", "")) && introPrepared) { ui.removeCallbacks(introTicker); ui.post(introTicker); }
     }
@@ -741,6 +772,7 @@ public final class MainActivity extends AndroidApplication {
         }
 
         private void drawWorldHud(Canvas c) {
+            if(showFrameRate&&roomEngine!=null){int fps=roomEngine.getFrameRate();text(c,fps>0?fps+" FPS":"FPS…",55,245,25,Color.WHITE,true);}
             if(settingsOpen){drawSettingsPanel(c);return;}
             if(pauseOpen){drawPausePanel(c);return;}
             JSONObject dialogue=state.optJSONObject("dialogue");
@@ -848,12 +880,14 @@ public final class MainActivity extends AndroidApplication {
                 if(bg!=null&&rect!=null)drawUiImage(c,bg,rect);else c.drawColor(0xFF101414);
             }
             drawMenuLabel(c,"OPÇÕES DA PRÉVIA",new float[]{610,220,1310,310},30,Color.WHITE);
-            button(c,uiScale>1f?"Interface ampliada":"Ampliar interface",680,330,1240,410,0xFFFFFFFF,0,()->{uiScale=1.15f;invalidate();});
-            button(c,uiScale==1f?"Interface padrão":"Usar interface padrão",680,430,1240,510,0xFFFFFFFF,0,()->{uiScale=1f;invalidate();});
-            button(c,muteMusic?"Músicas desligadas":"Músicas ligadas",680,530,1240,610,0xFFFFFFFF,0,MainActivity.this::toggleMusic);
-            button(c,muteIntro?"Som da introdução desligado":"Som da introdução ligado",680,630,1240,710,0xFFFFFFFF,0,()->{muteIntro=!muteIntro;if(introPlayer!=null)introPlayer.setVolume(muteIntro?0f:1f,muteIntro?0f:1f);invalidate();});
-            button(c,"Diagnóstico",680,730,1240,810,0xFFFFFFFF,0,MainActivity.this::showRendererDiagnostic);
-            button(c,"Voltar",680,830,1240,910,0xFFFFFFFF,0,()->{settingsOpen=false;updateEngine();invalidate();});
+            button(c,uiScale>1f?"Interface ampliada":"Ampliar interface",680,320,1240,390,0xFFFFFFFF,0,()->{uiScale=1.15f;invalidate();});
+            button(c,uiScale==1f?"Interface padrão":"Usar interface padrão",680,405,1240,475,0xFFFFFFFF,0,()->{uiScale=1f;invalidate();});
+            button(c,renderQualityLabel(),680,490,1240,560,0xFFFFFFFF,0,MainActivity.this::cycleRenderQuality);
+            button(c,showFrameRate?"Ocultar FPS":"Mostrar FPS",680,575,1240,645,0xFFFFFFFF,0,MainActivity.this::toggleFrameRate);
+            button(c,muteMusic?"Músicas desligadas":"Músicas ligadas",680,660,1240,730,0xFFFFFFFF,0,MainActivity.this::toggleMusic);
+            button(c,muteIntro?"Som da introdução desligado":"Som da introdução ligado",680,745,1240,815,0xFFFFFFFF,0,()->{muteIntro=!muteIntro;if(introPlayer!=null)introPlayer.setVolume(muteIntro?0f:1f,muteIntro?0f:1f);invalidate();});
+            button(c,"Diagnóstico",680,830,1240,900,0xFFFFFFFF,0,MainActivity.this::showRendererDiagnostic);
+            button(c,"Voltar",680,915,1240,985,0xFFFFFFFF,0,()->{settingsOpen=false;updateEngine();invalidate();});
         }
 
         private void drawPausePanel(Canvas c) {
@@ -1286,7 +1320,27 @@ public final class MainActivity extends AndroidApplication {
         private void fill(Canvas c,float l,float t,float r,float b,int color,float radius){p.setColor(color);p.setStyle(Paint.Style.FILL);c.drawRoundRect(l,t,r,b,radius,radius,p);}
         private void text(Canvas c,String s,float x,float y,float size,int color,boolean bold){p.setColor(color);p.setTextSize(size*uiScale);p.setTypeface(textFontOverride!=null?textFontOverride:(bold?Typeface.DEFAULT_BOLD:Typeface.DEFAULT));c.drawText(s==null?"":s,x,y,p);}
         private void center(Canvas c,String s,float x,float y,float size,int color,boolean bold){p.setTextSize(size*uiScale);p.setTypeface(textFontOverride!=null?textFontOverride:(bold?Typeface.DEFAULT_BOLD:Typeface.DEFAULT));text(c,s,x-p.measureText(s==null?"":s)/2,y,size,color,bold);}
-        private void wrap(Canvas c,String value,float x,float y,float maxWidth,float lineHeight,int maxLines,int color,float size){String[] words=(value==null?"":value).replace('\n',' ').split("\\s+");String line="";int row=0;p.setTextSize(size*uiScale);if(textFontOverride!=null)p.setTypeface(textFontOverride);for(String word:words){String candidate=line.isEmpty()?word:line+" "+word;if(p.measureText(candidate)>maxWidth&&!line.isEmpty()){text(c,line,x,y+row*lineHeight,size,color,false);line=word;if(++row>=maxLines-1){line=trim(line,90)+"…";break;}}else line=candidate;}if(row<maxLines)text(c,line,x,y+row*lineHeight,size,color,false);}
+        private void wrap(Canvas c,String value,float x,float y,float maxWidth,float lineHeight,int maxLines,int color,float size){
+            p.setTextSize(size*uiScale);if(textFontOverride!=null)p.setTypeface(textFontOverride);
+            List<String> lines=new ArrayList<>();
+            for(String paragraph:(value==null?"":value).split("\\n",-1)){
+                if(paragraph.isEmpty()){lines.add("");continue;}
+                String line="";
+                for(String word:paragraph.split("\\s+")){
+                    String candidate=line.isEmpty()?word:line+" "+word;
+                    if(p.measureText(candidate)>maxWidth&&!line.isEmpty()){lines.add(line);line=word;}
+                    else line=candidate;
+                }
+                lines.add(line);
+            }
+            int visible=Math.min(lines.size(),Math.max(0,maxLines));
+            if(lines.size()>visible&&visible>0){
+                String last=lines.get(visible-1);
+                while(!last.isEmpty()&&p.measureText(last+"…")>maxWidth)last=last.substring(0,last.length()-1);
+                lines.set(visible-1,last+"…");
+            }
+            for(int row=0;row<visible;row++)text(c,lines.get(row),x,y+row*lineHeight,size,color,false);
+        }
         private String trim(String s,int n){return s==null?"":s.length()<=n?s:s.substring(0,Math.max(1,n-1))+"…";}
         private void cover(Canvas c,Bitmap b,float l,float t,float r,float bottom){float s=Math.max((r-l)/b.getWidth(),(bottom-t)/b.getHeight());float w=b.getWidth()*s,h=b.getHeight()*s;c.save();c.clipRect(l,t,r,bottom);c.drawBitmap(b,null,new RectF((l+r-w)/2,(t+bottom-h)/2,(l+r+w)/2,(t+bottom+h)/2),p);c.restore();}
         private void contain(Canvas c,Bitmap b,float l,float t,float r,float bottom){float s=Math.min((r-l)/b.getWidth(),(bottom-t)/b.getHeight());float w=b.getWidth()*s,h=b.getHeight()*s;c.drawBitmap(b,null,new RectF((l+r-w)/2,(t+bottom-h)/2,(l+r+w)/2,(t+bottom+h)/2),p);}

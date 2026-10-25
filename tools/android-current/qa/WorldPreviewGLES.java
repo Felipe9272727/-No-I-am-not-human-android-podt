@@ -156,13 +156,17 @@ public final class WorldPreviewGLES {
             });
             Gdx.gl=faulty;Gdx.gl20=faulty;
         }
+        long measuredNanos=0;int measuredFrames=0;
         for(int i=0;i<120;i++) {
+            long frameStart=System.nanoTime();
             engine.render();
             String status=engine.getRendererStatus();
             if(status.startsWith("error:"))throw new IllegalStateException(engine.getRendererDiagnostic());
             int error=gl.glGetError();if(error!=GL20.GL_NO_ERROR)throw new IllegalStateException("GLES error 0x"+Integer.toHexString(error)+" frame "+i);
+            if(i>=20){measuredNanos+=System.nanoTime()-frameStart;measuredFrames++;}
         }
         if(inject&&!engine.getRendererDiagnostic().contains("Unlit GLES fallback active"))throw new AssertionError("fallback did not activate");
+        System.out.println("HOST_RENDER_MEAN_MS="+(measuredNanos/1e6/measuredFrames));
         System.out.println("RENDERER_DIAGNOSTIC="+engine.getRendererDiagnostic());
         Pixmap pixmap = ScreenUtils.getFrameBufferPixmap(0, 0, WIDTH, HEIGHT);
         PixmapIO.writePNG(new com.badlogic.gdx.files.FileHandle(output.toFile()), pixmap, -1, true);
