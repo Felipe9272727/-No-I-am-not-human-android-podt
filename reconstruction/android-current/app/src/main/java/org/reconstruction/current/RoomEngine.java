@@ -22,6 +22,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 /** Draws recovered room backgrounds and flat character cards on LibGDX's GL thread. */
 public final class RoomEngine extends ApplicationAdapter {
@@ -40,7 +42,7 @@ public final class RoomEngine extends ApplicationAdapter {
 
     private SpriteBatch batch;
     private PerspectiveCamera camera;
-    private WorldRenderer worldRenderer;
+    private volatile WorldRenderer worldRenderer;
     private final Matrix4 spriteTransform = new Matrix4();
     private int viewportX, viewportY, viewportWidth, viewportHeight;
     private int room = -1;
@@ -48,6 +50,10 @@ public final class RoomEngine extends ApplicationAdapter {
     private String viewMode = "world";
     private boolean inBatch;
     private JSONArray roomObjects = new JSONArray();
+    private volatile String rendererStatus = "loading: waiting for GL surface";
+    private volatile String rendererStage = "create room renderer";
+    private volatile String rendererDiagnostic = "";
+    private volatile boolean rendererFailed;
 
     private final Map<String, String> imagePaths = new HashMap<>();
     private final Map<Integer, String> roomBackgrounds = new HashMap<>();
@@ -73,16 +79,23 @@ public final class RoomEngine extends ApplicationAdapter {
     }
 
     @Override public void create() {
-        batch = new SpriteBatch();
-        camera = new PerspectiveCamera(MAIN_FOV, SOURCE_WIDTH, SOURCE_HEIGHT);
-        worldRenderer = new WorldRenderer("");
-        worldRenderer.create();
-        camera.near = 0.1f;
-        camera.far = 10000f;
-        applyPendingAssets();
-        applyPendingState();
-        updateViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        updateCamera();
+        try {
+            rendererStage = "create SpriteBatch shader";
+            batch = new SpriteBatch();
+            rendererStage = "create room camera";
+            camera = new PerspectiveCamera(MAIN_FOV, SOURCE_WIDTH, SOURCE_HEIGHT);
+            worldRenderer = new WorldRenderer("");
+            rendererStage = "create 3D renderer";
+            worldRenderer.create();
+            camera.near = 0.1f;
+            camera.far = 10000f;
+            rendererStage = "parse presentation assets";
+            applyPendingAssets();
+            applyPendingState();
+            updateViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+            updateCamera();
+            rendererStatus = worldRenderer.getStatus();
+        } catch (RuntimeException error) { failRenderer(error); }
     }
 
     @Override public void resize(int width, int height) {
@@ -92,29 +105,41 @@ public final class RoomEngine extends ApplicationAdapter {
     }
 
     @Override public void render() {
-        applyPendingAssets();
-        applyPendingState();
-        if (batch == null || camera == null) return;
-        Gdx.gl.glViewport(viewportX, viewportY, viewportWidth, viewportHeight);
-        Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-        if (!scenePhase) return;
-        if ("world".equals(viewMode)) {
-            if (worldRenderer != null) worldRenderer.render(Gdx.graphics.getDeltaTime());
-            return;
+        if (rendererFailed) return;
+        try {
+            rendererStage = "apply renderer state";
+            applyPendingAssets();
+            applyPendingState();
+            if (batch == null || camera == null) return;
+            rendererStage = "clear frame";
+            Gdx.gl.glViewport(viewportX, viewportY, viewportWidth, viewportHeight);
+            Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+            if (!scenePhase) return;
+            if ("world".equals(viewMode)) {
+                rendererStage = "render GLES world scene";
+                if (worldRenderer != null) worldRenderer.render(Gdx.graphics.getDeltaTime());
+                if (worldRenderer != null) rendererStatus = worldRenderer.getStatus();
+                return;
+            }
+            if (room < 0) return;
+            rendererStage = "draw room sprites";
+            updateCamera();
+            camera.update();
+            batch.setProjectionMatrix(camera.combined);
+            batch.begin();
+            inBatch = true;
+            drawBackground();
+            drawActors();
+            batch.end();
+            inBatch = false;
+            disposeTransientTextures();
+            rendererStatus = "ready";
+        } catch (RuntimeException error) {
+            if (inBatch) { try { batch.end(); } catch (RuntimeException ignored) { } inBatch = false; }
+            if (worldRenderer != null && "render GLES world scene".equals(rendererStage)) worldRenderer.failRender(error);
+            failRenderer(error);
         }
-        if (room < 0) return;
-
-        updateCamera();
-        camera.update();
-        batch.setProjectionMatrix(camera.combined);
-        batch.begin();
-        inBatch = true;
-        drawBackground();
-        drawActors();
-        batch.end();
-        inBatch = false;
-        disposeTransientTextures();
     }
 
     private void updateViewport(int width, int height) {
@@ -374,6 +399,38 @@ public final class RoomEngine extends ApplicationAdapter {
     public void setInputEnabled(boolean enabled) { if (worldRenderer != null) worldRenderer.setInputEnabled(enabled); }
     public JSONObject getInteraction() { return worldRenderer == null ? null : worldRenderer.getInteraction(); }
     public JSONObject getPose() { return worldRenderer == null ? new JSONObject() : worldRenderer.getPose(); }
+    public String getRendererStatus() {
+        WorldRenderer world = worldRenderer;
+        String worldStatus = world == null ? "" : world.getStatus();
+        if (rendererStatus.startsWith("error:")) return rendererStatus;
+        if (worldStatus.startsWith("error:") || worldStatus.startsWith("loading:")) return worldStatus;
+        return rendererStatus;
+    }
+    public String getRendererDiagnostic() {
+        WorldRenderer world = worldRenderer;
+        if (world != null) {
+            String detail = world.getDiagnostic();
+            if (detail != null && !detail.isEmpty() && !"ready".equals(detail)) return detail;
+        }
+        return rendererDiagnostic.isEmpty() ? getRendererStatus() : rendererDiagnostic;
+    }
+
+    private void failRenderer(RuntimeException error) {
+        rendererStatus = errorStatus(rendererStage, error);
+        StringWriter trace = new StringWriter(); error.printStackTrace(new PrintWriter(trace));
+        String gl = "GL information unavailable";
+        try { gl = "GL vendor=" + Gdx.gl.glGetString(GL20.GL_VENDOR) + ", renderer=" + Gdx.gl.glGetString(GL20.GL_RENDERER) + ", version=" + Gdx.gl.glGetString(GL20.GL_VERSION); }
+        catch (RuntimeException ignored) { }
+        rendererDiagnostic = "Renderer failure at " + rendererStage + "\n" + gl + "\n\n" + trace;
+        rendererFailed = true;
+    }
+
+    private static String errorStatus(String stage, Throwable error) {
+        String detail = error.getClass().getSimpleName() + ": " + String.valueOf(error.getMessage());
+        detail = detail.replace('\n', ' ').replace('\r', ' ').trim();
+        if (detail.length() > 160) detail = detail.substring(0, 157) + "...";
+        return "error: " + stage + ": " + detail;
+    }
 
     private void disposeTextures() {
         for (TextureEntry entry : textures.values()) entry.texture.dispose();

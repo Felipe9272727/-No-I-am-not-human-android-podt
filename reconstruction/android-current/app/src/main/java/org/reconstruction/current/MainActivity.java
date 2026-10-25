@@ -4,6 +4,9 @@ import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 
 import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -84,6 +87,9 @@ public final class MainActivity extends AndroidApplication {
     private volatile boolean initialized;
     private volatile boolean nativeBusy;
     private String loadError;
+    private String previousCrashReport = "";
+    private String rendererStatus = "";
+    private boolean rendererStatusPolling;
     private float uiScale = 1f;
     private boolean muteIntro;
     private boolean toolsMode;
@@ -102,6 +108,7 @@ public final class MainActivity extends AndroidApplication {
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        CrashDiagnostics.install(this);
         Window window = getWindow();
         window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
             View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
@@ -137,6 +144,7 @@ public final class MainActivity extends AndroidApplication {
 
         nativeBusy = true;
         nativeWorker.execute(() -> {
+            previousCrashReport = CrashDiagnostics.previous(this);
             JSONObject initial;
             try {
                 JSONObject assets = new JSONObject(readAssetText("presentation/assets.json"));
@@ -153,7 +161,7 @@ public final class MainActivity extends AndroidApplication {
                 try { initial.put("error", loadError); } catch (JSONException ignored) { }
             }
             final JSONObject result = initial;
-            runOnUiThread(() -> applyState(result));
+            runOnUiThread(() -> { applyState(result); if (!previousCrashReport.isEmpty()) showDiagnosticReport("Falha na execução anterior", previousCrashReport); });
         });
     }
 
@@ -227,12 +235,22 @@ public final class MainActivity extends AndroidApplication {
 
     private void applyState(JSONObject next) {
         state = next;
+        CrashDiagnostics.stage(this, "phase=" + next.optString("phase", "") + " view=" + next.optString("view_mode", ""));
         initialized = "state".equals(next.optString("type", ""));
         nativeBusy = false;
         updateCampaignClock();
         updateEngine();
         updateIntro();
         if (canvas != null) canvas.invalidate();
+        advanceIntroCompletion();
+    }
+
+    /** Debug adaptation: run the normal end-of-video transition without waiting for playback. */
+    private void debugSkipIntro() {
+        if (!"intro".equals(state.optString("phase", "")) || introFinishedPending) return;
+        releaseIntro();
+        introFinishedPending=true;
+        introCompletionTickAttempts=0;
         advanceIntroCompletion();
     }
 
@@ -279,6 +297,9 @@ public final class MainActivity extends AndroidApplication {
         if (roomEngine == null || roomEngineView == null) return;
         roomEngine.setState(state);
         roomEngineView.setVisibility(View.VISIBLE);
+        boolean world = "playing".equals(state.optString("phase", "")) && "world".equals(viewMode());
+        if (world && activityResumed && !rendererStatusPolling) { rendererStatusPolling = true; ui.post(rendererStatusTicker); }
+        if (!world) { rendererStatusPolling = false; ui.removeCallbacks(rendererStatusTicker); }
         boolean enable = "playing".equals(state.optString("phase", "")) && "world".equals(viewMode()) &&
             !nativeBusy && !toolsMode && state.optJSONObject("dialogue") == null &&
             (canvas == null || (!canvas.isPauseOpen() && !canvas.isSettingsOpen()));
@@ -306,6 +327,35 @@ public final class MainActivity extends AndroidApplication {
             ui.postDelayed(this, 100L);
         }
     };
+
+    private final Runnable rendererStatusTicker = new Runnable() {
+        @Override public void run() {
+            if (!activityResumed || !"playing".equals(state.optString("phase", "")) || !"world".equals(viewMode())) { rendererStatusPolling=false; return; }
+            String next = roomEngine == null ? "error: renderer unavailable" : roomEngine.getRendererStatus();
+            if (!next.equals(rendererStatus)) { rendererStatus=next; canvas.invalidate(); }
+            ui.postDelayed(this, 500L);
+        }
+    };
+
+    private void showDiagnosticReport(String title, String report) {
+        final String full = report == null ? "" : report;
+        new AlertDialog.Builder(this).setTitle(title)
+            .setMessage(full.length()>10000 ? full.substring(0,10000)+"\n[Copie o relatório completo]" : full)
+            .setPositiveButton("Copiar", (dialog, which) -> {
+                ClipboardManager clipboard=(ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+                if (clipboard!=null) clipboard.setPrimaryClip(ClipData.newPlainText("Diagnóstico NINAH",full));
+            })
+            .setNeutralButton("Compartilhar", (dialog, which) -> {
+                Intent intent=new Intent(Intent.ACTION_SEND);intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_TEXT,full);startActivity(Intent.createChooser(intent,"Compartilhar diagnóstico"));
+            }).setNegativeButton("Fechar",null).show();
+    }
+
+    private void showRendererDiagnostic() {
+        String detail=roomEngine==null?rendererStatus:roomEngine.getRendererDiagnostic();
+        showDiagnosticReport("Diagnóstico da cena 3D",CrashDiagnostics.header(this)+"\n"+detail+
+            (previousCrashReport.isEmpty()?"":"\n\nExecução anterior:\n"+previousCrashReport));
+    }
 
     private void resetWorldInput() {
         if (roomEngine != null) roomEngine.setMoveVector(0f, 0f);
@@ -378,20 +428,22 @@ public final class MainActivity extends AndroidApplication {
     }
 
     private void prepareIntro() {
-        if (activeIntroAsset.isEmpty() || introSurface == null || introPlayer != null) return;
+        if (activeIntroAsset.isEmpty() || introSurface == null || introPlayer != null || introFinishedPending) return;
         loadError = null;
+        final String preparingAsset=activeIntroAsset;
         try (AssetFileDescriptor afd = getAssets().openFd(activeIntroAsset)) {
             MediaPlayer player = new MediaPlayer();
             introPlayer = player;
             player.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
             player.setSurface(introSurface); player.setLooping(false);
             player.setVolume(muteIntro ? 0f : 1f, muteIntro ? 0f : 1f);
-            player.setOnPreparedListener(mp -> { loadError = null; introPlayer = mp; introPrepared = true; if (activityResumed) { mp.start(); ui.post(introTicker); } });
+            player.setOnPreparedListener(mp -> { if (mp!=introPlayer || !preparingAsset.equals(activeIntroAsset) || !"intro".equals(state.optString("phase",""))) return; loadError = null; introPrepared = true; if (activityResumed) { mp.start(); ui.post(introTicker); } });
             player.setOnCompletionListener(mp -> {
+                if (mp!=introPlayer || !"intro".equals(state.optString("phase",""))) return;
                 introPlayer = null; introPrepared = false; mp.release();
                 introFinishedPending = true; introCompletionTickAttempts = 0; advanceIntroCompletion();
             });
-            player.setOnErrorListener((mp, what, extra) -> { introPlayer = null; introPrepared = false; mp.release(); loadError = "Vídeo da introdução indisponível."; if (canvas != null) canvas.invalidate(); return true; });
+            player.setOnErrorListener((mp, what, extra) -> { if (mp!=introPlayer) return true; introPlayer = null; introPrepared = false; mp.release(); loadError = "Vídeo da introdução indisponível."; if (canvas != null) canvas.invalidate(); return true; });
             introPlayer = player; player.prepareAsync();
         } catch (Exception e) { releaseIntro(); loadError = "Não foi possível abrir a introdução: " + e.getMessage(); if (canvas != null) canvas.invalidate(); }
     }
@@ -411,7 +463,7 @@ public final class MainActivity extends AndroidApplication {
 
     private void releaseIntro() {
         ui.removeCallbacks(introTicker);
-        if (introPlayer != null) { introPlayer.setOnCompletionListener(null); introPlayer.release(); introPlayer = null; }
+        if (introPlayer != null) { introPlayer.setOnCompletionListener(null); introPlayer.setOnPreparedListener(null); introPlayer.setOnErrorListener(null); introPlayer.release(); introPlayer = null; }
         introPrepared = false; lastIntroTick = -1;
     }
 
@@ -429,7 +481,7 @@ public final class MainActivity extends AndroidApplication {
 
     @Override protected void onPause() {
         activityResumed = false;
-        ui.removeCallbacks(campaignTicker); ui.removeCallbacks(introTicker); ui.removeCallbacks(interactionPoll);
+        ui.removeCallbacks(campaignTicker); ui.removeCallbacks(introTicker); ui.removeCallbacks(interactionPoll); ui.removeCallbacks(rendererStatusTicker); rendererStatusPolling=false;
         if (roomEngine != null) roomEngine.setInputEnabled(false); resetWorldInput();
         lastPhase = "";
         if (introPlayer != null && introPlayer.isPlaying()) introPlayer.pause();
@@ -443,7 +495,7 @@ public final class MainActivity extends AndroidApplication {
     }
 
     @Override protected void onDestroy() {
-        ui.removeCallbacks(campaignTicker); releaseIntro(); nativeWorker.shutdown(); super.onDestroy();
+        ui.removeCallbacks(campaignTicker); ui.removeCallbacks(rendererStatusTicker); rendererStatusPolling=false; releaseIntro(); nativeWorker.shutdown(); super.onDestroy();
     }
 
     private String translatedText(JSONObject event) {
@@ -470,10 +522,11 @@ public final class MainActivity extends AndroidApplication {
     }
 
     private void showOptionsDialog() {
-        String[] items = {"Interface maior", "Interface padrão", muteIntro ? "Ativar som da introdução" : "Silenciar introdução"};
+        String[] items = {"Interface maior", "Interface padrão", muteIntro ? "Ativar som da introdução" : "Silenciar introdução", "Diagnóstico"};
         new AlertDialog.Builder(this).setTitle("Opções").setItems(items, (dialog, which) -> {
             if (which == 0) uiScale = 1.15f;
             else if (which == 1) uiScale = 1f;
+            else if (which == 3) { showRendererDiagnostic(); }
             else { muteIntro = !muteIntro; if (introPlayer != null) introPlayer.setVolume(muteIntro ? 0f : 1f, muteIntro ? 0f : 1f); }
             canvas.invalidate();
         }).setNegativeButton("Fechar", null).show();
@@ -563,7 +616,7 @@ public final class MainActivity extends AndroidApplication {
             fill(c,60,800,1860,1045,0xD9000000,18);
             String subtitle=introCaption(intro);
             if(!subtitle.isEmpty()) wrap(c,subtitle,115,860,1650,38,4,Color.WHITE,28);
-            if(intro!=null&&intro.optBoolean("can_skip",false)) button(c,"Pular introdução",1600,940,1830,1020,0xFF754B3B,14,()->act("skip_intro",null,null));
+            button(c,"DEBUG: pular intro",1450,40,1870,130,0xE8754B3B,14,MainActivity.this::debugSkipIntro);
             button(c,"Menu",80,940,250,1020,0xCC2B343D,14,()->act("menu",null,null));
             if(introPlayer==null&&!activeIntroAsset.isEmpty()) text(c,"Preparando vídeo…",280,990,20,Color.WHITE,false);
         }
@@ -914,8 +967,20 @@ public final class MainActivity extends AndroidApplication {
         }
 
         private void drawError(Canvas c) {
-            String error=state.isNull("error")?"":state.optString("error","");if(error.isEmpty()&&loadError!=null)error=loadError;if(error==null||error.isEmpty()||"null".equals(error))return;
-            fill(c,35,12,1885,92,0xDD58231C,10);text(c,error,65,60,20,Color.WHITE,true);
+            String error=state.isNull("error")?"":state.optString("error","");
+            if(error.isEmpty()&&loadError!=null)error=loadError;
+            if(error!=null&&!error.isEmpty()&&!"null".equals(error)) {
+                fill(c,35,12,1885,92,0xDD58231C,10);text(c,error,65,60,20,Color.WHITE,true);
+            }
+            if("playing".equals(state.optString("phase",""))&&"world".equals(viewMode())) {
+                if(rendererStatus.startsWith("error:")) {
+                    fill(c,35,102,1885,176,0xEE58231C,10);
+                    text(c,"Falha ao abrir a cena 3D — toque para copiar o diagnóstico",65,151,21,Color.WHITE,true);
+                    hits.add(new Hit(new RectF(35,102,1885,176),MainActivity.this::showRendererDiagnostic));
+                } else if(rendererStatus.startsWith("loading:")) {
+                    fill(c,35,102,1885,176,0xAA202A33,10);text(c,"Preparando a casa…",65,151,21,Color.WHITE,true);
+                }
+            }
         }
 
         private void actorTalkNeighbour() {

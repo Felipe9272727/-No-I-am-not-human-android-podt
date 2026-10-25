@@ -19,3 +19,12 @@ Os relatórios em `reconstruction/android-current/` distinguem o teste de regras
 A campanha para após a primeira conversa interna do vizinho; o save é temporário. Close-up/pinos do telefone, novos dias, efeitos e animações restantes ainda não estão integrados. O movimento de 2,5 m/s é uma adaptação móvel, pois a velocidade original serializada não foi confirmada. Shader, iluminação e colisão aproximam a implementação original; a geometria/texturas extraídas são reais.
 
 O Git é o registro do código atual. A cópia privada de versão 8 serve como base anterior e fonte de dados; não deve sobrescrever código novo do repositório.
+
+## Crash investigation (2026-10-25)
+
+The user reports v0.2 exits after the intro, before the house appears. The
+original renderer passed a 120-frame Mesa OpenGL ES 2 check during investigation;
+that does not reproduce the Redmi/Android failure. A new test build is being
+prepared with private on-device Java/native-exit diagnostics, an explicit debug
+intro skip, guarded MediaPlayer callbacks and a conditional shader fallback.
+The precise device crash cause is still unconfirmed.

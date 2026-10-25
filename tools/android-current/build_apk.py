@@ -292,8 +292,97 @@ def compile_native(bin_dir: Path, archives: dict[str, Path], work: Path) -> tupl
     return output, [path.name for path in sources]
 
 
+def native_source_fingerprint() -> tuple[str, int]:
+    """Stable digest for the exact C++/Rust source tree that built the reference APK."""
+    candidates = []
+    for directory in (
+        NATIVE_ROOT / "src", NATIVE_ROOT / "include", NATIVE_ROOT / "generated",
+        BRIDGE_ROOT / "src", ROOT / "reconstruction/yarn-runtime/src",
+    ):
+        if directory.exists():
+            candidates.extend(path for path in directory.rglob("*")
+                              if path.is_file() and path.suffix in {".cpp", ".hpp", ".h", ".rs"})
+    candidates.extend((
+        BRIDGE_ROOT / "Cargo.toml", BRIDGE_ROOT / "Cargo.lock",
+        ROOT / "reconstruction/yarn-runtime/Cargo.toml",
+        ROOT / "reconstruction/yarn-runtime/Cargo.lock",
+        ANDROID_ROOT / "native/current_game.cpp",
+    ))
+    files = sorted({path for path in candidates if path.is_file()}, key=lambda path: path.relative_to(ROOT).as_posix())
+    digest = hashlib.sha256()
+    for path in files:
+        relative = path.relative_to(ROOT).as_posix().encode("utf-8")
+        contents = path.read_bytes()
+        digest.update(relative + b"\0" + len(contents).to_bytes(8, "little") + contents)
+    return digest.hexdigest(), len(files)
+
+
+def reuse_reference_native(reference_apk: Path, work: Path) -> tuple[dict[str, Path], dict]:
+    """Extract JNI libraries only from the exact v2 APK, while native inputs match its lock."""
+    build_lock = json.loads((ROOT / "LATEST_BUILD.json").read_text(encoding="utf-8"))
+    expected_apk_sha = build_lock.get("sha256")
+    if not expected_apk_sha or not build_lock.get("native_source_tree_sha256"):
+        raise RuntimeError("LATEST_BUILD.json lacks the reference APK and native source fingerprints")
+    apk_digest = hashlib.sha256()
+    with reference_apk.open("rb") as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b""):
+            apk_digest.update(block)
+    actual_apk_sha = apk_digest.hexdigest()
+    if actual_apk_sha != expected_apk_sha:
+        raise RuntimeError(f"reference APK SHA-256 mismatch: {actual_apk_sha}")
+    current_source_sha, source_count = native_source_fingerprint()
+    if current_source_sha != build_lock["native_source_tree_sha256"]:
+        raise RuntimeError(
+            "native C++/Rust sources differ from the reference APK baseline; refusing to reuse old JNI libraries"
+        )
+    result = {}
+    metadata = {"reference_apk": str(reference_apk), "sha256": actual_apk_sha,
+                "native_source_tree_sha256": current_source_sha,
+                "native_source_file_count": source_count, "libraries": {}}
+    machines = {"arm64-v8a": 183, "x86_64": 62}
+    required_exports = (
+        b"Java_org_reconstruction_current_MainActivity_nativeCreate",
+        b"Java_org_reconstruction_current_MainActivity_nativeAction",
+    )
+    with zipfile.ZipFile(reference_apk) as apk:
+        for abi, expected_machine in machines.items():
+            member = f"lib/{abi}/libninah_current.so"
+            try:
+                binary = apk.read(member)
+            except KeyError as error:
+                raise RuntimeError(f"reference APK is missing {member}") from error
+            if binary[:4] != b"\x7fELF":
+                raise RuntimeError(f"reference JNI library is not ELF: {member}")
+            machine = int.from_bytes(binary[18:20], "little")
+            if machine != expected_machine:
+                raise RuntimeError(f"wrong ELF machine in {member}: {machine}, expected {expected_machine}")
+            phoff = int.from_bytes(binary[32:40], "little")
+            phentsize = int.from_bytes(binary[54:56], "little")
+            phnum = int.from_bytes(binary[56:58], "little")
+            alignments = [
+                int.from_bytes(binary[phoff + i * phentsize + 48:phoff + i * phentsize + 56], "little")
+                for i in range(phnum)
+                if int.from_bytes(binary[phoff + i * phentsize:phoff + i * phentsize + 4], "little") == 1
+            ]
+            max_alignment = max(alignments, default=0)
+            if max_alignment < 16384:
+                raise RuntimeError(f"reference JNI library is not 16KB-page aligned: {member}")
+            missing_exports = [symbol.decode("ascii") for symbol in required_exports if symbol not in binary]
+            if missing_exports:
+                raise RuntimeError(f"reference library lacks required JNI exports ({member}): {missing_exports}")
+            destination = work / "reference-native" / abi / "libninah_current.so"
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_bytes(binary)
+            result[abi] = destination
+            metadata["libraries"][abi] = {"member": member, "bytes": len(binary),
+                                          "elf_machine": machine,
+                                          "max_load_segment_alignment_bytes": max_alignment}
+    return result, metadata
+
+
 def compile_resources(build_tools: Path, android_jar: Path, work: Path,
-                      aar_resource_dirs: list[Path]) -> tuple[Path, Path]:
+                      aar_resource_dirs: list[Path], version_code: int,
+                      version_name: str) -> tuple[Path, Path]:
     resource_dirs = [ANDROID_APP / "res", *aar_resource_dirs]
     compiled_resources = []
     for index, resource_dir in enumerate(resource_dirs):
@@ -334,7 +423,7 @@ def compile_resources(build_tools: Path, android_jar: Path, work: Path,
         "--extra-packages", "com.badlogic.gdx.backends.android:androidx.core:androidx.versionedparcelable:androidx.lifecycle:androidx.core.viewtree",
         "--min-sdk-version", MIN_API,
         "--target-sdk-version", ANDROID_API,
-        "--version-code", "2", "--version-name", "0.2-port-3d",
+        "--version-code", str(version_code), "--version-name", version_name,
         "--rename-manifest-package", PACKAGE_NAME,
         "--auto-add-overlay", "-0", "mp4",
     ]
@@ -437,7 +526,8 @@ def package_apk(build_tools: Path, base_apk: Path,
 
 
 def collect_report(output: Path, build_tools: Path, source_modules: list[str],
-                   unresolved_dependencies: list[str]) -> dict:
+                   unresolved_dependencies: list[str], version_code: int,
+                   version_name: str, native_reuse: dict | None = None) -> dict:
     badging = run([build_tools / "aapt", "dump", "badging", output], capture=True)
     package_match = re.search(r"^package: name='([^']+)'", badging, re.MULTILINE)
     activity_match = re.search(r"^launchable-activity: name='([^']+)'", badging, re.MULTILINE)
@@ -567,7 +657,7 @@ def collect_report(output: Path, build_tools: Path, source_modules: list[str],
         raise RuntimeError(f"unexpected Android package name: {package_name!r}")
     if launch_activity != JNI_ACTIVITY:
         raise RuntimeError(f"unexpected launch activity: {launch_activity!r}")
-    if version_match is None or int(version_match.group(1)) != 2:
+    if version_match is None or int(version_match.group(1)) != version_code:
         raise RuntimeError(f"unexpected Android version code: {version_match.group(1) if version_match else None}")
     hasher = hashlib.sha256()
     with output.open("rb") as stream:
@@ -588,7 +678,7 @@ def collect_report(output: Path, build_tools: Path, source_modules: list[str],
         "artifact": str(output.relative_to(ROOT)) if output.is_relative_to(ROOT) else str(output),
         "sha256": digest, "bytes": apk_size, "zip_crc_check": "passed",
         "package_name": package_name, "launch_activity": launch_activity,
-        "version_code": int(version_match.group(1)), "version_name": "0.2-port-3d",
+        "version_code": int(version_match.group(1)), "version_name": version_name,
         "min_sdk": int(MIN_API), "target_sdk": int(ANDROID_API),
         "abis": ["arm64-v8a", "x86_64"], "native_libraries": libraries,
         "elf_machines": elf_machines, "elf_load_segment_max_alignment_bytes": load_alignments,
@@ -620,6 +710,7 @@ def collect_report(output: Path, build_tools: Path, source_modules: list[str],
         "embedded_mz_magic_entries": mz_members, "permissions": permissions,
         "original_game_or_native_library_executed": False,
         "full_campaign_implemented": False, "android_device_execution_tested": False,
+        "reused_native_from_apk": native_reuse,
         "notes": [
             "This preview opens the recovered intro and current reconstructed campaign renderer; it is not a complete campaign port.",
             "The intro MP4 retains its recovered stereo soundtrack; no standalone game audio is packaged.",
@@ -632,15 +723,22 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=DEFAULT_APK)
     parser.add_argument("--skip-assets", action="store_true", help="reuse an existing staged asset tree")
+    parser.add_argument("--reference-apk", type=Path,
+                        help="reuse JNI libraries only from the exact hash-locked v2 APK")
+    parser.add_argument("--version-code", type=int, default=2)
+    parser.add_argument("--version-name", default="0.2-port-3d")
     parser.add_argument("--rebuild-rust", action="store_true", help="force locked release builds for both Rust targets")
     args = parser.parse_args()
+
+    if args.version_code < 1:
+        parser.error("--version-code must be positive")
 
     sdk = choose_sdk().resolve()
     build_tools = find_build_tools(sdk)
     android_jar = sdk / f"platforms/android-{ANDROID_API}/android.jar"
     if not android_jar.is_file():
         raise FileNotFoundError(f"Android platform {ANDROID_API} not found at {android_jar}")
-    _, bin_dir = find_ndk()
+    bin_dir = None if args.reference_apk else find_ndk()[1]
 
     if not args.skip_assets:
         run([sys.executable, ROOT / "tools/android-current/prepare_assets.py"], cwd=ROOT)
@@ -661,18 +759,30 @@ def main() -> None:
         engine_jars, gdx_native_libs, aar_resource_dirs = engine_runtime_jars(work)
         base_apk, generated_sources = compile_resources(
             build_tools, android_jar, work, aar_resource_dirs,
+            args.version_code, args.version_name,
         )
-        archives = build_rust_archives(bin_dir, cargo, args.rebuild_rust)
-        native_libs, source_modules = compile_native(bin_dir, archives, work)
+        native_reuse = None
+        if args.reference_apk:
+            native_libs, native_reuse = reuse_reference_native(
+                args.reference_apk.resolve(), work,
+            )
+            source_modules = sorted(path.name for path in (NATIVE_ROOT / "src").glob("*.cpp"))
+            source_modules.append("current_game.cpp")
+        else:
+            assert bin_dir is not None
+            archives = build_rust_archives(bin_dir, cargo, args.rebuild_rust)
+            native_libs, source_modules = compile_native(bin_dir, archives, work)
         dex, _, unresolved_dependencies = compile_java(
             build_tools, android_jar, work, generated_sources, engine_jars,
         )
         output = args.output.resolve()
         package_apk(build_tools, base_apk, native_libs, gdx_native_libs,
                     dex, work, output)
-        report = collect_report(output, build_tools, source_modules, unresolved_dependencies)
-    REPORT.parent.mkdir(parents=True, exist_ok=True)
-    REPORT.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        report = collect_report(output, build_tools, source_modules, unresolved_dependencies,
+                                args.version_code, args.version_name, native_reuse)
+    report_path = output.with_name(output.stem + "_validation_report.json")
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(json.dumps(report, indent=2, ensure_ascii=False))
 
 

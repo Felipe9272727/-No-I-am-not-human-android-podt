@@ -9,5 +9,7 @@
   "host_report": "reconstruction/android-current/host_validation.json",
   "world_report": "reconstruction/android-current/world_validation.json",
   "android_device_execution_tested": false,
-  "full_campaign_implemented": false
+  "full_campaign_implemented": false,
+  "native_source_tree_sha256": "365ca1da29ef583498d80d91ed23b8c4ba968d1258ad6ed826b8f6a29f7ef135",
+  "native_source_fingerprint_inputs": 52
 }
