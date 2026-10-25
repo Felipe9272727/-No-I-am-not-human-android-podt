@@ -30,3 +30,17 @@ python3 tools/android-current/build_apk.py
 
 The source repository alone is not a complete distributable game: it requires
 the supplied data and does not yet implement the full campaign.
+
+For a Java-only diagnostic rebuild, the current delivered APK can supply its
+unchanged native libraries and staged assets. Restore its assets/ members under
+`reconstruction/android-current/app/src/main/assets`, then run:
+
+```sh
+python3 tools/android-current/build_apk.py --skip-assets --reference-apk <current-apk> --version-code 3 --version-name 0.3-crash-fix --output deliverables/NINAH-Port-3D-Correcao.apk
+```
+
+The reference APK must match LATEST_BUILD.json and its 52-file C++/Rust source
+fingerprint. Changes to native sources require a real native rebuild.
+`python3 tools/android-current/qa/run_gles_test.py` exercises host Mesa GLES2,
+including the narrowly scoped shader-compiler fallback. This does not replace
+Android execution or the user phone crash report.

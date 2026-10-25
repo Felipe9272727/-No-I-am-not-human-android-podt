@@ -14,6 +14,7 @@ import subprocess
 import sys
 import tempfile
 import xml.etree.ElementTree as ET
+import urllib.parse
 import urllib.request
 import zipfile
 from pathlib import Path
@@ -124,28 +125,43 @@ def engine_runtime_jars(work: Path) -> tuple[list[Path], dict[str, Path], list[P
     versionedparcelable = ANDROIDX_ROOT / "versionedparcelable-1.1.1.aar"
     lifecycle_runtime = ANDROIDX_ROOT / "lifecycle-runtime-2.6.2.aar"
     core_viewtree = ANDROIDX_ROOT / "core-viewtree-1.0.0.aar"
-    artifacts = [
-        (GDX_ROOT / "gdx-1.14.2.jar", "com.badlogicgames.gdx:gdx:1.14.2"),
-        (backend_aar, "com.badlogicgames.gdx:gdx-backend-android:1.14.2"),
-        (GDX_ROOT / "gdx-jnigen-loader-2.5.2.jar", "com.badlogicgames.gdx:gdx-jnigen-loader:2.5.2"),
-        (GDX_ROOT / "gdx-platform-1.14.2-natives-arm64-v8a.jar", "com.badlogicgames.gdx:gdx-platform:1.14.2:natives-arm64-v8a"),
-        (GDX_ROOT / "gdx-platform-1.14.2-natives-x86_64.jar", "com.badlogicgames.gdx:gdx-platform:1.14.2:natives-x86_64"),
-        (androidx_core, "androidx.core:core:1.17.0"),
-        (ANDROIDX_ROOT / "collection-jvm-1.4.2.jar", "androidx.collection:collection-jvm:1.4.2"),
-        (versionedparcelable, "androidx.versionedparcelable:versionedparcelable:1.1.1"),
-        (ANDROIDX_ROOT / "kotlin-stdlib-2.0.21.jar", "org.jetbrains.kotlin:kotlin-stdlib:2.0.21"),
-        (lifecycle_runtime, "androidx.lifecycle:lifecycle-runtime:2.6.2"),
-        (ANDROIDX_ROOT / "lifecycle-common-2.6.2.jar", "androidx.lifecycle:lifecycle-common:2.6.2"),
-        (core_viewtree, "androidx.core:core-viewtree:1.0.0"),
-        (ANDROIDX_ROOT / "kotlinx-coroutines-core-jvm-1.8.1.jar", "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.1"),
-    ]
+    artifact_paths = {
+        "com.badlogicgames.gdx:gdx:1.14.2": GDX_ROOT / "gdx-1.14.2.jar",
+        "com.badlogicgames.gdx:gdx-backend-android:1.14.2": backend_aar,
+        "com.badlogicgames.gdx:gdx-jnigen-loader:2.5.2": GDX_ROOT / "gdx-jnigen-loader-2.5.2.jar",
+        "com.badlogicgames.gdx:gdx-platform:1.14.2:natives-arm64-v8a": GDX_ROOT / "gdx-platform-1.14.2-natives-arm64-v8a.jar",
+        "com.badlogicgames.gdx:gdx-platform:1.14.2:natives-x86_64": GDX_ROOT / "gdx-platform-1.14.2-natives-x86_64.jar",
+        "androidx.core:core:1.17.0": androidx_core,
+        "androidx.collection:collection-jvm:1.4.2": ANDROIDX_ROOT / "collection-jvm-1.4.2.jar",
+        "androidx.versionedparcelable:versionedparcelable:1.1.1": versionedparcelable,
+        "org.jetbrains.kotlin:kotlin-stdlib:2.0.21": ANDROIDX_ROOT / "kotlin-stdlib-2.0.21.jar",
+        "androidx.lifecycle:lifecycle-runtime:2.6.2": lifecycle_runtime,
+        "androidx.lifecycle:lifecycle-common:2.6.2": ANDROIDX_ROOT / "lifecycle-common-2.6.2.jar",
+        "androidx.core:core-viewtree:1.0.0": core_viewtree,
+        "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.1": ANDROIDX_ROOT / "kotlinx-coroutines-core-jvm-1.8.1.jar",
+    }
     assets_json = json.loads((ASSET_DIR / "presentation/assets.json").read_text(encoding="utf-8"))
     expected = {row["coordinate"]: row["sha256"] for row in assets_json.get("engine_artifacts", [])}
-    for artifact, coordinate in artifacts:
+    from prepare_assets import ENGINE_ARTIFACTS
+    pinned = {row["coordinate"]: row for row in ENGINE_ARTIFACTS}
+    for coordinate, artifact in artifact_paths.items():
+        pin = pinned.get(coordinate)
+        if not pin or expected.get(coordinate) != pin["sha256"]:
+            raise RuntimeError(f"prepared assets do not match pinned dependency metadata: {coordinate}")
         if not artifact.is_file():
-            raise FileNotFoundError(f"missing pinned Android runtime dependency: {artifact}")
+            if urllib.parse.urlparse(pin["url"]).hostname not in {"repo.maven.apache.org", "dl.google.com"}:
+                raise RuntimeError(f"refusing untrusted dependency host for {coordinate}")
+            artifact.parent.mkdir(parents=True, exist_ok=True)
+            temporary = artifact.with_name(artifact.name + ".download")
+            with urllib.request.urlopen(pin["url"], timeout=90) as response, temporary.open("wb") as output:
+                shutil.copyfileobj(response, output)
+            downloaded_hash = hashlib.sha256(temporary.read_bytes()).hexdigest()
+            if downloaded_hash != pin["sha256"]:
+                temporary.unlink(missing_ok=True)
+                raise RuntimeError(f"downloaded dependency hash mismatch for {coordinate}: {downloaded_hash}")
+            temporary.replace(artifact)
         digest = hashlib.sha256(artifact.read_bytes()).hexdigest()
-        if digest != expected.get(coordinate):
+        if digest != pin["sha256"]:
             raise RuntimeError(f"runtime dependency hash mismatch for {artifact.name}: {digest}")
 
     classes_dir = work / "engine-classes"

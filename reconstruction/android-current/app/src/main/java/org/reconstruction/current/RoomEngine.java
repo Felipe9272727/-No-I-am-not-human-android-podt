@@ -407,6 +407,7 @@ public final class RoomEngine extends ApplicationAdapter {
         return rendererStatus;
     }
     public String getRendererDiagnostic() {
+        if (rendererStatus.startsWith("error:") && !rendererDiagnostic.isEmpty()) return rendererDiagnostic;
         WorldRenderer world = worldRenderer;
         if (world != null) {
             String detail = world.getDiagnostic();

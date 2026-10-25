@@ -1,0 +1,161 @@
+{
+  "status": "passed_host_graphics_and_parser_tests",
+  "user_report": "APK v0.2 exits after intro before house appears",
+  "exact_device_cause_confirmed": false,
+  "graphics": {
+    "api": "OpenGL ES 2.0 Mesa 25.2.8, llvmpipe LLVM20.1.2",
+    "resolution": [
+      1280,
+      720
+    ],
+    "frames_per_case": 120,
+    "normal_scene": "passed; GL_NO_ERROR",
+    "shader_failure_injection": "passed; unlit geometry/textures continue",
+    "java_heap_limit_mib": 256,
+    "loaded_mesh_chunks": 94,
+    "render_items": 114,
+    "mesh_colliders": 24,
+    "source_camera_visible_texture_bytes": 25165824
+  },
+  "cpu_tests": {
+    "WorldMathTest": "passed",
+    "WorldGeometryTest": "passed: 7 source ray targets and collision stop",
+    "TombstoneSummaryTest": "passed: native signal/thread/backtrace and malformed input"
+  },
+  "apk": {
+    "status": "built_and_verified",
+    "artifact": "deliverables/NINAH-Port-3D-Correcao.apk",
+    "sha256": "5241e7b40b0e72a0e6db71d9edf3e03e850b4347deb4d29612c66916172b861a",
+    "bytes": 298486695,
+    "zip_crc_check": "passed",
+    "package_name": "org.reconstruction.port.preview",
+    "launch_activity": "org.reconstruction.current.MainActivity",
+    "version_code": 3,
+    "version_name": "0.3-crash-fix",
+    "min_sdk": 23,
+    "target_sdk": 35,
+    "abis": [
+      "arm64-v8a",
+      "x86_64"
+    ],
+    "native_libraries": [
+      "lib/arm64-v8a/libgdx.so",
+      "lib/arm64-v8a/libninah_current.so",
+      "lib/x86_64/libgdx.so",
+      "lib/x86_64/libninah_current.so"
+    ],
+    "elf_machines": {
+      "arm64-v8a/libninah_current": 183,
+      "arm64-v8a/libgdx": 183,
+      "x86_64/libninah_current": 62,
+      "x86_64/libgdx": 62
+    },
+    "elf_load_segment_max_alignment_bytes": {
+      "arm64-v8a/libninah_current": 16384,
+      "arm64-v8a/libgdx": 16384,
+      "x86_64/libninah_current": 16384,
+      "x86_64/libgdx": 16384
+    },
+    "native_zip_data_offset_mod_16384": {
+      "lib/arm64-v8a/libninah_current.so": 0,
+      "lib/arm64-v8a/libgdx.so": 0,
+      "lib/x86_64/libninah_current.so": 0,
+      "lib/x86_64/libgdx.so": 0
+    },
+    "unresolved_direct_android_dependencies": [],
+    "intro_video": {
+      "asset": "assets/intro/Intro_Final_2_NO_SUBTITLES.mp4",
+      "bytes": 44542868,
+      "sha256": "67d32bc7e28e5bbb528c7553650d8c594138031f358e249ec011db559b54b9d2",
+      "zip_stored": true
+    },
+    "jni_exports": [
+      "Java_org_reconstruction_current_MainActivity_nativeCreate",
+      "Java_org_reconstruction_current_MainActivity_nativeAction"
+    ],
+    "native_game_cpp_modules": [
+      "arrivals.cpp",
+      "characters.cpp",
+      "command_input.cpp",
+      "core.cpp",
+      "courier.cpp",
+      "dialogue_commands.cpp",
+      "dialogue_services.cpp",
+      "dialogue_session.cpp",
+      "emotions.cpp",
+      "endings.cpp",
+      "inventory.cpp",
+      "occupants.cpp",
+      "options.cpp",
+      "phone.cpp",
+      "presentation.cpp",
+      "progression.cpp",
+      "rooms.cpp",
+      "scene_commands.cpp",
+      "story_state.cpp",
+      "current_game.cpp"
+    ],
+    "assets": {
+      "png_count": 1210,
+      "menu_png_count_including_native_alias": 15,
+      "character_sprite_texture_exports": 1200,
+      "supplemental_scene_sprites": 10,
+      "image_reference_mappings": 1210,
+      "exported_image_objects_mapped": 1210,
+      "bundled_license_files": 31,
+      "room_backgrounds": 7,
+      "room_character_layouts": 61,
+      "pt_br_localization_texts_by_line_key": 16358,
+      "pt_br_localization_texts_by_numeric_id": 32464,
+      "line_metadata_keys_validated": 15693,
+      "standalone_audio_assets_included": false,
+      "intro_video_original_audio_channels": 2,
+      "world_meshes": 100,
+      "world_textures": 42,
+      "world_texture_bytes": 37806081,
+      "world_texture_max_edge": 1024,
+      "original_game_ui_sprites": 119,
+      "original_game_ui_fonts": 5
+    },
+    "embedded_windows_executable_extensions": [],
+    "embedded_mz_magic_entries": [],
+    "permissions": [],
+    "original_game_or_native_library_executed": false,
+    "full_campaign_implemented": false,
+    "android_device_execution_tested": false,
+    "reused_native_from_apk": {
+      "reference_apk": "/workspace/scratch/ad0b61c5ef81/recovery-inputs/NINAH-Port-3D.apk",
+      "sha256": "36e7f23247c9fa5c204b486d39fbb6fed7de84e711c736806913ddacb1edd710",
+      "native_source_tree_sha256": "365ca1da29ef583498d80d91ed23b8c4ba968d1258ad6ed826b8f6a29f7ef135",
+      "native_source_file_count": 52,
+      "libraries": {
+        "arm64-v8a": {
+          "member": "lib/arm64-v8a/libninah_current.so",
+          "bytes": 9603224,
+          "elf_machine": 183,
+          "max_load_segment_alignment_bytes": 16384
+        },
+        "x86_64": {
+          "member": "lib/x86_64/libninah_current.so",
+          "bytes": 9338488,
+          "elf_machine": 62,
+          "max_load_segment_alignment_bytes": 16384
+        }
+      }
+    },
+    "notes": [
+      "This preview opens the recovered intro and current reconstructed campaign renderer; it is not a complete campaign port.",
+      "The intro MP4 retains its recovered stereo soundtrack; no standalone game audio is packaged.",
+      "APK signing uses the stable local preview debug key for repeatable test installation."
+    ]
+  },
+  "java_sources_sha256": {
+    "reconstruction/android-current/app/src/main/java/org/reconstruction/current/MainActivity.java": "25b37bcee9b67d5c16ae54e7beecaea409b0b4a8ee47167e40f42e3732840bda",
+    "reconstruction/android-current/app/src/main/java/org/reconstruction/current/RoomEngine.java": "e3b84d2fb1a182d8dcca946742b41799c373a8d1c50046ef585ae8a787735d79",
+    "reconstruction/android-current/app/src/main/java/org/reconstruction/current/WorldRenderer.java": "a21129db91641d1b49155110a49e27284b5a748fab9d6afc6db22b1076e79f70",
+    "reconstruction/android-current/app/src/main/java/org/reconstruction/current/CrashDiagnostics.java": "588cda5430a64c827568c240c157e3a8959e674308b79bad7baae9bd01764144",
+    "reconstruction/android-current/app/src/main/java/org/reconstruction/current/TombstoneSummary.java": "64b2307dc65d0437f7d394ae4cfedc88aeae61a38f9fd575f05dd976b6e8fd6f"
+  },
+  "android_emulator_test": "pending; no device claim",
+  "physical_device_test": false
+}
