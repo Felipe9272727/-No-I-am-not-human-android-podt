@@ -25,6 +25,11 @@ reconstruction/logic/
 **/exported_intro/
 **/exported_character_assets/
 **/exported_audio/
+**/exported_music/
+**/original_fsb/
+recovery-inputs/
+recovery-transfers.json
+upload/
 **/exported_scene_assets/
 reconstruction/reverse-world/models/
 reconstruction/reverse-world/textures/

@@ -1,0 +1,16 @@
+{
+  "repaired": [
+    {
+      "asset": "world/textures_android/012_texture_sharedassets1_assets_f0_p144_9ce8087d2ec9__.png",
+      "damaged_sha256": "fe7198d8df300ce9826bd3a7f33dbf5e71892a65bc91aade8c9a787acd29e748",
+      "restored_sha256": "7124f8706033dce9260b0894d432a6384cff88e71c6818a715755044198d7ca8"
+    },
+    {
+      "asset": "world/textures_android/032_texture_sharedassets1_assets_f0_p125_c585436fb628__.png",
+      "damaged_sha256": "db05629fe1a69ffa806d72e41fca4a04d3c46824e466071708d2402beec4556d",
+      "restored_sha256": "f996dc30f6ee44e939e2f9fce38b2b7cabc8177f7e9ed60102d4efbad74f79e9"
+    }
+  ],
+  "fully_decoded_png_count": 1387,
+  "invalid_png_count": 0
+}
