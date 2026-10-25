@@ -44,3 +44,8 @@ reconstruction/reverse-world/textures/
 *.pyc
 *-download.json
 *-upload*.json
+
+# Generated graphics captures and aggregate logs
+reconstruction/android-current/qa/*.png
+reconstruction/android-current/qa/*.jpg
+reconstruction/android-current/qa-gles-run.log

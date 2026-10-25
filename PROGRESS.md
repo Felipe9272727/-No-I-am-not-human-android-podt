@@ -24,7 +24,10 @@ O Git é o registro do código atual. A cópia privada de versão 8 serve como b
 
 The user reports v0.2 exits after the intro, before the house appears. The
 original renderer passed a 120-frame Mesa OpenGL ES 2 check during investigation;
-that does not reproduce the Redmi/Android failure. A new test build is being
-prepared with private on-device Java/native-exit diagnostics, an explicit debug
+that does not reproduce the Redmi/Android failure. A new test APK, version 0.3-crash-fix, was built and verified with private on-device Java/native-exit diagnostics, an explicit debug
 intro skip, guarded MediaPlayer callbacks and a conditional shader fallback.
+Current Java passes 120 GLES2 frames normally and another 120 frames after a
+simulated shader compile exception. Native tombstone parsing and geometry tests
+pass. The APK is signed with the same certificate as v0.2 and contains no new
+permissions. Android emulator validation is in progress.
 The precise device crash cause is still unconfirmed.

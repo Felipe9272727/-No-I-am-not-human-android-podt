@@ -35,7 +35,7 @@ Build from the source root:
 python3 tools/android-current/build_apk.py
 ```
 
-The intended output is `deliverables/NINAH-Port-Inicio.apk`. The build report
+The intended output is `deliverables/NINAH-Port-3D-Correcao.apk`. The build report
 records the actual output, signatures, native libraries, assets and validation
 limits. No original EXE, DLL or installer is executed or included. The preserved
 source reports are static reverse engineering evidence, not a certification
@@ -50,3 +50,11 @@ source data and are excluded from source checkpoints. The large intro MP4 is
 also excluded from that ZIP; it is reproducibly extracted from the original
 archive preserved in three parts. See `reverse-bootstrap/intro_evidence.json`,
 the extraction script, and `security/ORIGINAL_ARCHIVE_RECOVERY.json`.
+
+The v0.3 test build has a visible `DEBUG: pular intro` button. This explicit
+mobile debug adaptation releases the movie and follows the existing serialized
+`intro_tick(72000)` then `intro_video_finished` transition. It does not add a
+fake campaign phase or alter the native rules. The normal movie completion
+path remains available. Diagnostics stay private until the user copies or
+shares them from Options. A native Android exit/tombstone summary is available
+on supported system versions; the previous device crash is still unconfirmed.

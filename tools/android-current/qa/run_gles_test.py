@@ -9,7 +9,9 @@ import concurrent.futures
 import hashlib
 import os
 import subprocess
+import struct
 import urllib.request
+import zlib
 
 ROOT=Path(__file__).resolve().parents[3]
 QA=Path(__file__).resolve().parent
@@ -62,5 +64,15 @@ def main():
         (output/(label+'.log')).write_text(result.stdout)
         print(result.stdout,flush=True)
         result.check_returncode()
+        png=(output/(label+'.png')).read_bytes()
+        if not png.startswith(b'\x89PNG\r\n\x1a\n') or not png.endswith(b'IEND\xaeB`\x82'):
+            raise RuntimeError('incomplete screenshot: '+label)
+        offset=8
+        while offset<len(png):
+            size=struct.unpack_from('>I',png,offset)[0]
+            chunk=png[offset+4:offset+8+size]
+            if offset+size+12>len(png) or zlib.crc32(chunk)!=struct.unpack_from('>I',png,offset+8+size)[0]:
+                raise RuntimeError('invalid PNG chunk: '+label)
+            offset+=size+12
 
 if __name__=='__main__':main()

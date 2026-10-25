@@ -2,10 +2,14 @@
 
 Reconstrução em andamento da versão 1.3.18 fornecida pelo usuário. O repositório preserva o código novo, extratores, evidências e testes para retomar o trabalho após reinícios do ambiente. A campanha completa ainda não está implementada.
 
-A versão 0.2 acrescenta a casa 3D original, colisões, joystick e câmera por toque. A interface dos diálogos e da pausa usa a geometria, imagens e fontes recuperadas do original. O menu, o vídeo de abertura com áudio e legendas, a primeira visita do vizinho, a conversa dentro da casa e o estado de telefone continuam integrados.
+A versão 0.2 acrescentou a casa 3D original, colisões, joystick e câmera por toque. A interface dos diálogos e da pausa usa a geometria, imagens e fontes recuperadas do original. O menu, o vídeo de abertura com áudio e legendas, a primeira visita do vizinho, a conversa dentro da casa e o estado de telefone continuam integrados.
+
+A versão 0.3 inclui o botão **DEBUG: pular intro**, diagnóstico copiável no aparelho e recuperação com iluminação simplificada se a compilação do shader falhar. A causa exata do fechamento relatado no Redmi ainda não foi confirmada.
 
 ## Controles no celular
 
+- Durante o vídeo: **DEBUG: pular intro** entra na casa sem esperar 72 segundos.
+- Opções → Diagnóstico: copia ou compartilha o registro, por ação do usuário.
 - Joystick à esquerda: andar.
 - Arrastar à direita: olhar ao redor.
 - Mirar perto de uma porta: mostrar a ação de interação.
