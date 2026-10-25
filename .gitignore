@@ -56,3 +56,6 @@ reconstruction/android-current/qa/*.jpg
 reconstruction/android-current/qa-gles-run.log
 reconstruction/android-current/qa/android-emulator-attempt/
 reconstruction/android-current/build-v*.log
+
+# Reproducible mesh optimizer candidate (delivered inside APK assets)
+tools/mesh-opt/world_manifest.optimized.json

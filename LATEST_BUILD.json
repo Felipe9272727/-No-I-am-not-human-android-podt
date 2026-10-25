@@ -1,11 +1,11 @@
 {
-  "version": "0.5-render-music",
-  "version_code": 5,
+  "version": "0.6-visibility-performance",
+  "version_code": 6,
   "package": "org.reconstruction.port.preview",
-  "artifact": "NINAH-Port-3D-Musicas.apk",
-  "bytes": 322331722,
-  "sha256": "3159894270ae6be78993478c142ff56baa3659b6441f90809e27f554732e4117",
-  "validation_report": "reconstruction/android-current/render_music_build_report.json",
+  "artifact": "NINAH-Port-Desempenho.apk",
+  "bytes": 321611717,
+  "sha256": "515b528cecddcc255eb750d1e4c011010bddb14bf25f2a6ddfcd0a80ced32246",
+  "validation_report": "reconstruction/android-current/performance_build_report_v06.json",
   "host_report": "reconstruction/android-current/host_validation.json",
   "world_report": "reconstruction/android-current/world_validation.json",
   "android_device_execution_tested": false,
@@ -18,8 +18,8 @@
   "android_emulator_attempt": "blocked before installation: package/activity services unavailable",
   "physical_device_fix_verified": false,
   "confirmed_crash_cause": "missing libGDX classpath GLSL resources",
-  "shader_report": "reconstruction/android-current/shader_v05_validation.json",
-  "graphics_report": "reconstruction/android-current/graphics_v05_validation.json",
+  "shader_report": "reconstruction/android-current/shader_v06_validation.json",
+  "graphics_report": "reconstruction/android-current/optimized_graphics_v06.json",
   "music_report": "reconstruction/android-current/music_v05_validation.json",
   "previous_v04_house_opened_user_report": true,
   "original_music_tracks": 14,
@@ -27,5 +27,15 @@
     "main_menu",
     "night1",
     "ambience_house"
-  ]
+  ],
+  "reported_v05_fps_approximate": 10,
+  "render_quality_profiles": [
+    "balanced",
+    "light",
+    "native"
+  ],
+  "default_render_quality": "balanced",
+  "render_fps_counter": true,
+  "mesh_optimization": "meshoptimizer v1.3 exact vertex reindex, offline C++",
+  "device_performance_gain_measured": false
 }

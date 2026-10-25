@@ -36,7 +36,7 @@ unchanged native libraries and staged assets. Restore its assets/ members under
 `reconstruction/android-current/app/src/main/assets`, then run:
 
 ```sh
-python3 tools/android-current/build_apk.py --skip-assets --reference-apk <current-apk> --version-code 5 --version-name 0.5-render-music --output deliverables/NINAH-Port-3D-Musicas.apk
+python3 tools/android-current/build_apk.py --skip-assets --reference-apk <current-apk> --version-code 6 --version-name 0.6-visibility-performance --output deliverables/NINAH-Port-Desempenho.apk
 ```
 
 The reference APK must match LATEST_BUILD.json and its 52-file C++/Rust source
@@ -46,7 +46,7 @@ including the narrowly scoped shader-compiler fallback. This does not replace
 Android execution or the user phone crash report.
 
 Before delivering, run `python3 tools/android-current/qa/check_apk_shaders.py
-deliverables/NINAH-Port-3D-Musicas.apk --render`. The 12 namespaced GDX resources
+deliverables/NINAH-Port-Desempenho.apk --render`. The 12 namespaced GDX resources
 (including six GLSL files) must be packaged in the APK, not supplied by a
 development jar. See `shader_v04_validation.json` for the isolated check.
 
@@ -75,3 +75,21 @@ The final packager reopens the closed APK for another ZIP CRC/signature/hash
 check after report collection. Independent final verification also uses
 `apksigner verify --verbose --print-certs`. A rejected first v0.5 artifact was
 repacked; only the exact hash in LATEST_BUILD.json is deliverable.
+
+
+## Lossless mesh preparation (v0.6)
+
+When migrating a staged v0.4/v0.5 tree, run
+`python3 tools/mesh-opt/optimize_world.py --apply` before the skip-assets build.
+The helper compiles its new C++ source with g++ and includes a pinned, SHA-checked
+MIT-licensed subset of meshoptimizer. The candidate manifest stays generated;
+source blobs remain under world/models and optimized copies under models_android.
+The APK contains only the referenced optimized copies. Rebuilding directly from
+a v0.6 APK needs no reoptimization; its extracted assets already contain them.
+Rerunning optimization requires the original blobs from the saved earlier APK
+or source bundle. The C++/Rust game fingerprint is unchanged; this new C++ tool
+runs offline and does not add a new Android JNI library.
+
+Validate with the Java geometry/visibility/resolution tests and isolated final
+APK shader/render test. These host results do not measure Xiaomi FPS or validate
+Android SurfaceHolder resizing. See release_v06_summary.json for exact scope.

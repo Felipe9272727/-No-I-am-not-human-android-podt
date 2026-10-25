@@ -35,7 +35,7 @@ Build from the source root:
 python3 tools/android-current/build_apk.py
 ```
 
-The intended output is `deliverables/NINAH-Port-3D-Musicas.apk`. The build report
+The intended output is `deliverables/NINAH-Port-Desempenho.apk`. The build report
 records the actual output, signatures, native libraries, assets and validation
 limits. No original EXE, DLL or installer is executed or included. The preserved
 source reports are static reverse engineering evidence, not a certification
@@ -87,3 +87,19 @@ source Window materials and incomplete effects remain under investigation.
 Historical Android exits are labeled separately from the current renderer status.
 Only a previously unseen exit from the currently installed version triggers an
 automatic notice; older records remain available through manual diagnostics.
+
+## v0.6 performance preview
+
+The renderer fixes full-size/half-extents frustum rejection and Unity/GL cull enum
+translation, reuses per-item material/renderable objects and retains indexed GPU
+vertices from the offline C++ mesh optimizer. Shader and triangle counts remain
+source-based. Source geometry and all indexed corner attributes remain lossless.
+The GPU surface has balanced/light/native resolution options; native Canvas UI
+and touch mapping keep the same layout. FPS and graphics diagnostics are private
+until the user copies/shares them. Surface resizing and performance changes have
+not been executed on Android here. The user's v0.5 report is approximately10 FPS.
+
+Assembly is not a substitute for measuring the relevant CPU/GPU workload. The
+Android NDK supports NEON by default on arm64, and no measured native CPU hotspot
+has yet justified hand-written assembly. Research and validation links are in
+release_v06_summary.json.

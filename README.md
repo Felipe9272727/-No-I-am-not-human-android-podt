@@ -8,11 +8,14 @@ A versão 0.4 corrige a ausência dos shaders do libGDX dentro do APK, identific
 
 A versão 0.5 acrescenta músicas originais ao menu e à abertura na casa, com ambiência e opção de silenciar. Repara duas texturas danificadas, ajusta transparência/profundidade e a renderização de objetos espelhados. O histórico de falhas antigas deixa de gerar avisos automáticos após uma atualização. Os próximos dias continuam fora do port; a UI e os efeitos ainda têm diferenças em relação ao original.
 
+A versão 0.6 corrige paredes/teto descartados ao virar a câmera e acrescenta otimização dos modelos em C++ sem alterar triângulos, texturas ou normais. Reutiliza objetos do renderizador, inclui contador de FPS e oferece renderização equilibrada, leve ou nativa. O usuário relatou cerca de 10 FPS na 0.5; o ganho da 0.6 no aparelho ainda precisa ser medido.
+
 ## Controles no celular
 
 - Durante o vídeo: **DEBUG: pular intro** entra na casa sem esperar 72 segundos.
 - Opções → Músicas ligadas/desligadas: controla a trilha e a ambiência; a escolha fica salva.
 - Opções → Diagnóstico: copia ou compartilha o registro, por ação do usuário.
+- Opções → Renderização: alterna entre equilibrada (padrão), leve e nativa; Mostrar/Ocultar FPS controla o contador.
 - Joystick à esquerda: andar.
 - Arrastar à direita: olhar ao redor.
 - Mirar perto de uma porta: mostrar a ação de interação.

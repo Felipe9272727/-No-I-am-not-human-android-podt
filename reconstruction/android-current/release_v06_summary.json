@@ -1,0 +1,75 @@
+{
+  "version": "0.6-visibility-performance",
+  "artifact": "NINAH-Port-Desempenho.apk",
+  "bytes": 321611717,
+  "sha256": "515b528cecddcc255eb750d1e4c011010bddb14bf25f2a6ddfcd0a80ced32246",
+  "device_report": {
+    "previous_version": "0.5-render-music",
+    "approx_fps": 10,
+    "device": "Xiaomi 2312DRA50G",
+    "cause_profiled_on_device": false
+  },
+  "fixes": [
+    "Correct Unity cull enum translation into GL values before transform parity",
+    "Use Frustum float overload with actual half extents, avoiding accidental size halving",
+    "Preserve hard subtitle line breaks"
+  ],
+  "performance_changes": [
+    "Lossless C++ meshoptimizer preprocessing with all indexed corners verified",
+    "Reuse Renderable, Material and render-list objects across frames",
+    "Read only PNG header before texture upload instead of allocating the full compressed file twice",
+    "Skip zero-alpha draws with no color or depth contribution",
+    "GPU surface-resolution profiles with unchanged Canvas touch/UI layout",
+    "FPS and render-submit/texture-load/draw diagnostics"
+  ],
+  "lossless_meshes": {
+    "meshes": 100,
+    "source_vertices": 372897,
+    "optimized_vertices": 98536,
+    "source_blob_bytes": 13424292,
+    "optimized_blob_bytes": 4644740,
+    "corner_records_compared": 372897,
+    "triangle_and_submesh_order_preserved": true,
+    "lossy_operations": []
+  },
+  "quality_profiles": {
+    "default": "balanced",
+    "balanced_max_surface": [
+      1600,
+      720
+    ],
+    "light_max_surface": [
+      1200,
+      540
+    ],
+    "native": "display resolution",
+    "aspect_preserved": true,
+    "upscale_ui_or_touch_coordinates": false
+  },
+  "validation": {
+    "java_compile_android35": true,
+    "visibility_regression_reproduced_on_previous_code": true,
+    "cull_enum_regression_reproduced_on_v05": true,
+    "12_source_structure_camera_turns": true,
+    "geometry_collision_room_rays": true,
+    "five_resolution_fixtures_three_profiles": true,
+    "normal_four_angles_120_frames_each": true,
+    "injected_fallback_120_frames": true,
+    "optimized_vs_unoptimized_pixels_identical_all_five_captures": true,
+    "final_apk_only_shaders_and_render": true,
+    "pngs_fully_decoded_in_apk": 1404,
+    "mesh_hashes_verified_in_apk": 100,
+    "music_hashes_and_uncompressed_ogg_entries": 14,
+    "signature_verified_with_original_test_certificate": true
+  },
+  "android_device_execution_tested": false,
+  "actual_phone_fps_gain_measured": false,
+  "full_campaign_implemented": false,
+  "assembly_decision": "No hand-written assembly was added: measured device hot spots are still unavailable. C++ preprocessing targets GPU vertex reuse; the NDK already supports arm64 NEON.",
+  "research_primary_sources": [
+    "https://developer.android.com/games/optimize/optimization-tips",
+    "https://github.com/zeux/meshoptimizer/tree/v1.3",
+    "https://developer.android.com/ndk/guides/cpu-arm-neon",
+    "https://developer.android.com/reference/android/view/SurfaceHolder#setFixedSize(int,%20int)"
+  ]
+}

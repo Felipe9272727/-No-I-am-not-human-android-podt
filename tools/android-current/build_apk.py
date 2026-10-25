@@ -28,7 +28,7 @@ ASSET_DIR = ANDROID_APP / "assets"
 NATIVE_ROOT = ROOT / "reconstruction/native-game"
 BRIDGE_MANIFEST = NATIVE_ROOT / "bridge/Cargo.toml"
 BRIDGE_ROOT = NATIVE_ROOT / "bridge"
-DEFAULT_APK = ROOT / "deliverables/NINAH-Port-3D-Musicas.apk"
+DEFAULT_APK = ROOT / "deliverables/NINAH-Port-Desempenho.apk"
 REPORT = ANDROID_ROOT / "port3d_validation_report.json"
 PACKAGE_NAME = "org.reconstruction.port.preview"
 JNI_ACTIVITY = "org.reconstruction.current.MainActivity"
@@ -436,10 +436,21 @@ def compile_resources(build_tools: Path, android_jar: Path, work: Path,
     ET.register_namespace("android", ANDROID_NS)
     ET.ElementTree(manifest_root).write(manifest, encoding="utf-8", xml_declaration=True)
 
+    assets_for_packaging=ASSET_DIR
+    world_manifest=json.loads((ASSET_DIR / "world/world_manifest.json").read_text())
+    if world_manifest.get("android_mesh_optimization"):
+        assets_for_packaging=work / "packaged-assets"
+        def omit_source_meshes(directory,names):
+            return {"models"} if Path(directory)==ASSET_DIR / "world" else set()
+        def link_asset(source,target):
+            try: os.link(source,target)
+            except OSError: shutil.copyfile(source,target)
+            return target
+        shutil.copytree(ASSET_DIR,assets_for_packaging,copy_function=link_asset,ignore=omit_source_meshes)
     command = [
         build_tools / "aapt2", "link", "-o", base_apk,
         "--manifest", manifest,
-        "-I", android_jar, "-A", ASSET_DIR,
+        "-I", android_jar, "-A", assets_for_packaging,
         "--java", gen_dir,
         "--output-text-symbols", work / "symbols",
         "--extra-packages", "com.badlogic.gdx.backends.android:androidx.core:androidx.versionedparcelable:androidx.lifecycle:androidx.core.viewtree",
@@ -679,10 +690,27 @@ def collect_report(output: Path, build_tools: Path, source_modules: list[str],
         if len(world_meshes) != 100 or len(world_textures) != 42:
             raise RuntimeError(f"world assets incomplete: {len(world_meshes)} meshes, {len(world_textures)} textures")
         world_texture_bytes = 0
+        mesh_source_vertices=mesh_android_vertices=mesh_android_bytes=0
         for row in world_meshes:
             asset = row.get("android_asset")
             if not asset or f"assets/{asset}" not in names:
                 raise RuntimeError(f"APK missing world mesh asset: {asset}")
+            data=apk.read(f"assets/{asset}")
+            expected=row.get("android_sha256",row.get("source_sha256",row.get("sha256")))
+            if hashlib.sha256(data).hexdigest()!=expected:
+                raise RuntimeError(f"World mesh hash mismatch: {asset}")
+            vertices=row.get("android_vertex_count",row["vertex_count"])
+            indices=row.get("android_index_count",row["index_count"])
+            if len(data)!=vertices*32+indices*4:
+                raise RuntimeError(f"World mesh buffer/count mismatch: {asset}")
+            mesh_source_vertices+=row["vertex_count"];mesh_android_vertices+=vertices;mesh_android_bytes+=len(data)
+        if version_code>=6:
+            if not world_manifest.get("android_mesh_optimization"):
+                raise RuntimeError("Version 6+ requires lossless mesh optimization")
+            if any(name.startswith("assets/world/models/") for name in names):
+                raise RuntimeError("Unreferenced source meshes should not be packaged alongside optimized copies")
+            if "assets/licenses/meshoptimizer-LICENSE-MIT.txt" not in names:
+                raise RuntimeError("Meshoptimizer license missing")
         for row in world_textures:
             asset = row.get("android_asset")
             if not asset or f"assets/{asset}" not in names:
@@ -817,6 +845,8 @@ def collect_report(output: Path, build_tools: Path, source_modules: list[str],
             "music_tracks": music_tracks,
             "intro_video_original_audio_channels": assets_json["intro"]["audio_channel_count"],
             "world_meshes": len(world_meshes), "world_textures": len(world_textures),
+            "world_source_vertices":mesh_source_vertices,"world_android_vertices":mesh_android_vertices,
+            "world_android_mesh_bytes":mesh_android_bytes,"world_mesh_hashes_validated":len(world_meshes),
             "world_texture_bytes": world_texture_bytes, "world_texture_max_edge": 1024,
             "original_game_ui_sprites": len(ui_sprites), "original_game_ui_fonts": len(ui_fonts),
         },
@@ -839,8 +869,8 @@ def main() -> None:
     parser.add_argument("--skip-assets", action="store_true", help="reuse an existing staged asset tree")
     parser.add_argument("--reference-apk", type=Path,
                         help="reuse JNI libraries only from the exact hash-locked current APK")
-    parser.add_argument("--version-code", type=int, default=5)
-    parser.add_argument("--version-name", default="0.5-render-music")
+    parser.add_argument("--version-code", type=int, default=6)
+    parser.add_argument("--version-name", default="0.6-visibility-performance")
     parser.add_argument("--rebuild-rust", action="store_true", help="force locked release builds for both Rust targets")
     args = parser.parse_args()
 

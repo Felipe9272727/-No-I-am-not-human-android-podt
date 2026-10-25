@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Stage the recovered, non-audio assets used by the current Android shell."""
+"""Stage recovered game data and lossless Android variants."""
 
 from __future__ import annotations
 
@@ -8,6 +8,8 @@ import hashlib
 import json
 import re
 import shutil
+import subprocess
+import sys
 import tomllib
 import zipfile
 from pathlib import Path
@@ -181,6 +183,7 @@ def stage_third_party_notices(destination: Path) -> dict:
     rust_root.mkdir(parents=True, exist_ok=True)
     nlohmann_license = ROOT / "reconstruction/native-game/third_party/nlohmann/LICENSE.MIT"
     shutil.copyfile(nlohmann_license, license_root / "nlohmann-json-LICENSE-MIT.txt")
+    shutil.copyfile(ROOT / "tools/mesh-opt/third_party/meshoptimizer-v1.3/LICENSE.md", license_root / "meshoptimizer-LICENSE-MIT.txt")
     apache_license = Path("/usr/share/common-licenses/Apache-2.0")
     if not apache_license.is_file():
         raise FileNotFoundError("official Apache-2.0 license text is not available on this build host")
@@ -218,6 +221,7 @@ def stage_third_party_notices(destination: Path) -> dict:
 
     notice = [
         "Third-party notices for the Port Inicio Android preview APK.",
+        "Meshoptimizer v1.3 is used offline for lossless vertex remapping; see meshoptimizer-LICENSE-MIT.txt (MIT License).",
         "nlohmann/json is distributed under the MIT License; see nlohmann-json-LICENSE-MIT.txt.",
         "Rust crate notices below are copied from the matching local Cargo registry source packages.",
         "Only dependencies with locally retained license text are listed; host-only proc-macro crates are not linked into the APK.",
@@ -346,7 +350,11 @@ def stage_world_assets(destination: Path) -> dict:
                                    "texture_count": len(textures),
                                    "source_manifest_sha256": sha256_file(source_manifest)}
     minified_json(source_manifest, world_out / "world_manifest.json", manifest)
-    return manifest["android_staging"]
+    subprocess.run([sys.executable, str(ROOT / "tools/mesh-opt/optimize_world.py"),
+                    "--assets-root", str(destination), "--apply"], check=True, cwd=ROOT)
+    optimized=read_json(world_out / "world_manifest.json")
+    return {**manifest["android_staging"], "mesh_optimization":optimized["android_mesh_optimization"],
+            "optimized_mesh_bytes":sum((destination / row["android_asset"]).stat().st_size for row in optimized["meshes"])}
 
 
 def sha256_file(path: Path) -> str:

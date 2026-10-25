@@ -1,0 +1,10 @@
+HOST_RENDER_MEAN_MS=5.09446732
+RENDERER_DIAGNOSTIC=ready
+
+GL vendor=Mesa, renderer=llvmpipe (LLVM 20.1.2, 256 bits), version=OpenGL ES 2.0 Mesa 25.2.8-0ubuntu0.24.04.2, maxTextureSize=16384, depthBits=24
+World meshes=91, render items=111, mesh colliders=24, texture cache=64225280 bytes, visible textures=17
+FPS=60 render-submit=11.64 ms, surface=1280x720, draws=36 triangles=21631, texture loads=17 evictions=0, cached materials=111
+GL_RENDERER=llvmpipe (LLVM 20.1.2, 256 bits)
+GL_VERSION=OpenGL ES 2.0 Mesa 25.2.8-0ubuntu0.24.04.2
+WORLD_PREVIEW_POSE={"position":[-3.985,1.584,-6.998],"pitch":0,"yaw":90}
+WORLD_PREVIEW_PNG=/workspace/scratch/ad0b61c5ef81/reconstruction/android-current/qa/v06-optimized-yaw90.png

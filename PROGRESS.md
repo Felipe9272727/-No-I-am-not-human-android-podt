@@ -90,3 +90,33 @@ resources). Fourteen OGG assets match the fully decoded export and are stored
 uncompressed. A new isolated check loads all shader resources from this exact
 APK and renders 120 GLES2 frames. The first packaging attempt was rejected by
 independent integrity checks and was not delivered.
+
+
+## v0.6: visibility and measured work reduction
+
+The user reports about 10 FPS on the Xiaomi with v0.5. This has not been profiled
+on the device, so no CPU/GPU bottleneck or phone FPS gain is claimed.
+
+Two confirmed rendering defects were fixed: Unity Cull 0/1/2 was passed as GL
+enumerants, and half extents were passed to a Frustum overload that halves full
+dimensions again. Source triangle rays prove the near walls/ceiling exist and
+face the camera. Regressions reproduce both old failures; the corrected bounds
+pass twelve source structure/camera cases. Four-angle renders now show the
+original near surfaces instead of terrain/void through missing walls.
+
+A new offline C++ helper uses pinned meshoptimizer v1.3 for exact 32-byte vertex
+remap and vertex-fetch ordering. All 372,897 indexed corners remain byte exact
+and triangles/submesh order are preserved. Across 100 meshes, vertices fall
+from 372,897 to 98,536 and raw blobs from 13,424,292 to 4,644,740 bytes. The Java
+uploader retains shared indices instead of expanding every triangle again.
+Five GLES2 captures (four directions plus injected fallback) are pixel-identical
+to the unoptimized meshes with the same corrected visibility.
+
+Materials/renderables/lists are reused; pure no-contribution alpha-zero passes
+are skipped. The default 3D surface is capped at 1600x720, with a 1200x540 light
+mode and native option. UI/touch layout keeps display coordinates. Native
+surface behavior and FPS improvements require the user's phone test. An FPS
+counter and private render-submit/draw/texture counters help that test.
+
+The intro preserves explicit subtitle line breaks. Music and the existing
+campaign boundary remain unchanged. New code does not run original binaries.
