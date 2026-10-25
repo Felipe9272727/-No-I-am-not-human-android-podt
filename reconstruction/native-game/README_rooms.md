@@ -1,0 +1,9 @@
+# Room routing reconstruction
+
+This implements only the statically verified room-routing subset. `RoomRouter` takes mandatory dialog service hooks and optional room event subscribers. `enter` publishes `Entered` before an explicit room `EnterInner` callback; `leave` publishes `Left` before explicit view deactivation. Concrete-room side effects remain host supplied.
+
+Character click gates are dialog closed, selected pose present, and pose `CannotInteract` false. The room handler then suppresses killed characters; otherwise the route sets the companion, fetches the current dialog index, forms `talk_{lowercase CharacterType}_{index}`, and calls `RunDialog` with the linked camera. Narrative clicks instead call `ShowSubtitle(serializedNode)` and subscribe the captured end callback to `DialogEnded`.
+
+`narrative_objects()` preserves all nine factory records and their source `RectTransform.anchoredPosition` coordinates. They are not screen coordinates. The talk-count helper reproduces the empty-dictionary default index 0, `AddTalk`, `SetMaxTalks(count - 1)`, and clamp behavior.
+
+The conversation’s static findings reference `reverse-rooms/room_manifest.json`, `selected_rooms_il.txt`, and `selected_rooms_isil.txt` (these evidence artifacts were not present in the reset checkpoint). The narrative closure interface method slots were checked against the `IDialogManager` metadata MethodList: ordinal 27 is `ShowSubtitle`, and ordinal 4 is `add_DialogEnded`; ISIL argument setup passes the captured node and constructs the `OnEnded(bool,bool)` delegate. Generated CIL RVAs are not native GameAssembly RVAs. Serialized room geometry is not a hit map: the recovered button uses camera-aware RectTransform conversion and sprite alpha sampling above 0.1. Door triggers, special room actions, full scene projection, and async transitions are not implemented here.

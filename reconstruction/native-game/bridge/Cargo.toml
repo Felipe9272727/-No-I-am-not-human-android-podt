@@ -1,0 +1,9 @@
+[package]
+name = "ninah-yarn-bridge"
+version = "0.1.0"
+edition = "2021"
+[lib]
+crate-type = ["staticlib"]
+[dependencies]
+yarn-runtime = { path = "../../yarn-runtime" }
+serde_json = "1.0"
