@@ -1,0 +1,40 @@
+{
+  "version": "0.4-shaders-ui",
+  "cause_confirmed": "GDX classpath shader resources omitted by manual APK packaging",
+  "v03_exact_failure_reproduced": true,
+  "missing_path": "com/badlogic/gdx/graphics/g3d/shaders/default.vertex.glsl",
+  "fix": "Preserve and hash-verify all 12 GDX Java resources at APK root, including all six GLSL shader files",
+  "packaged_resources_test": "shader_v04_validation.json",
+  "build_report": "shader_ui_build_report.json",
+  "sha256": "84decf137df7e5392c23fdd53442e8f6f94c06cd39c98fc813f2cef037bb1881",
+  "bytes": 298520584,
+  "physical_device_fix_verified": false,
+  "android_emulator_retested": false,
+  "ui": {
+    "menu": "source RectTransform geometry and original button_2 art",
+    "world": "original ToOpen background/key/cross and red label from source",
+    "dialogue": "source line/options plates, Chakra Petch, source portrait geometry, no generic advance button",
+    "options": "multi-line Portuguese choices with original font; taps preserve original choice indexes",
+    "settings": "mobile controls restyled with recovered menu/pause assets",
+    "adaptations": [
+      "left joystick/right drag",
+      "TOQUE label replaces Space",
+      "debug intro skip",
+      "diagnostics",
+      "tap dialogue to advance"
+    ],
+    "inferred_not_proven": [
+      "VCR OSD menu font: menu text font mapping is absent",
+      "Chakra Petch for Portuguese choices replaces serialized Arabic placeholder font",
+      "some mobile font sizes and touch areas"
+    ],
+    "pixel_identical_to_original_claimed": false
+  },
+  "java_sources_sha256": {
+    "reconstruction/android-current/app/src/main/java/org/reconstruction/current/MainActivity.java": "956ee4d3cbbdb5bf34e4c31d52a92b7c5a1b4dddec7bc67cbf9875526af7860a",
+    "reconstruction/android-current/app/src/main/java/org/reconstruction/current/RoomEngine.java": "e3b84d2fb1a182d8dcca946742b41799c373a8d1c50046ef585ae8a787735d79",
+    "reconstruction/android-current/app/src/main/java/org/reconstruction/current/CrashDiagnostics.java": "588cda5430a64c827568c240c157e3a8959e674308b79bad7baae9bd01764144",
+    "reconstruction/android-current/app/src/main/java/org/reconstruction/current/WorldRenderer.java": "a21129db91641d1b49155110a49e27284b5a748fab9d6afc6db22b1076e79f70",
+    "reconstruction/android-current/app/src/main/java/org/reconstruction/current/TombstoneSummary.java": "64b2307dc65d0437f7d394ae4cfedc88aeae61a38f9fd575f05dd976b6e8fd6f"
+  }
+}

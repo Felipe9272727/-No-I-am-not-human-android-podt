@@ -7,6 +7,7 @@ With --render, render 120 GLES2 frames using the same isolated classpath.
 """
 from pathlib import Path
 import argparse
+import hashlib
 import importlib.util
 import json
 import os
@@ -41,10 +42,13 @@ def main():
     subprocess.run(['java','-jar',str(ROOT/'tools/android-current/java/ecj-3.38.0.jar'),'-8','-nowarn',
         '-classpath',str(stripped),'-d',str(classes),str(QA/'ClasspathShaderProbe.java')],check=True,cwd=ROOT)
     cp=os.pathsep.join(map(str,[classes,stripped,apk]))
-    probe=subprocess.run(['java','-cp',cp,'ClasspathShaderProbe'],text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,cwd=ROOT)
+    probe=subprocess.run(['java','-cp',cp,'ClasspathShaderProbe',str(apk)],text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,cwd=ROOT)
+    digest=hashlib.sha256()
+    with apk.open('rb') as stream:
+        for block in iter(lambda:stream.read(1024*1024),b''):digest.update(block)
     result={'apk':str(apk),'package_resource_validation_error':package_error,'classpath_probe_exit_code':probe.returncode,
         'classpath_probe_output':probe.stdout,'resources':resources,'desktop_gdx_resources_on_classpath':False,
-        'android_execution_tested':False}
+        'android_execution_tested':False,'apk_sha256':digest.hexdigest()}
     print(probe.stdout,flush=True)
     if args.expect_missing:
         if not package_error or probe.returncode==0 or 'default.vertex.glsl' not in probe.stdout:
@@ -62,6 +66,8 @@ def main():
             for jar in deps:
                 with zipfile.ZipFile(jar) as archive:
                     if set(archive.namelist())&set(builder.REQUIRED_GDX_SHADERS):raise AssertionError('desktop shader leak: '+str(jar))
+                    if 'META-INF/MANIFEST.MF' in archive.namelist() and b'Class-Path:' in archive.read('META-INF/MANIFEST.MF'):
+                        raise AssertionError('uncontrolled transitive classpath: '+str(jar))
             cp=os.pathsep.join(map(str,[QA/'build-gles',stripped,apk,*deps]))
             env=os.environ.copy();env.update(EGL_PLATFORM='surfaceless',MESA_GLES_VERSION_OVERRIDE='2.0',LIBGL_ALWAYS_SOFTWARE='1')
             screenshot=ROOT/'reconstruction/android-current/qa/apk-only-gles2.png'

@@ -1,11 +1,11 @@
 {
-  "version": "0.3-crash-fix",
-  "version_code": 3,
+  "version": "0.4-shaders-ui",
+  "version_code": 4,
   "package": "org.reconstruction.port.preview",
-  "artifact": "NINAH-Port-3D-Correcao.apk",
-  "bytes": 298486695,
-  "sha256": "5241e7b40b0e72a0e6db71d9edf3e03e850b4347deb4d29612c66916172b861a",
-  "validation_report": "reconstruction/android-current/crash_fix_validation.json",
+  "artifact": "NINAH-Port-3D-UI.apk",
+  "bytes": 298520584,
+  "sha256": "84decf137df7e5392c23fdd53442e8f6f94c06cd39c98fc813f2cef037bb1881",
+  "validation_report": "reconstruction/android-current/shader_ui_validation.json",
   "host_report": "reconstruction/android-current/host_validation.json",
   "world_report": "reconstruction/android-current/world_validation.json",
   "android_device_execution_tested": false,
@@ -13,7 +13,9 @@
   "native_source_tree_sha256": "365ca1da29ef583498d80d91ed23b8c4ba968d1258ad6ed826b8f6a29f7ef135",
   "native_source_fingerprint_inputs": 52,
   "debug_intro_skip": true,
-  "device_crash_cause_confirmed": false,
+  "device_crash_cause_confirmed": true,
   "android_emulator_execution_tested": false,
-  "android_emulator_attempt": "blocked before installation: package/activity services unavailable"
+  "android_emulator_attempt": "blocked before installation: package/activity services unavailable",
+  "physical_device_fix_verified": false,
+  "confirmed_crash_cause": "missing libGDX classpath GLSL resources"
 }

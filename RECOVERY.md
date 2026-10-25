@@ -36,7 +36,7 @@ unchanged native libraries and staged assets. Restore its assets/ members under
 `reconstruction/android-current/app/src/main/assets`, then run:
 
 ```sh
-python3 tools/android-current/build_apk.py --skip-assets --reference-apk <current-apk> --version-code 3 --version-name 0.3-crash-fix --output deliverables/NINAH-Port-3D-Correcao.apk
+python3 tools/android-current/build_apk.py --skip-assets --reference-apk <current-apk> --version-code 4 --version-name 0.4-shaders-ui --output deliverables/NINAH-Port-3D-UI.apk
 ```
 
 The reference APK must match LATEST_BUILD.json and its 52-file C++/Rust source
@@ -44,3 +44,8 @@ fingerprint. Changes to native sources require a real native rebuild.
 `python3 tools/android-current/qa/run_gles_test.py` exercises host Mesa GLES2,
 including the narrowly scoped shader-compiler fallback. This does not replace
 Android execution or the user phone crash report.
+
+Before delivering, run `python3 tools/android-current/qa/check_apk_shaders.py
+deliverables/NINAH-Port-3D-UI.apk --render`. The 12 namespaced GDX resources
+(including six GLSL files) must be packaged in the APK, not supplied by a
+development jar. See `shader_v04_validation.json` for the isolated check.

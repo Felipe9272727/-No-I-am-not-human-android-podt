@@ -46,5 +46,10 @@ rendering accidentally supplied these files from the development GDX jar.
 The builder now preserves 12 namespaced GDX resources at the APK root and
 verifies their exact bytes against the pinned library. A separate probe runs
 with a classes-only GDX jar and the APK as its only shader source. It reproduces
-the exact v0.3 FileNotFound failure; final-v0.4 validation is pending. UI work
-also replaces remaining generic controls with recovered styling.
+the exact v0.3 FileNotFound failure. The final v0.4 APK passes this probe;
+its resource URL points inside the delivered APK. With the same isolated
+classpath it also renders 120 GLES2 frames without GL errors or fallback.
+UI work replaces generic buttons/cards with recovered menu/HUD/dialogue art,
+uses recovered fonts, and wraps long Portuguese choices without truncating them.
+Menu font selection and some mobile sizing remain explicitly inferred.
+The physical-device fix is not yet verified.

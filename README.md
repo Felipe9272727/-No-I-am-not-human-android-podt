@@ -4,7 +4,7 @@ Reconstrução em andamento da versão 1.3.18 fornecida pelo usuário. O reposit
 
 A versão 0.2 acrescentou a casa 3D original, colisões, joystick e câmera por toque. A interface dos diálogos e da pausa usa a geometria, imagens e fontes recuperadas do original. O menu, o vídeo de abertura com áudio e legendas, a primeira visita do vizinho, a conversa dentro da casa e o estado de telefone continuam integrados.
 
-A versão 0.3 inclui o botão **DEBUG: pular intro**, diagnóstico copiável no aparelho e recuperação com iluminação simplificada se a compilação do shader falhar. A causa exata do fechamento relatado no Redmi ainda não foi confirmada.
+A versão 0.4 corrige a ausência dos shaders do libGDX dentro do APK, identificada pelo diagnóstico do aparelho. Menu, diálogos e interação usam artes/fontes recuperadas, substituindo os principais controles genéricos. O botão **DEBUG: pular intro** e o diagnóstico copiável permanecem. Há adaptações para celular e escolhas de fonte ainda inferidas; a interface não é apresentada como uma cópia idêntica do original.
 
 ## Controles no celular
 
@@ -34,3 +34,8 @@ Recursos originais grandes, arquivos de origem, SDK/NDK, caches, APKs e chaves d
 Passaram os testes de regras C++/Rust com AddressSanitizer e UndefinedBehaviorSanitizer, incluindo as duas rotas iniciais do vizinho, estado de telefone, navegação e save/restore. Os testes Java verificam eixos do joystick, limites da câmera, sete alvos de interação e colisão com a geometria original. A casa foi renderizada de verdade em Mesa/EGL sem janela, incluindo a câmera inicial e outro ângulo.
 
 Esses resultados não equivalem a execução em um aparelho Android. O desempenho, todos os efeitos originais e a campanha completa ainda precisam de validação e desenvolvimento.
+
+A verificação atual remove os recursos do JAR de desenvolvimento: os shaders
+são carregados exclusivamente do APK entregue. A versão 0.3 reproduz a falha,
+enquanto a versão 0.4 carrega todos os arquivos e renderiza 120 frames em GLES2.
+A validação desta correção no aparelho ainda depende do próximo teste do usuário.

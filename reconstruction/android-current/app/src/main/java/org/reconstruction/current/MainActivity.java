@@ -23,6 +23,9 @@ import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
 import android.util.LruCache;
 import android.view.MotionEvent;
 import android.view.Surface;
@@ -60,6 +63,7 @@ public final class MainActivity extends AndroidApplication {
 
     private final Map<String, String> imagePaths = new HashMap<>();
     private final Map<String, String> menuAssets = new HashMap<>();
+    private JSONObject menuScene = new JSONObject();
     private final Map<Integer, String> roomBackgrounds = new HashMap<>();
     private final Map<String, JSONObject> roomLayouts = new HashMap<>();
     private final Map<Integer, Map<String, JSONObject>> roomLayoutsByRoom = new HashMap<>();
@@ -199,6 +203,8 @@ public final class MainActivity extends AndroidApplication {
         }
         JSONObject menu = root.optJSONObject("menu");
         if (menu != null) {
+            JSONObject scene = menu.optJSONObject("scene");
+            if (scene != null) menuScene = scene;
             copyMap(menu.optJSONObject("images"), menuAssets);
             for (String key : new String[]{"background_asset","house_asset","logo_asset","eyes_asset","teeth_asset","button_asset","peephole_asset"}) {
                 String path = menu.optString(key, ""); if (!path.isEmpty()) menuAssets.put(key.replace("_asset", ""), path);
@@ -522,14 +528,8 @@ public final class MainActivity extends AndroidApplication {
     }
 
     private void showOptionsDialog() {
-        String[] items = {"Interface maior", "Interface padrão", muteIntro ? "Ativar som da introdução" : "Silenciar introdução", "Diagnóstico"};
-        new AlertDialog.Builder(this).setTitle("Opções").setItems(items, (dialog, which) -> {
-            if (which == 0) uiScale = 1.15f;
-            else if (which == 1) uiScale = 1f;
-            else if (which == 3) { showRendererDiagnostic(); }
-            else { muteIntro = !muteIntro; if (introPlayer != null) introPlayer.setVolume(muteIntro ? 0f : 1f, muteIntro ? 0f : 1f); }
-            canvas.invalidate();
-        }).setNegativeButton("Fechar", null).show();
+        if(canvas==null)return;
+        canvas.settingsOpen=true;updateEngine();canvas.invalidate();
     }
 
     private final class GameCanvas extends View {
@@ -570,13 +570,29 @@ public final class MainActivity extends AndroidApplication {
         private void drawLoading(Canvas c) { c.drawColor(Color.rgb(13,17,22)); center(c,"Carregando dados recuperados…",960,550,32,Color.WHITE,true); }
 
         private void drawMenu(Canvas c) {
+            if(settingsOpen){drawSettingsPanel(c);return;}
+            drawMenuBackdrop(c);
+            String[] labels=roomLabels; String[] sourceNames={"NewGame","Continue","Settings","Collection","Quit"};
+            JSONObject menu=state.optJSONObject("menu");boolean canContinue=menu!=null&&menu.optBoolean("can_continue",false);
+            Bitmap buttonSprite=bitmap(menuAssets.get("button"));
+            for(int i=0;i<labels.length;i++) {
+                float[] rect=menuRect(sourceNames[i]); if(rect==null)continue;
+                if(buttonSprite!=null)stretch(c,buttonSprite,rect[0],rect[1],rect[2],rect[3]);
+                drawMenuLabel(c,labels[i],rect,22,i==1&&!canContinue?0xFF929292:Color.WHITE);
+                final int action=i;hits.add(new Hit(new RectF(rect[0],rect[1],rect[2],rect[3]),()->menuChoice(action,canContinue)));
+            }
+            drawMobileSourceButton(c,"Ferramentas",1685,26,1885,88,0xCCFFFFFF,()->{toolsMode=true;updateEngine();invalidate();});
+        }
+
+        private void drawMenuBackdrop(Canvas c) {
             JSONObject menu=state.optJSONObject("menu");
             String bg=stringField(menu,"background_asset",menuAssets.get("background"));
             Bitmap background=bitmap(bg); if(background!=null) cover(c,background,0,0,W,H); else gradient(c);
             Bitmap house=bitmap(menuAssets.get("house")); if(house!=null) contain(c,house,0,0,W,H);
             Bitmap circle=bitmap(menuAssets.get("peephole")); if(circle!=null) contain(c,circle,0,0,W,H);
             Bitmap logo=bitmap(stringField(menu,"logo_asset",menuAssets.get("logo")));
-            if(logo!=null) contain(c,logo,641, -111,1279,526);
+            float[] logoRect=menuRect("Logo");
+            if(logo!=null&&logoRect!=null) contain(c,logo,logoRect[0],logoRect[1],logoRect[2],logoRect[3]);
             else { center(c,"NO, I'M NOT A HUMAN",960,180,48,Color.WHITE,true); }
             Bitmap eyes=bitmap(menuAssets.get("eyes")), teeth=bitmap(menuAssets.get("teeth"));
             Bitmap eyeMask=bitmap(menuAssets.get("mask_eyes")),teethMask=bitmap(menuAssets.get("mask_teeth"));
@@ -587,19 +603,43 @@ public final class MainActivity extends AndroidApplication {
             if(teethMask!=null) contain(c,teethMask,889,508,1031,572);
             if(teeth!=null) contain(c,teeth,889,510,1031,563);
             if(teethLight!=null) contain(c,teethLight,889,510,1031,563);
-            Bitmap tri=bitmap(menuAssets.get("trioskaz_banner")); if(tri!=null) contain(c,tri,1292,687,1500,923);
+            float[] triRect=menuRect("Trioskaz");Bitmap tri=bitmap(menuAssets.get("trioskaz_banner")); if(tri!=null&&triRect!=null) contain(c,tri,triRect[0],triRect[1],triRect[2],triRect[3]);
             Bitmap wishlist=bitmap(menuAssets.get("wishlist_banner")); if(wishlist!=null) contain(c,wishlist,1206,847,1279,918);
-            String[] labels=roomLabels; float[] centers={520,740,960,1180,1400};
-            boolean canContinue=menu!=null&&menu.optBoolean("can_continue",false);
-            Bitmap buttonSprite=bitmap(menuAssets.get("button"));
-            for(int i=0;i<labels.length;i++) {
-                float x=centers[i], top=937.5f, bottom=1012.5f;
-                if(buttonSprite!=null) contain(c,buttonSprite,x-100,top,x+100,bottom); else fill(c,x-100,top,x+100,bottom,i==0?0xFF8A4D39:0xFF303840,8);
-                String label=labels[i]; center(c,label,x,top+48,22,i==1&&!canContinue?0xFF929292:Color.WHITE,true);
-                final int action=i;
-                hits.add(new Hit(new RectF(x-100,top,x+100,bottom),()->menuChoice(action,canContinue)));
+        }
+
+        private float[] menuRect(String objectName) {
+            JSONArray objects=menuScene.optJSONArray("objects");if(objects==null)return null;
+            for(int i=0;i<objects.length();i++) {
+                JSONObject object=objects.optJSONObject(i);if(object==null||!objectName.equals(object.optString("name","")))continue;
+                JSONObject rt=object.optJSONObject("rect_transform");if(rt==null)return null;
+                JSONArray pos=rt.optJSONArray("anchored_position"),size=rt.optJSONArray("size_delta"),anchor=rt.optJSONArray("anchor_min");
+                if(pos==null||size==null||anchor==null)return null;
+                float cx=(float)(anchor.optDouble(0,.5)*W+pos.optDouble(0,0));
+                float cy=(float)(H-anchor.optDouble(1,.5)*H-pos.optDouble(1,0));
+                float w=(float)size.optDouble(0,0),h=(float)size.optDouble(1,0);
+                return new float[]{cx-w/2f,cy-h/2f,cx+w/2f,cy+h/2f};
             }
-            button(c,"Ferramentas",1710,25,1880,88,0xCC252E36,12,()->{toolsMode=true;updateEngine();invalidate();});
+            return null;
+        }
+
+        private Typeface sourceFont(String asset) {
+            Typeface cached=uiFonts.get(asset);if(cached!=null)return cached;
+            try{Typeface loaded=Typeface.createFromAsset(getAssets(),asset);uiFonts.put(asset,loaded);return loaded;}
+            catch(Exception ignored){return Typeface.DEFAULT;}
+        }
+
+        private void drawMenuLabel(Canvas c,String label,float[] rect,float size,int color) {
+            p.setTypeface(sourceFont("ui/exported_fonts/sharedassets0_1163_VCR_OSD_Mono_Cyr.ttf"));
+            p.setTextSize(size*uiScale);p.setTextAlign(Paint.Align.CENTER);p.setColor(color);
+            Paint.FontMetrics fm=p.getFontMetrics();float baseline=(rect[1]+rect[3]-(fm.ascent+fm.descent))/2f;
+            c.drawText(label,(rect[0]+rect[2])/2f,baseline,p);p.setTextAlign(Paint.Align.LEFT);
+        }
+
+        private void drawMobileSourceButton(Canvas c,String label,float l,float t,float r,float b,int color,Runnable action) {
+            Bitmap art=bitmap(menuAssets.get("button"));
+            if(art!=null)stretch(c,art,l,t,r,b);else drawSourcePanel(c,new float[]{l,t,r,b});
+            drawMenuLabel(c,label,new float[]{l,t,r,b},17,Color.WHITE);
+            hits.add(new Hit(new RectF(l,t,r,b),action));
         }
 
         private void menuChoice(int choice, boolean canContinue) {
@@ -613,9 +653,11 @@ public final class MainActivity extends AndroidApplication {
 
         private void drawIntro(Canvas c) {
             JSONObject intro=state.optJSONObject("intro");
-            fill(c,60,800,1860,1045,0xD9000000,18);
             String subtitle=introCaption(intro);
-            if(!subtitle.isEmpty()) wrap(c,subtitle,115,860,1650,38,4,Color.WHITE,28);
+            if(!subtitle.isEmpty()) {
+                Typeface old=textFontOverride;textFontOverride=sourceFont("ui/exported_fonts/sharedassets0_1169_ChakraPetch-SemiBold.ttf");
+                wrap(c,subtitle,115,860,1650,38,4,Color.WHITE,28);textFontOverride=old;
+            }
             button(c,"DEBUG: pular intro",1450,40,1870,130,0xE8754B3B,14,MainActivity.this::debugSkipIntro);
             button(c,"Menu",80,940,250,1020,0xCC2B343D,14,()->act("menu",null,null));
             if(introPlayer==null&&!activeIntroAsset.isEmpty()) text(c,"Preparando vídeo…",280,990,20,Color.WHITE,false);
@@ -642,10 +684,9 @@ public final class MainActivity extends AndroidApplication {
             JSONObject dialogue=state.optJSONObject("dialogue");
             if(dialogue!=null){drawDialogue(c,dialogue);drawPortrait(c,state.optJSONObject("portrait"));return;}
             drawHudComponents(c,"world",true,"SaveIcon");
-            button(c,"Ⅱ",1780,25,1870,110,0xCC242B32,10,()->{pauseOpen=true;updateEngine();invalidate();});
+            drawSourceKeyControl(c,"Ⅱ",1778,23,1882,112,()->{pauseOpen=true;updateEngine();invalidate();});
             if(nearbyInteraction!=null&&!nativeBusy) {
-                String label=nearbyLabel(nearbyInteraction);
-                button(c,label,1450,845,1845,945,0xEE874C34,16,MainActivity.this::dispatchNearbyInteraction);
+                drawWorldInteractionPrompt(c,nearbyLabel(nearbyInteraction));
             }
             drawJoystick(c);drawRightLookHint(c);
         }
@@ -662,6 +703,72 @@ public final class MainActivity extends AndroidApplication {
             return "Interagir";
         }
 
+        private void drawWorldInteractionPrompt(Canvas c,String label) {
+            JSONObject background=findComponent("world","BG","ToOpen");
+            JSONObject key=findComponent("world","Key","ToOpen");
+            JSONObject open=findComponent("world","Open","ToOpen");
+            JSONObject cross=findComponent("world","Cross","ToOpen");
+            float[] crossRect=uiBounds(cross);if(crossRect!=null)drawUiImage(c,cross,crossRect);
+            float[] panel=uiBounds(background),keyRect=uiBounds(key),textRect=uiBounds(open);
+            if(panel==null)panel=new float[]{806.4f,590.7f,1113.6f,725.3f};
+            if(background!=null)drawUiImage(c,background,panel);else drawSourcePanel(c,panel);
+            if(keyRect!=null) {
+                if(key!=null)drawUiImage(c,key,keyRect);
+                drawSourceText(c,"TOQUE",keyRect,16,Color.WHITE,sourceFont("ui/exported_fonts/sharedassets0_1169_ChakraPetch-SemiBold.ttf"));
+            }
+            if(textRect==null)textRect=new float[]{905.7f,653.8f,1113.6f,725.3f};
+            drawSourceText(c,label,textRect,18,uiColor(open,null),sourceFont("ui/exported_fonts/sharedassets0_1169_ChakraPetch-SemiBold.ttf"));
+            hits.add(new Hit(new RectF(panel[0],panel[1],panel[2],panel[3]),MainActivity.this::dispatchNearbyInteraction));
+        }
+
+        private void drawSourceKeyControl(Canvas c,String label,float l,float t,float r,float b,Runnable action) {
+            JSONObject key=findComponent("world","KeyImage","ControlView");
+            Bitmap image=bitmap(uiAsset(key));
+            if(image!=null)contain(c,image,l,t,r,b);else drawSourcePanel(c,new float[]{l,t,r,b});
+            drawSourceText(c,label,new float[]{l,t,r,b},31,Color.WHITE,sourceFont("ui/exported_fonts/sharedassets0_1169_ChakraPetch-SemiBold.ttf"));
+            hits.add(new Hit(new RectF(l,t,r,b),action));
+        }
+
+        private void drawSourcePanel(Canvas c,float[] rect) {
+            p.setColor(0xCC0B1214);p.setStyle(Paint.Style.FILL);c.drawRect(rect[0],rect[1],rect[2],rect[3],p);
+            p.setColor(0xAA7D8C81);p.setStyle(Paint.Style.STROKE);p.setStrokeWidth(2);c.drawRect(rect[0],rect[1],rect[2],rect[3],p);p.setStyle(Paint.Style.FILL);p.setColor(Color.WHITE);
+        }
+
+        private void drawSourceText(Canvas c,String value,float[] rect,float size,int color,Typeface font) {
+            p.setTypeface(font==null?Typeface.DEFAULT:font);p.setTextSize(size*uiScale);p.setColor(color);p.setTextAlign(Paint.Align.CENTER);
+            Paint.FontMetrics fm=p.getFontMetrics();float baseline=(rect[1]+rect[3]-(fm.ascent+fm.descent))/2f;
+            c.save();c.clipRect(rect[0],rect[1],rect[2],rect[3]);c.drawText(fitText(value,rect[2]-rect[0]-12,size*uiScale,font), (rect[0]+rect[2])/2f,baseline,p);c.restore();p.setTextAlign(Paint.Align.LEFT);
+        }
+
+        private void drawSourceTextLeft(Canvas c,String value,float[] rect,float size,int color,Typeface font) {
+            p.setTypeface(font==null?Typeface.DEFAULT:font);p.setTextSize(size*uiScale);p.setColor(color);p.setTextAlign(Paint.Align.LEFT);
+            Paint.FontMetrics fm=p.getFontMetrics();float baseline=(rect[1]+rect[3]-(fm.ascent+fm.descent))/2f;
+            c.save();c.clipRect(rect[0],rect[1],rect[2],rect[3]);c.drawText(fitText(value,rect[2]-rect[0]-16,size*uiScale,font),rect[0]+8,baseline,p);c.restore();
+        }
+
+        private String fitText(String value,float maxWidth,float size,Typeface font) {
+            p.setTypeface(font==null?Typeface.DEFAULT:font);p.setTextSize(size);String text=value==null?"":value;
+            if(p.measureText(text)<=maxWidth)return text;
+            while(!text.isEmpty()&&p.measureText(text+"…")>maxWidth)text=text.substring(0,text.length()-1);
+            return text+"…";
+        }
+
+        private JSONObject findComponent(String scene,String name,String ancestor) {
+            JSONArray items=sceneComponents(scene);if(items==null)return null;
+            for(int i=0;i<items.length();i++) {
+                JSONObject item=items.optJSONObject(i);if(item==null||!name.equals(uiName(item)))continue;
+                JSONArray h=item.optJSONArray("hierarchy");if(h==null)continue;
+                for(int j=0;j<h.length();j++)if(ancestor.equals(h.optString(j,"")))return item;
+            }
+            return null;
+        }
+
+        private void drawUiImage(Canvas c,JSONObject item,float[] rect) {
+            Bitmap image=bitmap(uiAsset(item));if(image==null)return;
+            p.setColor(Color.WHITE);p.setAlpha(255);p.setColorFilter(null);
+            c.drawBitmap(image,null,new RectF(rect[0],rect[1],rect[2],rect[3]),p);
+        }
+
         private void drawRoomHud(Canvas c) {
             JSONObject dialogue=state.optJSONObject("dialogue");
             if(dialogue!=null){drawDialogue(c,dialogue);drawPortrait(c,state.optJSONObject("portrait"));return;}
@@ -672,12 +779,18 @@ public final class MainActivity extends AndroidApplication {
         }
 
         private void drawSettingsPanel(Canvas c) {
-            fill(c,0,0,W,H,0xA9000000,0);fill(c,620,235,1300,850,0xF0141A20,20);
-            center(c,"OPÇÕES",960,330,34,Color.WHITE,true);
-            button(c,uiScale>1f?"Interface maior ✓":"Interface maior",700,395,1220,475,0xFF46545C,12,()->{uiScale=1.15f;invalidate();});
-            button(c,uiScale==1f?"Interface padrão ✓":"Interface padrão",700,500,1220,580,0xFF46545C,12,()->{uiScale=1f;invalidate();});
-            button(c,muteIntro?"Som da introdução: desligado":"Som da introdução: ligado",700,605,1220,685,0xFF46545C,12,()->{muteIntro=!muteIntro;if(introPlayer!=null)introPlayer.setVolume(muteIntro?0f:1f,muteIntro?0f:1f);invalidate();});
-            button(c,"Fechar",700,710,1220,790,0xFF794839,12,()->{settingsOpen=false;updateEngine();invalidate();});
+            boolean mainMenu="menu".equals(state.optString("phase",""));
+            if(mainMenu)drawMenuBackdrop(c);
+            else {
+                JSONObject bg=findComponent("pause","BG","Pause");float[] rect=uiBounds(bg);
+                if(bg!=null&&rect!=null)drawUiImage(c,bg,rect);else c.drawColor(0xFF101414);
+            }
+            drawMenuLabel(c,"OPÇÕES DA PRÉVIA",new float[]{610,220,1310,310},30,Color.WHITE);
+            button(c,uiScale>1f?"Interface ampliada":"Ampliar interface",680,350,1240,435,0xFFFFFFFF,0,()->{uiScale=1.15f;invalidate();});
+            button(c,uiScale==1f?"Interface padrão":"Usar interface padrão",680,465,1240,550,0xFFFFFFFF,0,()->{uiScale=1f;invalidate();});
+            button(c,muteIntro?"Som da introdução desligado":"Som da introdução ligado",680,580,1240,665,0xFFFFFFFF,0,()->{muteIntro=!muteIntro;if(introPlayer!=null)introPlayer.setVolume(muteIntro?0f:1f,muteIntro?0f:1f);invalidate();});
+            button(c,"Diagnóstico",680,695,1240,780,0xFFFFFFFF,0,MainActivity.this::showRendererDiagnostic);
+            button(c,"Voltar",680,810,1240,895,0xFFFFFFFF,0,()->{settingsOpen=false;updateEngine();invalidate();});
         }
 
         private void drawPausePanel(Canvas c) {
@@ -779,6 +892,7 @@ public final class MainActivity extends AndroidApplication {
         private String uiName(JSONObject item) { return item.optString("game_object_name",item.optString("name","")); }
 
         private String uiAsset(JSONObject item) {
+            if(item==null)return "";
             String path=item.isNull("asset")?"":item.optString("asset","");if(!path.isEmpty()&&!("null".equals(path)))return path;
             JSONObject image=item.optJSONObject("image");String key=image==null||image.isNull("sprite_key")?"":image.optString("sprite_key","");
             if(key.isEmpty())return "";
@@ -859,24 +973,42 @@ public final class MainActivity extends AndroidApplication {
         private void drawDialogueContent(Canvas c,JSONObject d) {
             if(d==null)return;
             String kind=d.optString("type","line"),name=d.optString("character",state.optString("character",""));
+            String displayedLine=translatedText(d);
+            String speakerToken=dialogueSpeakerPrefix(displayedLine);
+            if(!speakerToken.isEmpty())name=speakerToken;
+            name="Neighbour".equals(name)?"Vizinho":"Phone".equals(name)?"Telefone":name;
+            displayedLine=stripDialogueSpeaker(displayedLine);
             boolean options="options".equals(kind);String plateName=options?"DialogContent2":"DialogContent";
             drawHudComponents(c,"dialogue",false,plateName);
             JSONObject textComponent=findDialogueText(options);float[] textRect=uiBounds(textComponent);
+            JSONObject speakerComponent=findDialogueSpeaker(options);float[] speakerRect=uiBounds(speakerComponent);
             if(textRect==null)textRect=new float[]{1010,249,1678,569};
-            float left=textRect[0]+22,right=textRect[2]-22,top=textRect[1]+12,bottom=textRect[3]-12;
-            if(!name.isEmpty())text(c,name.toUpperCase(),left,top+24,23,0xFFE0AE79,true);
+            if(speakerRect==null)speakerRect=textRect;
+            float left=textRect[0]+8,right=textRect[2]-8,top=textRect[1]+8,bottom=textRect[3]-8;
+            Typeface sourceDialogueFont=sourceFont("ui/exported_fonts/sharedassets0_1169_ChakraPetch-SemiBold.ttf");
+            if(!name.isEmpty())drawSourceTextLeft(c,name.toUpperCase(),new float[]{speakerRect[0]+8,speakerRect[1]+4,speakerRect[2]-8,speakerRect[1]+42},24,Color.WHITE,sourceDialogueFont);
             if("command".equals(kind)) {
-                text(c,"Comando ainda não integrado: "+d.optString("command",""),left,top+86,27,0xFFFFC685,true);
-                text(c,"A execução permanece pendente.",left,top+128,23,Color.WHITE,false);return;
+                drawSourceTextLeft(c,"Comando ainda não integrado: "+d.optString("command",""),new float[]{left,top+48,right,bottom-46},25,0xFFFFC685,sourceDialogueFont);
+                drawSourceTextLeft(c,"A execução permanece pendente.",new float[]{left,top+88,right,bottom-8},21,Color.WHITE,sourceDialogueFont);return;
             }
             if(options){showOptionsCanvas(c,d.optJSONArray("options"),new float[]{left,top+42,right,bottom});return;}
             if("error".equals(kind)||"stopped".equals(kind)) {
-                wrap(c,d.optString("message",d.optString("error","")),left,top+78,right-left,36,5,Color.WHITE,27);return;
+                wrap(c,d.optString("message",d.optString("error","")),left,top+48,right-left,34,7,Color.WHITE,27);return;
             }
-            float bodyTop=top+66;
-            wrap(c,translatedText(d),left,bodyTop,right-left,36,4,Color.WHITE,30);
-            hits.add(new Hit(new RectF(left,bodyTop-22,right,bottom-58),()->showFullDialogue(d)));
-            button(c,"Avançar",right-180,bottom-54,right,bottom-6,0xAA915B3E,10,()->act("advance",null,null));
+            float bodyTop=top+42;
+            wrap(c,displayedLine,left,bodyTop,right-left,34,7,Color.WHITE,28);
+            hits.add(new Hit(new RectF(textRect[0],textRect[1],textRect[2],textRect[3]),()->act("advance",null,null)));
+        }
+
+        private String dialogueSpeakerPrefix(String value) {
+            if(value.startsWith("Neighbour:"))return "Neighbour";
+            if(value.startsWith("Phone:"))return "Phone";
+            return "";
+        }
+
+        private String stripDialogueSpeaker(String value) {
+            String speaker=dialogueSpeakerPrefix(value);
+            return speaker.isEmpty()?value:value.substring(speaker.length()+1).trim();
         }
 
         private JSONObject findDialogueText(boolean options) {
@@ -889,17 +1021,46 @@ public final class MainActivity extends AndroidApplication {
             return null;
         }
 
+        private JSONObject findDialogueSpeaker(boolean options) {
+            JSONArray items=sceneComponents("dialogue");if(items==null)return null;
+            for(int i=0;i<items.length();i++) {
+                JSONObject item=items.optJSONObject(i);if(item==null||!"CharName".equals(uiName(item)))continue;
+                JSONArray h=item.optJSONArray("hierarchy");if(h==null)continue;
+                for(int j=0;j<h.length();j++)if((options&&"Options List View".equals(h.optString(j,"")))||(!options&&"Line View".equals(h.optString(j,""))))return item;
+            }
+            return null;
+        }
+
         private void showOptionsCanvas(Canvas c,JSONArray options,float[] area) {
             if(options==null)return;
-            int rows=Math.min(4,options.length());float rowHeight=Math.min(52f,(area[3]-area[1]-10f)/Math.max(1,rows));
+            int rows=options.length();if(rows==0)return;float rowHeight=(area[3]-area[1])/rows;
+            Typeface optionFont=sourceFont("ui/exported_fonts/sharedassets0_1169_ChakraPetch-SemiBold.ttf");
             for(int i=0;i<rows;i++) {
                 JSONObject option=options.optJSONObject(i); final int index=i;
                 String label=option==null?"Opção "+(i+1):optionText(option,i);
                 boolean enabled=option==null||option.optBoolean("enabled",true);
-                float y=area[1]+i*rowHeight;
-                button(c,label,area[0],y,area[2],y+rowHeight-5,enabled?0x77465760:0x7731373D,8,()->{if(enabled)act("choose","index",index);});
+                float[] row={area[0],area[1]+i*rowHeight,area[2],area[1]+(i+1)*rowHeight};
+                float size=Math.max(18f,Math.min(34f,rowHeight*.64f));
+                drawOptionText(c,label,row,size,enabled?Color.WHITE:0xFF888888,optionFont);
+                hits.add(new Hit(new RectF(row[0],row[1],row[2],row[3]),()->{if(enabled)act("choose","index",index);}));
             }
-            if(options.length()>4) button(c,"Mais opções",area[2]-190,area[3]-48,area[2],area[3],0xAA46545C,8,()->showOptionsDialog(options));
+        }
+
+        private void drawOptionText(Canvas c,String label,float[] row,float size,int color,Typeface font) {
+            TextPaint paint=new TextPaint(Paint.ANTI_ALIAS_FLAG);
+            paint.setTypeface(font);paint.setColor(color);
+            int width=Math.max(1,(int)(row[2]-row[0]-16));float height=row[3]-row[1]-8;
+            StaticLayout layout;
+            do {
+                paint.setTextSize(size*uiScale);
+                layout=StaticLayout.Builder.obtain(label,0,label.length(),paint,width)
+                    .setAlignment(Layout.Alignment.ALIGN_NORMAL).setIncludePad(false).build();
+                if(layout.getHeight()<=height||size<=16)break;
+                size-=1;
+            } while(true);
+            c.save();c.clipRect(row[0],row[1],row[2],row[3]);
+            c.translate(row[0]+8,row[1]+Math.max(4,(row[3]-row[1]-layout.getHeight())/2));
+            layout.draw(c);c.restore();
         }
 
         private void drawPortrait(Canvas c,JSONObject portrait) {
@@ -1051,7 +1212,14 @@ public final class MainActivity extends AndroidApplication {
             return frames.optString(i,"");
         }
 
-        private void button(Canvas c,String label,float l,float t,float r,float b,int color,int radius,Runnable action){fill(c,l,t,r,b,color,radius);center(c,label,(l+r)/2,(t+b)/2+8,24,Color.WHITE,true);hits.add(new Hit(new RectF(l,t,r,b),action));}
+        private void button(Canvas c,String label,float l,float t,float r,float b,int color,int radius,Runnable action){
+            float[] rect={l,t,r,b};Bitmap art=bitmap(menuAssets.get("button"));
+            if(art!=null&&((r-l)/(b-t))>1.3f){int alpha=(color>>>24)&255;p.setAlpha(alpha);stretch(c,art,l,t,r,b);p.setAlpha(255);}
+            else if(art==null)drawSourcePanel(c,rect);
+            Typeface old=textFontOverride;textFontOverride=sourceFont("ui/exported_fonts/sharedassets0_1169_ChakraPetch-SemiBold.ttf");
+            center(c,label,(l+r)/2,(t+b)/2+8,Math.min(24,(b-t)*.38f),Color.WHITE,false);textFontOverride=old;
+            hits.add(new Hit(new RectF(l,t,r,b),action));
+        }
         private void fill(Canvas c,float l,float t,float r,float b,int color,float radius){p.setColor(color);p.setStyle(Paint.Style.FILL);c.drawRoundRect(l,t,r,b,radius,radius,p);}
         private void text(Canvas c,String s,float x,float y,float size,int color,boolean bold){p.setColor(color);p.setTextSize(size*uiScale);p.setTypeface(textFontOverride!=null?textFontOverride:(bold?Typeface.DEFAULT_BOLD:Typeface.DEFAULT));c.drawText(s==null?"":s,x,y,p);}
         private void center(Canvas c,String s,float x,float y,float size,int color,boolean bold){p.setTextSize(size*uiScale);p.setTypeface(textFontOverride!=null?textFontOverride:(bold?Typeface.DEFAULT_BOLD:Typeface.DEFAULT));text(c,s,x-p.measureText(s==null?"":s)/2,y,size,color,bold);}
