@@ -1,0 +1,29 @@
+{
+  "cpu_math_passed": true,
+  "cpu_source_geometry_passed": true,
+  "actual_ray_targets_tested": 7,
+  "source_spawn_forward_distance_before_collision_m": 2.379,
+  "stopped_at_source_geometry": true,
+  "graphics_execution_tested": true,
+  "graphics_backend": "LWJGL EGL pbuffer / Mesa OpenGL 4.5 Compatibility software renderer",
+  "source_camera_rendered": true,
+  "yaw_90_rendered": true,
+  "framebuffer_png_flip_corrected": true,
+  "material_uv_conversion": "Vgdx=1-(Vunity*scaleV+offsetV)",
+  "mag_filter_mipmaps_rejected": true,
+  "source_coordinate_conversion": "Unity LH reflected across Z with reversed triangle winding",
+  "android_device_execution_tested": false,
+  "full_campaign_implemented": false,
+  "limitations": [
+    "Rendering/physics adapters approximate original shaders, lightmaps and ECM2 controller.",
+    "Movement speed 2.5 m/s is a mobile fallback; original serialized speed remains unresolved.",
+    "Software Mesa graphics validation does not establish Android performance or device execution."
+  ],
+  "source_sha256": {
+    "reconstruction/android-current/app/src/main/java/org/reconstruction/current/RoomEngine.java": "c355e132c92a646f5d237abc5f90939eeff9c0c5ccafcc25c130b14f29ddb3ff",
+    "reconstruction/android-current/app/src/main/java/org/reconstruction/current/WorldRenderer.java": "d9078635b4d0d935a4da328994c6784c458f9b7696265ff1934f6d4036452e60",
+    "tools/android-current/qa/WorldMathTest.java": "773b5f36a304c1bdf4cec2a4488b35b601f078f3011602464b8dd09083107188",
+    "tools/android-current/qa/WorldGeometryTest.java": "23fa6ce94cd0973455efeb162728c0785ff9d4d25fcf1e040670217067ed30bc",
+    "tools/android-current/qa/WorldPreviewEGL.java": "333ad071c8b13d4c6f155a899a6661a889d8a142b96b2af0d9276cd5e0755434"
+  }
+}

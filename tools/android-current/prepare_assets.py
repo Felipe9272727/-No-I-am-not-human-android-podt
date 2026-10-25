@@ -256,9 +256,12 @@ def stage_world_assets(destination: Path) -> dict:
     if len(meshes) != 100 or len(textures) != 42:
         raise RuntimeError(f"expected 100 world meshes and 42 textures, got {len(meshes)} and {len(textures)}")
     world_out = destination / "world"
+    if world_out.exists():
+        shutil.rmtree(world_out)
+    world_out.mkdir(parents=True, exist_ok=True)
     mesh_bytes = 0
     for row in meshes:
-        relative = Path(row.get("asset", row.get("path", "")))
+        relative = Path(row.get("mesh_asset", row.get("asset", row.get("path", ""))))
         if relative.is_absolute() or ".." in relative.parts or not relative.parts:
             raise RuntimeError(f"unsafe world mesh path: {relative}")
         source = WORLD_SOURCE / relative
@@ -324,7 +327,8 @@ def stage_ui_assets(destination: Path) -> dict:
     if not source_manifest.is_file():
         raise FileNotFoundError(f"game UI export is not ready: {source_manifest}")
     manifest = read_json(source_manifest)
-    image_rows = manifest.get("sprites", manifest.get("images", []))
+    image_table = manifest.get("sprites", manifest.get("images", []))
+    image_rows = list(image_table.values()) if isinstance(image_table, dict) else image_table
     font_rows = manifest.get("fonts", [])
     if len(image_rows) != 119 or len(font_rows) != 5:
         raise RuntimeError(f"expected 119 original UI sprites and 5 fonts, got {len(image_rows)} and {len(font_rows)}")
@@ -332,9 +336,7 @@ def stage_ui_assets(destination: Path) -> dict:
         rel = Path(row.get("output", row.get("path", row.get("asset", ""))))
         if rel.is_absolute() or ".." in rel.parts or not rel.parts:
             raise RuntimeError(f"unsafe UI image path: {rel}")
-        source = UI_SOURCE / "exported_images" / rel.name
-        if not source.is_file():
-            source = UI_SOURCE / rel
+        source = UI_SOURCE / rel
         target_rel = Path("ui/exported_images") / source.name
         if not source.is_file():
             raise FileNotFoundError(source)
@@ -348,11 +350,10 @@ def stage_ui_assets(destination: Path) -> dict:
         row["asset"] = target_rel.as_posix()
         row["android_asset"] = target_rel.as_posix()
     for row in font_rows:
-        rel = Path(row.get("output", row.get("path", row.get("asset", ""))))
-        source = UI_SOURCE / "exported_fonts" / rel.name
-        if not source.is_file():
-            source = UI_SOURCE / rel
-        expected = row.get("sha256") or row.get("exported_sha256")
+        embedded = row.get("embedded_ttf") or {}
+        rel = Path(row.get("output", row.get("path", row.get("asset", embedded.get("path", "")))))
+        source = UI_SOURCE / rel
+        expected = row.get("sha256") or row.get("exported_sha256") or embedded.get("sha256")
         digest = sha256_file(source)
         if expected and digest != expected:
             raise RuntimeError(f"UI font hash mismatch: {source.name}")
@@ -360,8 +361,23 @@ def stage_ui_assets(destination: Path) -> dict:
         target = destination / target_rel
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(source, target)
-        row["asset"] = target_rel.as_posix()
-        row["android_asset"] = target_rel.as_posix()
+        embedded["asset"] = target_rel.as_posix()
+        embedded["android_asset"] = target_rel.as_posix()
+        atlas = row.get("atlas")
+        if atlas and atlas.get("path"):
+            atlas_rel = Path(atlas["path"])
+            atlas_source = UI_SOURCE / atlas_rel
+            atlas_target_rel = Path("ui/exported_fonts") / atlas_rel.name
+            if not atlas_source.is_file():
+                raise FileNotFoundError(atlas_source)
+            if sha256_file(atlas_source) != atlas.get("sha256"):
+                raise RuntimeError(f"UI font atlas hash mismatch: {atlas_source.name}")
+            atlas_target = destination / atlas_target_rel
+            atlas_target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(atlas_source, atlas_target)
+            atlas["source_export_path"] = atlas_rel.as_posix()
+            atlas["path"] = atlas_target_rel.as_posix()
+            atlas["android_asset"] = atlas_target_rel.as_posix()
     minified_json(source_manifest, destination / "presentation/ui/ui_manifest.json", manifest)
     return {"manifest": "presentation/ui/ui_manifest.json", "sprites": len(image_rows), "fonts": len(font_rows),
             "source_sha256": sha256_file(source_manifest)}

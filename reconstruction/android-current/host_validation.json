@@ -1,0 +1,45 @@
+{
+  "original_game_executed": false,
+  "own_host_test_executed": true,
+  "sanitizers": [
+    "AddressSanitizer",
+    "UndefinedBehaviorSanitizer"
+  ],
+  "leak_sanitizer_enabled": false,
+  "leak_sanitizer_reason": "Environment ptrace/proc task access failure; no leak validation claimed",
+  "test_binary": "build-host/host-test-asan",
+  "execution_command": "ASAN_OPTIONS=detect_leaks=0:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1 reconstruction/android-current/build-host/host-test-asan reconstruction",
+  "exit_code": 0,
+  "passed": true,
+  "output": "Current Android host: menu, intro captions, first Neighbour admission/talk, legacy tools routes, and in-memory snapshots passed",
+  "cases": [
+    "initial menu; day 0 night and energy 1",
+    "five original Intro subtitle intervals and completion gate",
+    "two paired original Neighbour entrance and first in-house question routes",
+    "admission updates occupants and visible room character",
+    "fridge activity state across command and snapshot restore",
+    "15 source-order phone entries initialized with production fixed values and host RNG",
+    "generated Neighbour phone number lookup and subscriber unlock",
+    "phone number, unlock, RNG, occupants, scene and Yarn snapshot restoration",
+    "original Fatman reward without duplicate effect after restore",
+    "original Firefighter refusal",
+    "original Alkonost energy choice",
+    "character inspection and delayed Mother pose",
+    "world/room mode defaults and active-dialogue navigation guards",
+    "six source room RaycastTarget collider mappings and Entrance ray collider2432",
+    "source-eye camera pose validation and joint save/load revision"
+  ],
+  "source_sha256": {
+    "reconstruction/android-current/native/current_game.cpp": "a6586ebbedaf6ef0c665a51a6aa05b99d2759a8a35fc5e592c2f3c30aee1bcc0",
+    "reconstruction/android-current/native/host_test.cpp": "b89fab71b906801480ee1da084417b7cce0010d02dcda490a36a97616683b262"
+  },
+  "full_campaign_implemented": false,
+  "android_device_execution_tested": false,
+  "limitations": [
+    "Only the bounded opening and first Neighbour interaction are wired.",
+    "Save state is in process memory only.",
+    "Phone close-up and pin UI are not implemented.",
+    "Original complete startup roster and any additional automatic first-scene Yarn event remain unresolved."
+  ],
+  "world_navigation_tested": true
+}

@@ -1,0 +1,13 @@
+{
+  "file_name": "NINAH-Recursos-3D-UI.zip",
+  "bytes": 121008072,
+  "sha256": "ce0245d3206a8119a8883158fe99290c15b95ccfda03df848c4b9428809286dc",
+  "files": 269,
+  "source_bytes": 138524399,
+  "contains_original_programs": false,
+  "extract_at_source_root": true,
+  "metadata_included": [
+    "world_manifest.json",
+    "ui_manifest.json"
+  ]
+}

@@ -44,6 +44,9 @@ Json admit_neighbour(Json state, std::size_t entrance_branch) {
   auto blocked_exit = call({{"action", "enter_world"}});
   assert(!blocked_exit.at("error").is_null());
   assert(blocked_exit.at("view_mode") == "room" && blocked_exit.at("dialogue") == first_line);
+  auto blocked_room = call({{"action", "enter_room"}, {"room", 0}});
+  assert(!blocked_room.at("error").is_null());
+  assert(blocked_room.at("view_mode") == "room" && blocked_room.at("room") == 5);
   state = act({{"action", "save"}});
   state = act({{"action", "advance"}});
   assert(state.at("dialogue").at("type") == "options");

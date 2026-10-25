@@ -1,0 +1,29 @@
+{
+  "source_execution": "No original game executable, DLL, or installer was run.",
+  "nodes": 3255,
+  "instructions": 56585,
+  "initial_values": 276,
+  "distinct_line_and_option_ids": 15693,
+  "localization": {
+    "english_en_": {
+      "mapped_dialogue_and_option_ids": 15693,
+      "missing": 0,
+      "duplicate_records": 16100
+    },
+    "portuguese_brazil_pt-br_": {
+      "mapped_dialogue_and_option_ids": 15693,
+      "missing": 0,
+      "duplicate_records": 16100
+    }
+  },
+  "current_cpp_rust_validation": "native-game/VALIDATION.json",
+  "current_android_test_apk_report": "android-current/port_validation_report.json",
+  "current_test_host": "android-current/host_validation.json",
+  "legacy_apk_validation": "mobile-runtime/LEGACY_VALIDATION.json",
+  "full_campaign_implemented": false,
+  "android_device_execution_tested": false,
+  "previous_android_core_apk_report": "android-current/validation_report.json",
+  "opening_source_evidence": "reverse-bootstrap/intro_evidence.json",
+  "first_night_source_evidence": "reverse-bootstrap/first-night-continuation.json",
+  "image_layout_source_evidence": "reverse-bootstrap/image_layout_evidence.json"
+}

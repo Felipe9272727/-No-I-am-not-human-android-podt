@@ -14,7 +14,9 @@ World geometry, source transforms, materials, colliders, lights, and named door 
 `reconstruction/reverse-world/world_manifest.json`. The app uses the source Unity left-handed,
 Y-up coordinates and converts to LibGDX's right-handed system by reflecting Z for vertices,
 normals, and transforms and reversing triangle winding once. Mesh data is split at triangle
-boundaries into chunks that fit LibGDX's 16-bit indices. Material texture UV tiling, offsets,
+boundaries into chunks that fit LibGDX's 16-bit indices. Material texture UV tiling and offsets
+follow the static export, with V inverted once because UnityPy exports Unity's bottom-origin
+texture pixels to top-origin PNGs while LibGDX uploads Pixmap rows directly to OpenGL. Texture
 wrap/filter mode, tint, transparency, and culling follow the static export. Active source lights
 and ambient color are used as a static approximation; dynamic shadowing and runtime light changes
 are not recovered.
@@ -43,3 +45,9 @@ thread after the batch completes. The room close-up preserves its 1920×1080 Scr
 composition, per-room FOV/distance factors, RectTransform size/pivot/order, native pose scale, and
 serialized `Image.preserveAspect=true` behavior verified for all seven backgrounds and 61 character
 images.
+
+`tools/android-current/libgdx/WorldMathTest.java` checks joystick axes, yaw, and pitch limits
+without GL. `WorldGeometryTest.java` parses the staged manifest and mesh colliders on the CPU,
+checks all seven source ray colliders and action mappings, then walks from the Main Camera pose
+until the entrance collider stops movement. `WorldPreview.java [output.png] [walkSeconds] [forward]`
+is the desktop GL screenshot harness when an X11/EGL Mesa display is available.

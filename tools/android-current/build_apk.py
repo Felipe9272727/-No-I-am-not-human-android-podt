@@ -14,6 +14,7 @@ import subprocess
 import sys
 import tempfile
 import xml.etree.ElementTree as ET
+import urllib.request
 import zipfile
 from pathlib import Path
 
@@ -55,6 +56,26 @@ def run(command: list[str], *, cwd: Path | None = None, env=None, capture=False)
         stderr=subprocess.STDOUT if capture else None,
     )
     return result.stdout or "" if capture else ""
+
+
+def ensure_local_ecj() -> Path:
+    """Restore the pinned compiler fallback from official Maven Central."""
+    compiler_dir = ROOT / "tools/android-current/java"
+    compiler_dir.mkdir(parents=True, exist_ok=True)
+    artifact = compiler_dir / "ecj-3.38.0.jar"
+    expected_sha1 = "86b2e4ab1d6aef91cb21f4d2ec364afb75d05b2c"
+    if not artifact.is_file():
+        url = "https://repo.maven.apache.org/maven2/org/eclipse/jdt/ecj/3.38.0/ecj-3.38.0.jar"
+        temporary = artifact.with_suffix(".jar.download")
+        with urllib.request.urlopen(url, timeout=60) as response, temporary.open("wb") as output:
+            shutil.copyfileobj(response, output)
+        if hashlib.sha1(temporary.read_bytes()).hexdigest() != expected_sha1:
+            temporary.unlink(missing_ok=True)
+            raise RuntimeError("pinned ECJ download failed SHA-1 verification")
+        temporary.replace(artifact)
+    if hashlib.sha1(artifact.read_bytes()).hexdigest() != expected_sha1:
+        raise RuntimeError("pinned ECJ compiler SHA-1 mismatch")
+    return artifact
 
 
 def choose_sdk() -> Path:
@@ -334,14 +355,33 @@ def compile_java(build_tools: Path, android_jar: Path, work: Path,
     classes = work / "classes"
     classes.mkdir(parents=True, exist_ok=True)
     javac = os.environ.get("JAVAC") or shutil.which("javac")
-    classpath = os.pathsep.join(map(str, [android_jar, *engine_jars]))
-    if javac:
-        run([
-            javac, "-source", "17", "-target", "17", "-classpath", classpath,
-            "-d", classes, *java_files,
-        ], cwd=ROOT)
+    using_ecj = False
+    if not javac:
+        local_ecj = ROOT / "tools/android-current/java/javac"
+        if local_ecj.is_file():
+            javac = str(local_ecj)
+            using_ecj = True
+    elif Path(javac).resolve() == (ROOT / "tools/android-current/java/javac").resolve():
+        using_ecj = True
+    if using_ecj:
+        ensure_local_ecj()
+        # ECJ resolves Java 17 core classes from the host runtime. Keep Android
+        # framework APIs on its class path, but strip Android's java.* stubs so
+        # ECJ does not see duplicate java.base types (and can resolve lambdas).
+        filtered_android = work / "android-api-classpath.jar"
+        with zipfile.ZipFile(android_jar) as source, zipfile.ZipFile(filtered_android, "w", zipfile.ZIP_DEFLATED) as filtered:
+            for member in source.infolist():
+                if not member.filename.startswith("java/"):
+                    filtered.writestr(member, source.read(member.filename))
+        classpath_jars = [filtered_android, *engine_jars]
     else:
-        raise FileNotFoundError("javac 17 is required for this build")
+        classpath_jars = [android_jar, *engine_jars]
+    classpath = os.pathsep.join(map(str, classpath_jars))
+    if javac:
+        compiler_options = ["-source", "17", "-target", "17"]
+        run([javac, *compiler_options, "-classpath", classpath, "-d", classes, *java_files], cwd=ROOT)
+    else:
+        raise FileNotFoundError("a Java 17 compiler (javac or the pinned Eclipse ECJ wrapper) is required")
     classes_jar = work / "classes.jar"
     with zipfile.ZipFile(classes_jar, "w", compression=zipfile.ZIP_DEFLATED) as jar:
         for file in classes.rglob("*.class"):
@@ -401,6 +441,7 @@ def collect_report(output: Path, build_tools: Path, source_modules: list[str],
     badging = run([build_tools / "aapt", "dump", "badging", output], capture=True)
     package_match = re.search(r"^package: name='([^']+)'", badging, re.MULTILINE)
     activity_match = re.search(r"^launchable-activity: name='([^']+)'", badging, re.MULTILINE)
+    version_match = re.search(r"^package:.*versionCode='(\d+)'", badging, re.MULTILINE)
     package_name = package_match.group(1) if package_match else None
     launch_activity = activity_match.group(1) if activity_match else None
     manifest_root = ET.parse(ANDROID_APP / "AndroidManifest.xml").getroot()
@@ -455,14 +496,24 @@ def collect_report(output: Path, build_tools: Path, source_modules: list[str],
         if world_texture_bytes > 64 * 1024 * 1024:
             raise RuntimeError(f"APK world texture budget exceeds 64 MiB: {world_texture_bytes}")
         ui_manifest = json.loads(apk.read("assets/presentation/ui/ui_manifest.json"))
-        ui_sprites = ui_manifest.get("sprites", ui_manifest.get("images", []))
+        ui_sprite_table = ui_manifest.get("sprites", ui_manifest.get("images", []))
+        ui_sprites = list(ui_sprite_table.values()) if isinstance(ui_sprite_table, dict) else ui_sprite_table
         ui_fonts = ui_manifest.get("fonts", [])
         if len(ui_sprites) != 119 or len(ui_fonts) != 5:
             raise RuntimeError(f"original game UI incomplete: {len(ui_sprites)} sprites, {len(ui_fonts)} fonts")
-        for row in [*ui_sprites, *ui_fonts]:
+        for row in ui_sprites:
             asset = row.get("android_asset", row.get("asset"))
             if not asset or f"assets/{asset}" not in names:
                 raise RuntimeError(f"APK missing original UI asset: {asset}")
+        for row in ui_fonts:
+            font = row.get("embedded_ttf") or row
+            asset = font.get("android_asset", font.get("asset"))
+            if not asset or f"assets/{asset}" not in names:
+                raise RuntimeError(f"APK missing original UI font: {asset}")
+            atlas = row.get("atlas") or {}
+            atlas_asset = atlas.get("android_asset", atlas.get("path"))
+            if atlas_asset and f"assets/{atlas_asset}" not in names:
+                raise RuntimeError(f"APK missing original UI font atlas: {atlas_asset}")
         license_members = sorted(name for name in names if name.startswith("assets/licenses/") and not name.endswith("/"))
         if len(license_members) < 3:
             raise RuntimeError(f"expected bundled third-party notices and licenses, found {license_members}")
@@ -516,6 +567,8 @@ def collect_report(output: Path, build_tools: Path, source_modules: list[str],
         raise RuntimeError(f"unexpected Android package name: {package_name!r}")
     if launch_activity != JNI_ACTIVITY:
         raise RuntimeError(f"unexpected launch activity: {launch_activity!r}")
+    if version_match is None or int(version_match.group(1)) != 2:
+        raise RuntimeError(f"unexpected Android version code: {version_match.group(1) if version_match else None}")
     hasher = hashlib.sha256()
     with output.open("rb") as stream:
         for block in iter(lambda: stream.read(1024 * 1024), b""):
@@ -535,6 +588,7 @@ def collect_report(output: Path, build_tools: Path, source_modules: list[str],
         "artifact": str(output.relative_to(ROOT)) if output.is_relative_to(ROOT) else str(output),
         "sha256": digest, "bytes": apk_size, "zip_crc_check": "passed",
         "package_name": package_name, "launch_activity": launch_activity,
+        "version_code": int(version_match.group(1)), "version_name": "0.2-port-3d",
         "min_sdk": int(MIN_API), "target_sdk": int(ANDROID_API),
         "abis": ["arm64-v8a", "x86_64"], "native_libraries": libraries,
         "elf_machines": elf_machines, "elf_load_segment_max_alignment_bytes": load_alignments,

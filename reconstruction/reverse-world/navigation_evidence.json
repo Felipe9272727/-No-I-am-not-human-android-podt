@@ -1,0 +1,380 @@
+{
+  "schema_version": 1,
+  "provenance": {
+    "method": "Static Unity scene parse, raw MonoBehaviour fields, and retained C# stubs/ISIL; no original PE/DLL executed.",
+    "source_hashes": {
+      "reconstruction/logic/recovered_isil/Assembly-CSharp/_Code/Player/PlayerController.txt": "1da9a51f7974e00fe4ae5ffc927ae32a118b21506df1231f0bebabd871d460e0",
+      "reconstruction/logic/recovered_isil/Assembly-CSharp/_Scripts/Raycast/RaycastSource.txt": "839b00b1780fe8bfa2bae11ac20ba249f71c12dfc227f60e809f46949302867d",
+      "reconstruction/logic/recovered_isil/Assembly-CSharp/DoorTrigger.txt": "6ca481792672eb953fc3ab4947e8308201024c69f838bcbdc59a10e7bd445c1e",
+      "reconstruction/logic/recovered_isil/Assembly-CSharp/_Code/Infrastructure/Rooms/RoomsManager.txt": "10c5fe8fb205712a75ce970b8297b74065e2bb5a659a265f1b8ab72e803ef304",
+      "reconstruction/logic/recovered_isil/Assembly-CSharp/_Code/Infrastructure/TriggerObjects/ATriggerObject.txt": "aacf352ea464f2cce9d2cf31468bce0e34b2d93a75c479b27545cc9c3713a53b",
+      "reconstruction/logic/recovered_isil/Assembly-CSharp/PlayerInputActions.txt": "6126730a9c77fc11d4e275b7690aecb59f39511e6ec26a2e0c41794878559d03",
+      "reconstruction/logic/recovered_isil/Assembly-CSharp/_Code/ActionObjects/LookAtObject/PeepholeTrigger.txt": "3d03aacb9498b73f39982daa3c41d9c2623a2b5275299a768c9ab20fa91418e8",
+      "reconstruction/logic/cpp2il_cs/DiffableCs/Assembly-CSharp/_Code/Rooms/ERoom.cs": "63fc875a9fd81ca2761059d10d1f8bb1a8b1e56c2086eae4bf893fbab9e41f55",
+      "reverse-world/world_manifest.json": "0b641ea0fde739e21e687061b5a4246c5752814f4889172e6ba7849c74dc275c",
+      "reverse-ui/ui_manifest.json": "564eb5f58020d8c73471e7a827b05cc645a157d05a2a5c06c949a5f8175e7683"
+    }
+  },
+  "coordinates": {
+    "source": "Unity left-handed, Y-up, metres; renderer owns any coordinate conversion."
+  },
+  "player": {
+    "player_instance": {
+      "gameobject_path_id": 259,
+      "transform_path_id": 1541,
+      "position": [
+        -3.9849998951,
+        -0.0659999996,
+        -6.998000145
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    "main_camera": {
+      "gameobject_path_id": 854,
+      "transform_path_id": 1935,
+      "position": [
+        -3.9849998951,
+        1.5839999765,
+        -6.998000145
+      ],
+      "local_eye_offset": [
+        0,
+        1.649999976,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "field_of_view_deg": 60,
+      "near_clip": 0.1,
+      "far_clip": 1000
+    },
+    "controller_constructor_defaults": {
+      "pitch_min_deg": -80,
+      "pitch_max_deg": 80,
+      "mouse_sensitivity": [
+        1.5,
+        1.25
+      ]
+    },
+    "movement": "HandleMovement transforms Move action by Player transform, normalizes only when magnitude > 1, then passes direction to ECM2 Character. Serialized speed/gravity not recovered."
+  },
+  "controls": {
+    "Move": "WASD / left stick",
+    "Look": "mouse delta scale 0.1 / right stick",
+    "Interact": "mouse left, E, Space, gamepad south",
+    "Run": "Shift / right trigger",
+    "Crouch": "left Ctrl / right-stick press",
+    "Pause": "Escape / gamepad start",
+    "pitch_clamp_deg": [
+      -80,
+      80
+    ]
+  },
+  "interaction": {
+    "component": "_Scripts.Raycast.RaycastSource",
+    "ray_origin": "Camera.ScreenPointToRay",
+    "layer_mask": "Default",
+    "max_ray_distance_constructor_default": 1.0,
+    "max_ray_distance_serialized_override": "not recovered; do not assume constructor value is final",
+    "target": "Collider hit resolves ARaycastTarget and toggles IsTargeted."
+  },
+  "rooms": [
+    {
+      "id": 0,
+      "name": "Kitchen"
+    },
+    {
+      "id": 1,
+      "name": "Office"
+    },
+    {
+      "id": 2,
+      "name": "BigRoom"
+    },
+    {
+      "id": 3,
+      "name": "Bathroom"
+    },
+    {
+      "id": 4,
+      "name": "Pantry"
+    },
+    {
+      "id": 5,
+      "name": "Entrance"
+    },
+    {
+      "id": 6,
+      "name": "Bedroom"
+    }
+  ],
+  "room_doors": [
+    {
+      "name": "Door1 (Kitchen)",
+      "gameobject_path_id": 23,
+      "transform_path_id": 1367,
+      "room_id_from_name": 0,
+      "pivot_position": [
+        -1.7928555512,
+        0.2724078179,
+        -13.8711472517
+      ],
+      "interaction_target": {
+        "gameobject_path_id": 112,
+        "collider_path_id": 2425,
+        "transform_path_id": 1433,
+        "component": "RaycastTarget",
+        "collider_type": "BoxCollider",
+        "is_trigger": true,
+        "world_center": [
+          -2.108930531,
+          1.391007798,
+          -11.845447361
+        ],
+        "size": [
+          0.05,
+          1.99,
+          0.86
+        ],
+        "size_space": "collider local space; source transform scale applies"
+      }
+    },
+    {
+      "name": "Door2 (Office)",
+      "gameobject_path_id": 159,
+      "transform_path_id": 1467,
+      "room_id_from_name": 1,
+      "pivot_position": [
+        0.040144027,
+        0.272407818,
+        -13.862922288
+      ],
+      "interaction_target": {
+        "gameobject_path_id": 211,
+        "collider_path_id": 2449,
+        "transform_path_id": 1508,
+        "component": "RaycastTarget",
+        "collider_type": "BoxCollider",
+        "is_trigger": true,
+        "world_center": [
+          -0.269097944,
+          1.328732762,
+          -11.819597414
+        ],
+        "size": [
+          0.05,
+          1.99,
+          0.86
+        ],
+        "size_space": "collider local space; source transform scale applies"
+      }
+    },
+    {
+      "name": "Door3 (BigRoom)",
+      "gameobject_path_id": 177,
+      "transform_path_id": 1481,
+      "room_id_from_name": 2,
+      "pivot_position": [
+        0.94971885,
+        0.272407818,
+        -6.767097535
+      ],
+      "interaction_target": {
+        "gameobject_path_id": 245,
+        "collider_path_id": 2452,
+        "transform_path_id": 1529,
+        "component": "RaycastTarget",
+        "collider_type": "BoxCollider",
+        "is_trigger": true,
+        "world_center": [
+          0.984968848,
+          1.328732762,
+          -8.829222446
+        ],
+        "size": [
+          0.05,
+          1.99,
+          0.86
+        ],
+        "size_space": "collider local space; source transform scale applies"
+      }
+    },
+    {
+      "name": "Door4 (Bathroom)",
+      "gameobject_path_id": 210,
+      "transform_path_id": 1507,
+      "room_id_from_name": 3,
+      "pivot_position": [
+        -0.879880927,
+        0.272407818,
+        -7.454472552
+      ],
+      "interaction_target": {
+        "gameobject_path_id": 247,
+        "collider_path_id": 2453,
+        "transform_path_id": 1531,
+        "component": "RaycastTarget",
+        "collider_type": "BoxCollider",
+        "is_trigger": true,
+        "world_center": [
+          -2.986656064,
+          1.27233279,
+          -7.755272878
+        ],
+        "size": [
+          0.7,
+          1.9,
+          0.05
+        ],
+        "size_space": "collider local space; source transform scale applies"
+      }
+    },
+    {
+      "name": "Door5 (Pantry)",
+      "gameobject_path_id": 163,
+      "transform_path_id": 1470,
+      "room_id_from_name": 4,
+      "pivot_position": [
+        -7.13205607,
+        0.272407818,
+        -9.514247353
+      ],
+      "interaction_target": {
+        "gameobject_path_id": 270,
+        "collider_path_id": 2460,
+        "transform_path_id": 1549,
+        "component": "RaycastTarget",
+        "collider_type": "BoxCollider",
+        "is_trigger": false,
+        "world_center": [
+          -5.07933089,
+          1.286432748,
+          -9.424947624
+        ],
+        "size": [
+          0.64,
+          2.02,
+          0.1
+        ],
+        "size_space": "collider local space; source transform scale applies"
+      }
+    },
+    {
+      "name": "Door6 (Bedroom)",
+      "gameobject_path_id": 190,
+      "transform_path_id": 1491,
+      "room_id_from_name": 6,
+      "pivot_position": [
+        5.122018877,
+        0.272407818,
+        -10.235697302
+      ],
+      "interaction_target": {
+        "gameobject_path_id": 172,
+        "collider_path_id": 2439,
+        "transform_path_id": 1477,
+        "component": "RaycastTarget",
+        "collider_type": "BoxCollider",
+        "is_trigger": true,
+        "world_center": [
+          3.142143797,
+          1.318157759,
+          -10.524747603
+        ],
+        "size": [
+          0.86,
+          1.99,
+          0.05
+        ],
+        "size_space": "collider local space; source transform scale applies"
+      }
+    }
+  ],
+  "entrance_interaction": {
+    "name": "Peephole_LookAtObjectTrigger",
+    "gameobject_path_id": 81,
+    "transform_path_id": 1408,
+    "monobehaviour_path_id": 3929,
+    "component": "_Code.ActionObjects.LookAtObject.PeepholeTrigger",
+    "active": true,
+    "linked_room": 5,
+    "serialized_component_evidence": {
+      "raw_size": 304,
+      "peephole_camera_gameobject_path_id": 43,
+      "volume_component_path_id": 4032,
+      "distortion_scale": 0.5,
+      "linked_room_enum_value": 5,
+      "raw_fields": "offset 32 PPtr Transform1494 (GO194), 44 PPtr Transform1543 (GO262), 56 PPtr MonoBehaviour4035 on GO142, 288 float .5, 292 int 5."
+    },
+    "raycast_target": {
+      "gameobject_path_id": 142,
+      "transform_path_id": 1451,
+      "name": "RaycastTrigger",
+      "collider_path_id": 2432,
+      "type": "BoxCollider",
+      "is_trigger": false,
+      "layer": "Default",
+      "world_center": [
+        -4.1213582131,
+        1.4663078882,
+        -4.2295438035
+      ],
+      "local_center": [
+        0,
+        0,
+        -0.00400000019
+      ],
+      "local_size": [
+        0.00986942742,
+        0.00099928433,
+        0.02041645907
+      ],
+      "world_transform_scale": [
+        117.5,
+        117.5,
+        117.5
+      ]
+    },
+    "proximity_trigger": {
+      "gameobject_path_id": 81,
+      "collider_path_id": 2412,
+      "is_trigger": true,
+      "world_center": [
+        -4.1170056497,
+        0.0987843928,
+        -4.5357724288
+      ],
+      "local_size": [
+        1.03,
+        0.41,
+        0.54
+      ],
+      "world_scale": [
+        1.175,
+        1.175,
+        1.175
+      ]
+    },
+    "behavior": "PeepholeTrigger uses linked room via IRoomsManager and authored peephole-camera/lens distortion entry/exit actions. Its referenced GO142 collider is the actual raycast target; GO81 collider is separate proximity trigger."
+  },
+  "navigation_callbacks": {
+    "door_trigger": "DoorTrigger stores _linkedRoom and resolves it through IRoomsManager; source entry/exit actions perform door animation and CanLeave checks linked room, day/night, and close-up state.",
+    "room_enter": "RoomsManager.OnRoomEntered/OnRoomEnteredAsync handles linked-room transition and presentation.",
+    "trigger_base": "ATriggerObject forwards physics enter/exit to virtual callbacks.",
+    "visitor_front_door": "When Neighbour is waiting, native renderer maps the PeepholeTrigger raycast target to open_door; this enters Entrance close-up and starts known entrance_neighbour_0 node."
+  },
+  "unresolved": [
+    "Which StartPoint is selected on fresh startup; Main Camera scene TRS is the known initial pose, not proven relocation result.",
+    "Serialized DoorTrigger linked-room enum values, ECM2 speed/gravity, exact ray-distance override, and joystick viewport geometry.",
+    "Mobile close-up exit affordances are presentation adaptations."
+  ]
+}

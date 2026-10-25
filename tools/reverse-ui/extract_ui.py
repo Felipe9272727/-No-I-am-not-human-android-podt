@@ -264,7 +264,6 @@ def main():
     for fname, pid in sorted(font_assets):
         obj = files[fname].objects[pid]
         raw = obj.get_raw_data()
-        tree = obj.read_typetree()
         source_fonts, texture_refs = [], []
         for off in range(32, len(raw) - 12, 4):
             fid, tpid = struct.unpack_from("<iq", raw, off)
