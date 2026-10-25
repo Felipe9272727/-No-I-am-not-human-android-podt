@@ -81,3 +81,12 @@ The original intro movie retains its own soundtrack.
 Crash-history policy regression checks suppress the user's old timestamp after
 an APK update, avoid repeated notices and keep unrelated Java/native reports
 separate. v0.5 has not been executed on a physical Android device.
+
+The final v0.5 APK is 322,331,722 bytes, SHA-256
+`3159894270ae6be78993478c142ff56baa3659b6441f90809e27f554732e4117`.
+Its closed-file signature verifies with the stable certificate, and all
+1,404 PNGs in the APK fully decode (1,387 staged game PNGs plus Android/library
+resources). Fourteen OGG assets match the fully decoded export and are stored
+uncompressed. A new isolated check loads all shader resources from this exact
+APK and renders 120 GLES2 frames. The first packaging attempt was rejected by
+independent integrity checks and was not delivered.

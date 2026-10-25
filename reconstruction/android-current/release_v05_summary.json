@@ -1,0 +1,55 @@
+{
+  "version": "0.5-render-music",
+  "artifact": "NINAH-Port-3D-Musicas.apk",
+  "bytes": 322331722,
+  "sha256": "3159894270ae6be78993478c142ff56baa3659b6441f90809e27f554732e4117",
+  "certificate_sha256": "f07ec9f06df46a41621203512a410bbbfce871a4300cb85a0bbe59461721176a",
+  "signature_schemes_verified": [
+    "v1",
+    "v2",
+    "v3"
+  ],
+  "native_zip_and_elf_alignment_bytes": 16384,
+  "java_application_compile": "passed Android API35 with pinned engine dependencies",
+  "png_validation": {
+    "fully_decoded_staged_pngs": 1387,
+    "fully_decoded_final_apk_pngs": 1404,
+    "world_texture_hashes_checked": 42,
+    "repaired_world_textures": 2
+  },
+  "music": {
+    "bundled_original_tracks": 14,
+    "active_opening_track_keys": [
+      "main_menu",
+      "night1",
+      "ambience_house"
+    ],
+    "source_and_staged_full_ffmpeg_decode": "passed with -xerror",
+    "zip_stored": true,
+    "ogg_bytes": 23597371,
+    "unitypy_version": "1.25.4"
+  },
+  "graphics": {
+    "host_only": true,
+    "gles2_normal_120_frames": "passed",
+    "injected_shader_fallback_120_frames": "passed",
+    "camera_yaw_90_180_270": "passed without GL errors",
+    "final_apk_only_shader_resources_and_120_frame_render": "passed"
+  },
+  "crash_history_policy_test": "passed",
+  "packaging_integrity": {
+    "first_attempt": "rejected by independent final ZIP/signature check",
+    "repacked_final_artifact": "passed closed-file ZIP CRC, hash, signature and isolated shader checks",
+    "builder_final_reopen_guard_added": true
+  },
+  "android_device_execution_tested": false,
+  "android_emulator_execution_tested": false,
+  "full_campaign_implemented": false,
+  "limits": [
+    "Later campaign progression and later-day music routing remain unfinished.",
+    "The stock shader/light reconstruction and some room coverage still differ from the original.",
+    "Phone playback, touch/lifecycle behavior and renderer changes need the user device test."
+  ],
+  "source_original_executables_executed": false,
+  "permissions": []
+}

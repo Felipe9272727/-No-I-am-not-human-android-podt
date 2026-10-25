@@ -70,3 +70,8 @@ loaded. The repair requires the exact source-bundle hash and reproduces the
 existing world_manifest.android_sha256 values. Generated music, FSB chunks,
 world textures, APKs and signing keys stay outside Git. The music manifest and
 extractor are tracked; new encodes record their actual OGG hashes.
+
+The final packager reopens the closed APK for another ZIP CRC/signature/hash
+check after report collection. Independent final verification also uses
+`apksigner verify --verbose --print-certs`. A rejected first v0.5 artifact was
+repacked; only the exact hash in LATEST_BUILD.json is deliverable.

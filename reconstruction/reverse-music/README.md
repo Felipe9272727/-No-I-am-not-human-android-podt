@@ -2,6 +2,8 @@
 
 `music_manifest.json` records the selected Unity `AudioClip` objects, their streamed resource ranges and hashes, original FSB payloads, source `AudioSource` evidence where the clip is directly assigned in a scene, and the final OGG hashes. `routing_evidence` preserves the `SoundData` (`sharedassets0.assets`, MonoBehaviour path ID 2718) and `SoundList` (path ID 2719) references, plus the directly verified menu and day-0 NIGHT sources. The custom MonoBehaviour type trees are stripped from the supplied Unity assets, so routes for days 1–18 are left explicitly unexpanded rather than guessed.
 
+Install the static parser with `python3 -m pip install -r tools/reverse-music/requirements.txt`; ffmpeg and ffprobe must also be available. The recorded parser is UnityPy 1.25.4.
+
 The export is reproducible from the SHA-verified ZIP rebuilt by `tools/security/restore_original_archive.py`:
 
 ```sh

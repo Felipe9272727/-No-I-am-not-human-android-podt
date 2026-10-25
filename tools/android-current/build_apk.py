@@ -894,6 +894,14 @@ def main() -> None:
                     dex, work, output, engine_jars)
         report = collect_report(output, build_tools, source_modules, unresolved_dependencies,
                                 args.version_code, args.version_name, native_reuse)
+        # Reopen the closed artifact after the report scans; never deliver a report
+        # for bytes whose final ZIP/signature no longer validate.
+        run([build_tools / "apksigner", "verify", "--verbose", output], cwd=ROOT)
+        with zipfile.ZipFile(output) as final_apk:
+            if final_apk.testzip() is not None:
+                raise RuntimeError("final APK CRC verification failed")
+        if hashlib.sha256(output.read_bytes()).hexdigest() != report["sha256"]:
+            raise RuntimeError("APK changed during final validation")
     report_path = output.with_name(output.stem + "_validation_report.json")
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
