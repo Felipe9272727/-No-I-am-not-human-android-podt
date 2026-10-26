@@ -67,7 +67,17 @@ struct RoomRenderPacket {
 struct PoseChange { std::string character; std::int32_t state=0; };
 class PresentationState {
 public:
+ struct Snapshot {
+  std::string dialog_companion;
+  std::optional<std::int32_t> emotion;
+  std::optional<bool> gun_shown;
+  std::optional<SignRenderPacket> active_sign;
+  std::vector<PoseChange> immediate_poses, tomorrow_poses;
+  std::map<std::string,std::int32_t> live_poses;
+ };
  explicit PresentationState(const PresentationCatalog& catalog);
+ Snapshot snapshot() const;
+ void restore(const Snapshot&);
  PresentationResult set_dialog_companion(const std::string& character);
  std::optional<RoomRenderPacket> room_packet(const std::string& character) const;
  PresentationResult set_emotion(const std::string& raw);

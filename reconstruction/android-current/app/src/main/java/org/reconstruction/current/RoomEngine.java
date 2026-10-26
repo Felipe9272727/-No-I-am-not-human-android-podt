@@ -43,6 +43,7 @@ public final class RoomEngine extends ApplicationAdapter {
     private SpriteBatch batch;
     private PerspectiveCamera camera;
     private volatile WorldRenderer worldRenderer;
+    private volatile boolean catPreviewEnabled;
     private final Matrix4 spriteTransform = new Matrix4();
     private int viewportX, viewportY, viewportWidth, viewportHeight;
     private int room = -1;
@@ -88,6 +89,7 @@ public final class RoomEngine extends ApplicationAdapter {
             rendererStage = "create room camera";
             camera = new PerspectiveCamera(MAIN_FOV, SOURCE_WIDTH, SOURCE_HEIGHT);
             worldRenderer = new WorldRenderer("");
+            worldRenderer.setCatPreviewEnabled(catPreviewEnabled);
             rendererStage = "create 3D renderer";
             worldRenderer.create();
             camera.near = 0.1f;
@@ -197,6 +199,7 @@ public final class RoomEngine extends ApplicationAdapter {
             }
             if (worldRenderer != null) worldRenderer.setManifestPath(root.optString("world_manifest", ""));
             if (worldRenderer != null) worldRenderer.setDoorManifestPath(root.optString("animations_manifest", ""));
+            if (worldRenderer != null) worldRenderer.setCatPreviewEnabled(catPreviewEnabled);
             JSONObject images = root.optJSONObject("images");
             if (images != null) {
                 Iterator<String> keys = images.keys();
@@ -461,6 +464,12 @@ public final class RoomEngine extends ApplicationAdapter {
     public boolean isDoorOpenComplete(long token) { WorldRenderer world=worldRenderer;return world!=null&&world.isDoorOpenComplete(token); }
     public void cancelDoorMotion() { WorldRenderer world=worldRenderer;if(world!=null)world.cancelDoorMotion(); }
     public void setPresentationPaused(boolean paused) { WorldRenderer world=worldRenderer;if(world!=null)world.setPresentationPaused(paused); }
+    /** Enables the source-backed cat render preview for debug inspection only. */
+    public void setCatPreviewEnabled(boolean enabled) {
+        catPreviewEnabled=enabled;
+        WorldRenderer world=worldRenderer;
+        if(world!=null)world.setCatPreviewEnabled(enabled);
+    }
 
     public String getRendererDiagnostic() {
         if (rendererStatus.startsWith("error:") && !rendererDiagnostic.isEmpty()) return rendererDiagnostic;

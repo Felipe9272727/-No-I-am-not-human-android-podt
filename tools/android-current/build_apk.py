@@ -7,9 +7,11 @@ import argparse
 import hashlib
 import io
 import json
+import math
 import os
 import re
 import shutil
+import struct
 import subprocess
 import sys
 import tempfile
@@ -28,7 +30,7 @@ ASSET_DIR = ANDROID_APP / "assets"
 NATIVE_ROOT = ROOT / "reconstruction/native-game"
 BRIDGE_MANIFEST = NATIVE_ROOT / "bridge/Cargo.toml"
 BRIDGE_ROOT = NATIVE_ROOT / "bridge"
-DEFAULT_APK = ROOT / "deliverables/NINAH-Port-Primeira-Manha.apk"
+DEFAULT_APK = ROOT / "deliverables/NINAH-Port-Gato-Save.apk"
 REPORT = ANDROID_ROOT / "port3d_validation_report.json"
 PACKAGE_NAME = "org.reconstruction.port.preview"
 JNI_ACTIVITY = "org.reconstruction.current.MainActivity"
@@ -714,6 +716,8 @@ def collect_report(output: Path, build_tools: Path, source_modules: list[str],
             "assets/licenses/nlohmann-json-LICENSE-MIT.txt",
             "assets/licenses/apache-2.0-LICENSE.txt",
         ]
+        if version_code >= 11:
+            required_assets.append("assets/world/cat3d_manifest.json")
         missing = [name for name in required_assets if name not in names]
         if missing:
             raise RuntimeError(f"APK is missing required assets: {missing}")
@@ -764,6 +768,44 @@ def collect_report(output: Path, build_tools: Path, source_modules: list[str],
             world_texture_bytes += apk.getinfo(f"assets/{asset}").file_size
         if world_texture_bytes > 64 * 1024 * 1024:
             raise RuntimeError(f"APK world texture budget exceeds 64 MiB: {world_texture_bytes}")
+        cat_summary=None
+        if version_code >= 11:
+            cat_manifest=json.loads(apk.read("assets/world/cat3d_manifest.json"))
+            cat_mesh=cat_manifest.get("mesh",{});cat_material=cat_manifest.get("material",{})
+            visibility=cat_manifest.get("visibility",{})
+            if visibility.get("scene_active_self") is not False or "debug preview only" not in visibility.get("purpose",""):
+                raise RuntimeError("Cat 3D preview must remain debug-only and preserve its inactive source scene flag")
+            if cat_mesh.get("vertex_count") != 1112 or cat_mesh.get("index_count") != 4557:
+                raise RuntimeError("Unexpected source cat mesh vertex/index counts")
+            mesh_asset=cat_mesh.get("android_asset")
+            if not mesh_asset or f"assets/{mesh_asset}" not in names:
+                raise RuntimeError(f"APK missing source cat 3D mesh: {mesh_asset}")
+            mesh_data=apk.read(f"assets/{mesh_asset}")
+            expected_mesh=cat_mesh.get("staged_sha256",cat_mesh.get("sha256"))
+            if hashlib.sha256(mesh_data).hexdigest()!=expected_mesh:
+                raise RuntimeError(f"Source cat 3D mesh hash mismatch: {mesh_asset}")
+            expected_mesh_bytes=cat_mesh["vertex_count"]*32+cat_mesh["index_count"]*4
+            if len(mesh_data)!=expected_mesh_bytes:
+                raise RuntimeError(f"Source cat mesh byte/count mismatch: {len(mesh_data)} vs {expected_mesh_bytes}")
+            floats=struct.unpack_from("<"+"f"*(cat_mesh["vertex_count"]*8),mesh_data)
+            if not all(math.isfinite(value) for value in floats):
+                raise RuntimeError("Source cat mesh contains a non-finite vertex or normal")
+            indices=struct.unpack_from("<"+"I"*cat_mesh["index_count"],mesh_data,cat_mesh["vertex_count"]*32)
+            if any(index>=cat_mesh["vertex_count"] for index in indices):
+                raise RuntimeError("Source cat mesh index is outside the vertex buffer")
+            texture_asset=cat_material.get("android_asset")
+            if not texture_asset or f"assets/{texture_asset}" not in names:
+                raise RuntimeError(f"APK missing source cat albedo texture: {texture_asset}")
+            texture_data=apk.read(f"assets/{texture_asset}")
+            expected_texture=cat_material.get("staged_sha256",cat_material.get("texture_sha256"))
+            if hashlib.sha256(texture_data).hexdigest()!=expected_texture:
+                raise RuntimeError(f"Source cat albedo hash mismatch: {texture_asset}")
+            cat_texture_dimensions=validate_png_bytes(texture_data,texture_asset)
+            if max(cat_texture_dimensions)>1024:
+                raise RuntimeError(f"Source cat texture exceeds 1024px: {cat_texture_dimensions}")
+            cat_summary={"vertices":cat_mesh["vertex_count"],"triangles":cat_mesh["triangle_count"],
+                         "mesh_bytes":len(mesh_data),"texture_dimensions":cat_texture_dimensions,
+                         "debug_only":True,"default_visible":False}
         ui_manifest = json.loads(apk.read("assets/presentation/ui/ui_manifest.json"))
         ui_sprite_table = ui_manifest.get("sprites", ui_manifest.get("images", []))
         ui_sprites = list(ui_sprite_table.values()) if isinstance(ui_sprite_table, dict) else ui_sprite_table
@@ -893,6 +935,7 @@ def collect_report(output: Path, build_tools: Path, source_modules: list[str],
             "world_source_vertices":mesh_source_vertices,"world_android_vertices":mesh_android_vertices,
             "world_android_mesh_bytes":mesh_android_bytes,"world_mesh_hashes_validated":len(world_meshes),
             "world_texture_bytes": world_texture_bytes, "world_texture_max_edge": 1024,
+            "cat_3d_preview":cat_summary,
             "original_game_ui_sprites": len(ui_sprites), "original_game_ui_fonts": len(ui_fonts),
         },
         "embedded_windows_executable_extensions": forbidden_paths,
@@ -914,8 +957,8 @@ def main() -> None:
     parser.add_argument("--skip-assets", action="store_true", help="reuse an existing staged asset tree")
     parser.add_argument("--reference-apk", type=Path,
                         help="reuse JNI libraries only from the exact hash-locked current APK")
-    parser.add_argument("--version-code", type=int, default=10)
-    parser.add_argument("--version-name", default="0.10-first-morning")
+    parser.add_argument("--version-code", type=int, default=11)
+    parser.add_argument("--version-name", default="0.11-cat-save")
     parser.add_argument("--rebuild-rust", action="store_true", help="force locked release builds for both Rust targets")
     args = parser.parse_args()
 

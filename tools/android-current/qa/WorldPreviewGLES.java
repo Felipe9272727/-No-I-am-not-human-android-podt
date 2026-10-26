@@ -148,7 +148,13 @@ public final class WorldPreviewGLES {
         JSONObject state = new JSONObject().put("phase", "playing").put("view_mode", "world").put("room", 5)
                 .put("world_pose", pose);
         engine.setState(state);
+        boolean catPreviewQA=args.length>12 && "cat-preview".equals(args[12]);
+        java.lang.reflect.Field catPreviewFlag=RoomEngine.class.getDeclaredField("catPreviewEnabled");catPreviewFlag.setAccessible(true);
+        boolean defaultCatPreview=catPreviewFlag.getBoolean(engine);
+        if(catPreviewQA&&defaultCatPreview)throw new AssertionError("debug cat preview must default off");
+        if(catPreviewQA)engine.setCatPreviewEnabled(true);
         engine.create();
+        if(catPreviewQA)runCatPreviewQA(engine,assets,output,defaultCatPreview);
         if(args.length>10 && "ambient-only".equals(args[10])) {
             java.lang.reflect.Field wf=RoomEngine.class.getDeclaredField("worldRenderer");wf.setAccessible(true);Object wr=wf.get(engine);
             java.lang.reflect.Field ef=wr.getClass().getDeclaredField("environment");ef.setAccessible(true);
@@ -213,6 +219,54 @@ public final class WorldPreviewGLES {
         EGL10.eglDestroyContext(egl[0], egl[2]);
         EGL10.eglDestroySurface(egl[0], egl[1]);
         EGL10.eglTerminate(egl[0]);
+    }
+
+    private static void runCatPreviewQA(RoomEngine engine,Path assets,Path enabledOutput,boolean defaultPreview) throws Exception {
+        JSONObject catManifest=new JSONObject(Files.readString(assets.resolve("world/cat3d_manifest.json")));
+        int expectedTriangles=catManifest.getJSONObject("mesh").getInt("triangle_count");
+        if(catManifest.getJSONObject("visibility").getBoolean("scene_active_self"))
+            throw new AssertionError("preview fixture must preserve the source inactive scene flag");
+        java.lang.reflect.Field rendererField=RoomEngine.class.getDeclaredField("worldRenderer");rendererField.setAccessible(true);
+        Object renderer=rendererField.get(engine);
+        java.lang.reflect.Field rendererEnabledField=renderer.getClass().getDeclaredField("catPreviewEnabled");rendererEnabledField.setAccessible(true);
+        if(!rendererEnabledField.getBoolean(renderer))throw new AssertionError("pre-GL debug preview setting was not preserved");
+        java.lang.reflect.Field baseField=renderer.getClass().getDeclaredField("renderItems");baseField.setAccessible(true);
+        java.lang.reflect.Field catField=renderer.getClass().getDeclaredField("catPreviewItems");catField.setAccessible(true);
+        java.util.List<?> base=(java.util.List<?>)baseField.get(renderer),cat=(java.util.List<?>)catField.get(renderer);
+        int baseItemCount=base.size();
+        int staticManifestMeshes=new JSONObject(Files.readString(assets.resolve("world/world_manifest.json"))).getJSONArray("meshes").length();
+        if(staticManifestMeshes!=100)throw new AssertionError("base static mesh count changed: "+staticManifestMeshes);
+        if(cat.size()!=1)throw new AssertionError("expected one source cat mesh draw item, got "+cat.size());
+        java.lang.reflect.Field countField=cat.get(0).getClass().getDeclaredField("count");countField.setAccessible(true);
+        int renderedTriangles=countField.getInt(cat.get(0))/3;
+        if(renderedTriangles!=expectedTriangles)throw new AssertionError("cat triangle count mismatch: "+renderedTriangles+" vs "+expectedTriangles);
+
+        engine.setCatPreviewEnabled(false);
+        engine.render();Gdx.gl.glFinish();
+        Pixmap disabled=ScreenUtils.getFrameBufferPixmap(0,0,WIDTH,HEIGHT);
+        Path disabledOutput=enabledOutput.resolveSibling(enabledOutput.getFileName().toString().replace("-on.png","-off.png"));
+        PixmapIO.writePNG(new com.badlogic.gdx.files.FileHandle(disabledOutput.toFile()),disabled,-1,true);
+
+        engine.setCatPreviewEnabled(true);
+        for(int i=0;i<4;i++)engine.render();
+        Gdx.gl.glFinish();
+        Pixmap enabled=ScreenUtils.getFrameBufferPixmap(0,0,WIDTH,HEIGHT);
+        PixmapIO.writePNG(new com.badlogic.gdx.files.FileHandle(enabledOutput.toFile()),enabled,-1,true);
+        int differentPixels=0;
+        for(int y=0;y<HEIGHT;y++)for(int x=0;x<WIDTH;x++)if(disabled.getPixel(x,y)!=enabled.getPixel(x,y))differentPixels++;
+        disabled.dispose();enabled.dispose();
+        if(differentPixels<100)throw new AssertionError("cat preview changed too few pixels: "+differentPixels);
+        if(base.size()!=baseItemCount)throw new AssertionError("cat preview altered static world renderer items");
+        JSONObject report=new JSONObject().put("renderer","Mesa GLES2 host capture").put("debug_preview_enabled",true)
+                .put("default_preview_enabled",defaultPreview).put("pre_gl_setting_preserved",true).put("source_gameobject_active_self",false)
+                .put("static_world_manifest_meshes",staticManifestMeshes)
+                .put("static_world_draw_items",baseItemCount).put("cat_draw_items",cat.size())
+                .put("cat_triangles",renderedTriangles).put("source_expected_triangles",expectedTriangles)
+                .put("different_pixels",differentPixels).put("enabled_capture",enabledOutput.toString())
+                .put("disabled_capture",disabledOutput.toString());
+        Path reportPath=Path.of("reconstruction/android-current/qa/cat3d_gles_qa.json").toAbsolutePath();
+        Files.writeString(reportPath,report.toString(2)+"\n");
+        System.out.println("CAT3D_GLES_QA="+report);
     }
 
     private static void renderRoomCompositions(RoomEngine engine, Path output) throws Exception {

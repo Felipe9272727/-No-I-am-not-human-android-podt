@@ -183,6 +183,14 @@ Json finish_first_morning(Json state,const std::filesystem::path& root) {
   assert(!call({{"action","sleep"}}).at("error").is_null());
   assert(!call({{"action","enter_world"}}).at("error").is_null());
   state=act({{"action","save"}}); // transition checkpoint before any morning effects
+  const auto transition_export=Json::parse(ninah::current::action(Json{{"action","export_save"}}.dump())).at("save").dump();
+  ninah::current::create(read(root/"narrative/program.json"),read(root/"reverse-localization/line_metadata.json"));
+  auto imported_transition=Json::parse(ninah::current::action(Json{{"action","import_save"},{"save",transition_export}}.dump()));
+  if(!imported_transition.at("error").is_null())std::cerr<<"transition import: "<<imported_transition.at("error")<<'\n';
+  assert(imported_transition.at("error").is_null());
+  assert(imported_transition.at("phase")=="menu");
+  state=act({{"action","continue_game"}});
+  assert(state.at("campaign").at("transition_pending")==true);
   state=act({{"action","complete_day_transition"}});
   assert(state.at("day")==1 && state.at("energy")==2);
   assert(state.at("campaign").at("transition_pending")==false);
@@ -349,6 +357,58 @@ int main(int argc, char** argv) {
   state = admit_neighbour(state, 1);
   state = finish_first_inside_talk(state, 1);
 
+  // Persistent export/import is a real fresh-context round trip, including an
+  // active Yarn VM after its inventory/global side effects; import only installs the slot.
+  state=act({{"action","scenario"},{"name","fatman"}});
+  const auto vm_kombucha=state.at("inventory").at("Kombucha").get<int>();
+  for(int i=0;i<20&&state.at("inventory").at("Kombucha")==vm_kombucha;++i)state=act({{"action","advance"}});
+  assert(state.at("inventory").at("Kombucha")==vm_kombucha+1 && !state.at("dialogue").is_null());
+  state=act({{"action","save"}});
+  const auto exported=Json::parse(ninah::current::action(Json{{"action","export_save"}}.dump()));
+  assert(exported.at("type")=="state" && exported.at("save").at("version")==1);
+  const auto serialized=exported.at("save").dump();
+  auto fresh=Json::parse(ninah::current::create(read(root/"narrative/program.json"),read(root/"reverse-localization/line_metadata.json")));
+  assert(fresh.at("phase")=="menu" && fresh.at("save_available")==false);
+  fresh=Json::parse(ninah::current::action(Json{{"action","import_save"},{"save",serialized}}.dump()));
+  if(!fresh.at("error").is_null())std::cerr<<"active dialogue import: "<<fresh.at("error")<<'\n';
+  assert(fresh.at("error").is_null());
+  assert(fresh.at("phase")=="menu" && fresh.at("save_available")==true);
+  fresh=act({{"action","continue_game"}});
+  assert(fresh.at("phase")==state.at("phase") && fresh.at("dialogue")==state.at("dialogue"));
+  assert(fresh.at("inventory")==state.at("inventory"));
+  fresh=act({{"action","advance"}});
+  assert(fresh.at("inventory").at("Kombucha")==vm_kombucha+1); // GetItem must not replay.
+  fresh=act({{"action","load"}});
+  assert(fresh.at("dialogue")==state.at("dialogue"));
+  const auto stable_export=Json::parse(ninah::current::action(Json{{"action","export_save"}}.dump())).at("save");
+  auto corrupted=stable_export;corrupted["version"]=999;
+  auto rejected=Json::parse(ninah::current::action(Json{{"action","import_save"},{"save",corrupted}}.dump()));
+  assert(rejected.at("save_available")==true && !rejected.at("error").is_null());
+  const auto after_reject=Json::parse(ninah::current::action(Json{{"action","export_save"}}.dump())).at("save");
+  assert(after_reject==stable_export);
+  auto bad_reference=stable_export;bad_reference["occupants"]["inside"]=Json::array({999999});
+  rejected=Json::parse(ninah::current::action(Json{{"action","import_save"},{"save",bad_reference}}.dump()));
+  assert(rejected.at("save_available")==true && !rejected.at("error").is_null());
+  auto bad_inventory=stable_export;bad_inventory["inventory"]["storage"]=Json::array({Json::array({3,-1})});
+  rejected=Json::parse(ninah::current::action(Json{{"action","import_save"},{"save",bad_inventory}}.dump()));
+  assert(rejected.at("save_available")==true && !rejected.at("error").is_null());
+  auto bad_vm=stable_export;bad_vm["has_session"]=true;bad_vm["active_node"]="Fatman_Asking_1_1_1";bad_vm["dialogue"]="truncated VM state";
+  rejected=Json::parse(ninah::current::action(Json{{"action","import_save"},{"save",bad_vm}}.dump()));
+  assert(rejected.at("save_available")==true && !rejected.at("error").is_null());
+  rejected=Json::parse(ninah::current::action(Json{{"action","import_save"},{"save","{truncated"}}.dump()));
+  assert(rejected.at("save_available")==true && !rejected.at("error").is_null());
+  auto bad_fine=stable_export;bad_fine["progression"]["fines"]=Json::array({Json::array({-1,2})});
+  rejected=Json::parse(ninah::current::action(Json{{"action","import_save"},{"save",bad_fine}}.dump()));
+  assert(rejected.at("save_available")==true && !rejected.at("error").is_null());
+  bad_fine["progression"]["fines"]=Json::array({Json::array({1,2.5})});
+  rejected=Json::parse(ninah::current::action(Json{{"action","import_save"},{"save",bad_fine}}.dump()));
+  assert(rejected.at("save_available")==true && !rejected.at("error").is_null());
+  auto fine_roundtrip=stable_export;fine_roundtrip["progression"]["fines"]=Json::array({Json::array({1,2})});
+  rejected=Json::parse(ninah::current::action(Json{{"action","import_save"},{"save",fine_roundtrip}}.dump()));
+  assert(rejected.at("error").is_null());
+  const auto fine_export=Json::parse(ninah::current::action(Json{{"action","export_save"}}.dump())).at("save");
+  assert(fine_export.at("progression").at("fines")==Json::array({Json::array({1,2})}));
+
   std::cout << "Current Android host: menu, intro captions, first Neighbour admission/talk, "
-               "first morning and seven original TV lines, legacy tools routes, and in-memory snapshots passed\n";
+               "first morning and seven original TV lines, legacy tools routes, versioned fresh-context snapshots and invalid import rollback passed\n";
 }

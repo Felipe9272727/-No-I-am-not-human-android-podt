@@ -16,6 +16,8 @@ A versão 0.8 recupera o tratamento de cor da cena noturna, anima seis portas in
 
 A versão 0.10 acrescenta a primeira manhã: após concluir a visita inicial, entre no quarto e toque em **Dormir**. A virada aplica as regras recuperadas do dia 1, com duas ações disponíveis; **Assistir à TV** abre as sete falas originais de `tv_1_necessary`, em português. A cama usa sua imagem, posição e escala recuperadas. O fade de 500 ms e os botões são adaptações para toque. Pausa e segundo plano congelam a transição, e a música muda para a faixa original diurna. A próxima noite, as visitas seguintes e a iluminação diurna final continuam em desenvolvimento.
 
+A versão 0.11 acrescenta save manual no aparelho, com validação do estado completo e uma cópia anterior. Ao reabrir, use **Continuar**. Em **Opções → DEBUG: gato 3D**, pode-se conferir o modelo e a textura originais na cadeira da entrada. É uma prévia estática: animações, carinho, alimentação e a liberação pela Ballerina ainda não estão integrados. O teste fica desligado por padrão e não altera a campanha, que continua limitada à primeira manhã.
+
 ## Controles no celular
 
 - Durante o vídeo: **DEBUG: pular intro** entra na casa sem esperar 72 segundos.
@@ -25,9 +27,10 @@ A versão 0.10 acrescenta a primeira manhã: após concluir a visita inicial, en
 - Joystick à esquerda: andar.
 - Arrastar à direita: olhar ao redor.
 - Mirar perto de uma porta: mostrar a ação de interação.
-- Botão de pausa: continuar, opções, menu e salvar a sessão.
+- Botão de pausa: continuar, opções, menu e **Salvar jogo**.
+- **Salvar jogo** grava no aparelho; ao reabrir, use **Continuar** no menu.
 
-O save é apenas em memória: fechar o aplicativo perde o estado. A sequência atual chega à primeira manhã e ao primeiro noticiário. A noite do dia 1, o telefone em close-up, a iluminação final e outros efeitos permanecem em desenvolvimento.
+A partir da 0.11, o save manual persiste ao fechar o aplicativo e mantém uma cópia anterior para recuperar gravações incompletas. A sequência atual chega à primeira manhã e ao primeiro noticiário. A noite do dia 1, o telefone em close-up, a iluminação final e outros efeitos permanecem em desenvolvimento.
 
 ## Código e dados
 

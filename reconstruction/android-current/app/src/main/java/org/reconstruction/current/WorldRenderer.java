@@ -56,6 +56,7 @@ final class WorldRenderer implements Disposable {
     private static final long TEXTURE_BUDGET=64L*1024L*1024L;
     private String manifestPath="", manifestDirectory="", appliedManifest="";
     private final List<RenderItem> renderItems=new ArrayList<>();
+    private final List<RenderItem> catPreviewItems=new ArrayList<>();
     private final List<Mesh> meshes=new ArrayList<>();
     private final List<BoxCollider> boxColliders=new ArrayList<>();
     private final Map<Integer,BoxCollider> boxById=new HashMap<>();
@@ -75,6 +76,7 @@ final class WorldRenderer implements Disposable {
     private volatile float yaw,pitch;
     private float moveX,moveForward,moveSpeed=2.5f;
     private boolean inputEnabled,worldEnabled=true,loaded,doorWaiting;
+    private volatile boolean catPreviewEnabled;
     private long poseRevision=Long.MIN_VALUE;
     private String appliedPoseKey="";
     private int frontRayColliderId=2432;
@@ -107,6 +109,7 @@ final class WorldRenderer implements Disposable {
         doorManifestPath=next;
         if(loaded)try{loadDoorMotion(new JSONObject(appliedManifest));}catch(JSONException error){recordWarning("load door animation",error);}
     }
+    void setCatPreviewEnabled(boolean enabled){catPreviewEnabled=enabled;if(Gdx.graphics!=null)Gdx.graphics.requestRendering();}
     synchronized long beginDoorOpen(int room){
         if(room<0||room>6||(doorRoomMask&(1<<room))==0)return 0;
         long token=++doorTokenCounter;doorRequest=new DoorRequest(room,token);return token;
@@ -197,25 +200,8 @@ final class WorldRenderer implements Disposable {
         updateCamera();camera.update();
         depthWritingVisible.clear();transparentVisible.clear();visibleTextures.clear();
         visibleDraws=visibleTriangles=0;
-        for(RenderItem item:renderItems) {
-            if(!visible(item.bounds)||!contributes(item.material))continue;
-            MaterialInfo info=item.material;
-            if(info!=null&&!info.texture.isEmpty()) {
-                Texture texture=texture(info.texture);
-                if(texture!=null) {
-                    if(texture!=item.boundTexture) {
-                        TextureAttribute attribute=(TextureAttribute)item.renderable.material.get(TextureAttribute.Diffuse);
-                        if(attribute==null){attribute=TextureAttribute.createDiffuse(texture);item.renderable.material.set(attribute);}
-                        else attribute.textureDescription.set(texture,texture.getMinFilter(),texture.getMagFilter(),texture.getUWrap(),texture.getVWrap());
-                        attribute.scaleU=info.su;attribute.scaleV=info.sv;attribute.offsetU=info.ou;attribute.offsetV=info.ov;
-                        item.boundTexture=texture;
-                    }
-                    visibleTextures.add(info.texture);
-                }
-            }
-            (info==null||info.zWrite?depthWritingVisible:transparentVisible).add(item);
-            visibleDraws++;visibleTriangles+=item.count/3;
-        }
+        for(RenderItem item:renderItems)prepareVisible(item);
+        if(catPreviewEnabled)for(RenderItem item:catPreviewItems)prepareVisible(item);
         renderStage="compile/draw GLES world scene";
         try {drawRenderables(depthWritingVisible);drawRenderables(transparentVisible);}
         catch(RuntimeException error){if(!activateShaderFallback(error))throw error;return;}
@@ -236,6 +222,25 @@ final class WorldRenderer implements Disposable {
         modelBatch.begin(camera);
         for(RenderItem item:items)modelBatch.render(item,unlitFallback?null:environment);
         modelBatch.end();
+    }
+    private void prepareVisible(RenderItem item){
+        if(!visible(item.bounds)||!contributes(item.material))return;
+        MaterialInfo info=item.material;
+        if(info!=null&&!info.texture.isEmpty()){
+            Texture texture=texture(info.texture);
+            if(texture!=null){
+                if(texture!=item.boundTexture){
+                    TextureAttribute attribute=(TextureAttribute)item.renderable.material.get(TextureAttribute.Diffuse);
+                    if(attribute==null){attribute=TextureAttribute.createDiffuse(texture);item.renderable.material.set(attribute);}
+                    else attribute.textureDescription.set(texture,texture.getMinFilter(),texture.getMagFilter(),texture.getUWrap(),texture.getVWrap());
+                    attribute.scaleU=info.su;attribute.scaleV=info.sv;attribute.offsetU=info.ou;attribute.offsetV=info.ov;
+                    item.boundTexture=texture;
+                }
+                visibleTextures.add(info.texture);
+            }
+        }
+        (info==null||info.zWrite?depthWritingVisible:transparentVisible).add(item);
+        visibleDraws++;visibleTriangles+=item.count/3;
     }
     static boolean contributes(MaterialInfo info) {
         return info==null||!(info.transparent&&!info.zWrite&&info.color.a<=0f&&info.blendSrc==GL20.GL_SRC_ALPHA&&info.blendDst==GL20.GL_ONE_MINUS_SRC_ALPHA);
@@ -288,7 +293,30 @@ final class WorldRenderer implements Disposable {
         return lo<=max?lo:-1;
     }
 
-    private void loadManifest(){if(manifestPath.isEmpty()||Gdx.files==null)return;String json;status="loading: read world manifest";renderStage=status;try{json=Gdx.files.internal(manifestPath).readString("UTF-8");}catch(Exception e){status=errorStatus("read world manifest",e);diagnostic=errorDiagnostic("read world manifest",e);return;}if(json.equals(appliedManifest)){if(camera!=null)try{applyCameraClip(findCamera(new JSONObject(json).optJSONArray("cameras")));}catch(JSONException ignored){}return;}appliedManifest=json;clearScene();warningStatus=null;diagnostic="";try{status="loading: parse world scene";renderStage=status;JSONObject root=new JSONObject(json);parseTextures(root.optJSONArray("textures"));parseMaterials(root.optJSONArray("materials"));parseLighting(root.optJSONArray("lights"),root.optJSONArray("render_settings"));JSONArray meshArray=root.optJSONArray("meshes");status="loading: allocate source meshes";renderStage=status;parseRenderers(root.optJSONArray("renderers"),meshArray);status="loading: build collision geometry";renderStage=status;parseColliders(root.optJSONArray("colliders"),meshArray);parseTargets(root.optJSONArray("interaction_targets"),root.optJSONArray("named_door_targets"));JSONObject cam=findCamera(root.optJSONArray("cameras"));applyCameraClip(cam);if(poseRevision==Long.MIN_VALUE&&cam!=null)setCameraPose(cam);moveSpeed=(float)root.optDouble("player_movement_speed_mps",2.5);if(latestState!=null)updateNavigation(latestState.optJSONObject("world_navigation"));loaded=true;loadDoorMotion(root);status=warningStatus==null?"ready":warningStatus;}catch(Exception e){clearScene();loaded=false;status=errorStatus("load world manifest",e);diagnostic=errorDiagnostic("load world manifest",e);}}
+    private void loadManifest(){if(manifestPath.isEmpty()||Gdx.files==null)return;String json;status="loading: read world manifest";renderStage=status;try{json=Gdx.files.internal(manifestPath).readString("UTF-8");}catch(Exception e){status=errorStatus("read world manifest",e);diagnostic=errorDiagnostic("read world manifest",e);return;}if(json.equals(appliedManifest)){if(camera!=null)try{applyCameraClip(findCamera(new JSONObject(json).optJSONArray("cameras")));}catch(JSONException ignored){}return;}appliedManifest=json;clearScene();warningStatus=null;diagnostic="";try{status="loading: parse world scene";renderStage=status;JSONObject root=new JSONObject(json);parseTextures(root.optJSONArray("textures"));parseMaterials(root.optJSONArray("materials"));parseLighting(root.optJSONArray("lights"),root.optJSONArray("render_settings"));JSONArray meshArray=root.optJSONArray("meshes");status="loading: allocate source meshes";renderStage=status;parseRenderers(root.optJSONArray("renderers"),meshArray);loadCatPreview();status="loading: build collision geometry";renderStage=status;parseColliders(root.optJSONArray("colliders"),meshArray);parseTargets(root.optJSONArray("interaction_targets"),root.optJSONArray("named_door_targets"));JSONObject cam=findCamera(root.optJSONArray("cameras"));applyCameraClip(cam);if(poseRevision==Long.MIN_VALUE&&cam!=null)setCameraPose(cam);moveSpeed=(float)root.optDouble("player_movement_speed_mps",2.5);if(latestState!=null)updateNavigation(latestState.optJSONObject("world_navigation"));loaded=true;loadDoorMotion(root);status=warningStatus==null?"ready":warningStatus;}catch(Exception e){clearScene();loaded=false;status=errorStatus("load world manifest",e);diagnostic=errorDiagnostic("load world manifest",e);}}
+    private void loadCatPreview(){
+        String path=manifestDirectory+"cat3d_manifest.json";
+        try{
+            FileHandle file=Gdx.files.internal(path);if(!file.exists())return;
+            JSONObject root=new JSONObject(file.readString("UTF-8"));
+            JSONObject meshInfo=root.optJSONObject("mesh"),materialInfo=root.optJSONObject("material"),pose=root.optJSONObject("preview_pose");
+            if(meshInfo==null||materialInfo==null||pose==null)throw new JSONException("cat preview manifest is incomplete");
+            JSONObject source=new JSONObject(meshInfo.toString());
+            String meshAsset=source.optString("android_asset",source.optString("asset",source.optString("mesh_asset","")));
+            source.put("android_asset",meshAsset);source.put("vertex_count",source.optInt("vertex_count",0));source.put("index_count",source.optInt("index_count",0));
+            MeshData data=loadMesh(source);if(data==null||data.chunks.isEmpty())throw new JSONException("cat preview mesh could not be loaded");
+            String texturePath=resolve(materialInfo.optString("android_asset",materialInfo.optString("texture_asset","")));
+            JSONObject colors=materialInfo.optJSONObject("colors");JSONArray diffuse=colors==null?materialInfo.optJSONArray("color"):colors.optJSONArray("_BaseColor");
+            Color color=new Color((float)(diffuse==null?1:diffuse.optDouble(0,1)),(float)(diffuse==null?1:diffuse.optDouble(1,1)),(float)(diffuse==null?1:diffuse.optDouble(2,1)),(float)(diffuse==null?1:diffuse.optDouble(3,1)));
+            JSONObject samplerInfo=materialInfo.optJSONObject("sampler");if(!texturePath.isEmpty()&&samplerInfo!=null)samplers.put(texturePath,new Sampler(samplerInfo.optInt("filter_mode",1),samplerInfo.optInt("wrap_u",0),samplerInfo.optInt("wrap_v",0),samplerInfo.optInt("aniso",1)));
+            JSONArray refs=materialInfo.optJSONArray("texture_refs");float[] uv=unityUvTransform(1,1,0,0);
+            if(refs!=null)for(int i=0;i<refs.length();i++){JSONObject ref=refs.optJSONObject(i);if(ref==null)continue;String prop=ref.optString("property","");if("_BaseMap".equals(prop)||"_MainTex".equals(prop)){float[] scale=vec2(ref.optJSONArray("scale"),1,1),offset=vec2(ref.optJSONArray("offset"),0,0);uv=unityUvTransform(scale[0],scale[1],offset[0],offset[1]);break;}}
+            JSONObject floats=materialInfo.optJSONObject("float_properties");int cull=materialInfo.optInt("cull",floats==null?2:floats.optInt("_Cull",2));boolean alphaClip=materialInfo.optBoolean("alpha_clip",floats!=null&&floats.optDouble("_AlphaClip",0)>.5);float cutoff=(float)materialInfo.optDouble("alpha_cutoff",floats==null?.5:floats.optDouble("_Cutoff",.5));boolean zWrite=materialInfo.optBoolean("z_write",floats==null||floats.optDouble("_ZWrite",1)>.5);
+            MaterialInfo material=new MaterialInfo(color,texturePath,uv,cull,false,GL20.GL_ONE,GL20.GL_ZERO,zWrite,alphaClip,cutoff);
+            float[] transformValues=matrix(pose.optJSONArray("world_matrix_row_major"));Matrix4 transform=new Matrix4(transformValues);Bounds bounds=transformBounds(transformValues,data.bounds);
+            int count=data.chunks.get(0).getNumIndices();for(int i=0;i<data.chunks.size();i++){Mesh mesh=data.chunks.get(i);catPreviewItems.add(new RenderItem("source-cat-preview-"+i,-1,mesh,0,mesh.getNumIndices(),transform,material,bounds));}
+        }catch(Exception error){catPreviewItems.clear();recordWarning("load source Cat 3D preview",error);}
+    }
     private void applyCameraClip(JSONObject source){if(camera==null||source==null)return;camera.near=(float)source.optDouble("near_clip",.1);camera.far=(float)source.optDouble("far_clip",1000);if(camera.near<=0||camera.far<=camera.near){camera.near=.1f;camera.far=1000f;}}
     private void parseTextures(JSONArray a){if(a==null)return;for(int i=0;i<a.length();i++){JSONObject t=a.optJSONObject(i),ref=t==null?null:t.optJSONObject("source_ref");if(ref==null)continue;String path=resolve(t.optString("android_asset",t.optString("asset","")));texturesByIndex.put(i,path);texturesByPathId.put(ref.optInt("path_id",-1),path);JSONObject s=t.optJSONObject("sampler");if(s!=null)samplers.put(path,new Sampler(s.optInt("filter_mode",1),s.optInt("wrap_u",0),s.optInt("wrap_v",0),s.optInt("aniso",1)));}}
     private void parseMaterials(JSONArray a){if(a==null)return;for(int i=0;i<a.length();i++){JSONObject m=a.optJSONObject(i);if(m==null)continue;JSONArray c=m.optJSONArray("color");Color color=new Color((float)(c==null?1:c.optDouble(0,1)),(float)(c==null?1:c.optDouble(1,1)),(float)(c==null?1:c.optDouble(2,1)),(float)(c==null?1:c.optDouble(3,1)));JSONObject fp=m.optJSONObject("float_properties");int cull=fp==null?2:fp.optInt("_Cull",2);boolean trans=(fp!=null&&fp.optDouble("_Surface",0)>.5)||(fp!=null&&((int)fp.optDouble("_SrcBlend",1)!=1||(int)fp.optDouble("_DstBlend",0)!=0))||color.a<.999f;int src=blendFactor(fp==null?(trans?5:1):fp.optInt("_SrcBlend",trans?5:1)),dst=blendFactor(fp==null?(trans?10:0):fp.optInt("_DstBlend",trans?10:0));if(src==GL20.GL_ONE&&dst==GL20.GL_ONE_MINUS_SRC_ALPHA)src=GL20.GL_SRC_ALPHA;String path="";float[] uv=unityUvTransform(1,1,0,0);JSONObject chosen=preferredDiffuseTexture(m.optJSONArray("texture_refs"));if(chosen!=null){path=texturesByIndex.getOrDefault(chosen.optInt("texture_index",-1),"");if(path.isEmpty()){JSONObject ref=chosen.optJSONObject("ref");if(ref!=null)path=texturesByPathId.getOrDefault(ref.optInt("path_id",-1),"");}float[] s=vec2(chosen.optJSONArray("scale"),1,1),o=vec2(chosen.optJSONArray("offset"),0,0);uv=unityUvTransform(s[0],s[1],o[0],o[1]);}boolean zWrite=fp==null?!trans:fp.optDouble("_ZWrite",!trans?1:0)>.5;boolean alphaClip=fp!=null&&fp.optDouble("_AlphaClip",0)>.5;float cutoff=fp==null?.5f:(float)fp.optDouble("_Cutoff",.5);materials.put(i,new MaterialInfo(color,path,uv,cull,trans,src,dst,zWrite,alphaClip,cutoff));}}
@@ -317,7 +345,7 @@ final class WorldRenderer implements Disposable {
     private Texture texture(String path){TextureEntry e=textureCache.get(path);if(e!=null)return e.texture;try{FileHandle f=Gdx.files.internal(path);byte[] head=new byte[24];int read=0;try(java.io.InputStream input=f.read()){while(read<24){int n=input.read(head,read,24-read);if(n<0)break;read+=n;}}if(read<24||head[0]!=(byte)137||head[1]!='P'||head[2]!='N'||head[3]!='G')return null;int w=be(head,16),h=be(head,20);if(w>2048||h>2048)return null;Sampler s=samplers.get(path);boolean mipmaps=s!=null&&s.filter==2;Texture t=new Texture(f,mipmaps);Texture.TextureFilter min=s!=null&&s.filter==0?Texture.TextureFilter.Nearest:mipmaps?Texture.TextureFilter.MipMapLinearLinear:Texture.TextureFilter.Linear;Texture.TextureFilter mag=s!=null&&s.filter==0?Texture.TextureFilter.Nearest:Texture.TextureFilter.Linear;t.setFilter(min,mag);t.setWrap(wrap(s==null?0:s.u),wrap(s==null?0:s.v));if(s!=null&&s.aniso>1)t.setAnisotropicFilter(s.aniso);long bytes=textureBytes(t.getWidth(),t.getHeight(),mipmaps);textureCache.put(path,new TextureEntry(t,bytes));textureBytes+=bytes;textureLoads++;return t;}catch(Exception error){recordWarning("load texture "+path,error);return null;}}
     private static long textureBytes(int width,int height,boolean mipmaps){long total=0;int w=width,h=height;do{total+=(long)w*h*4;if(!mipmaps||(w==1&&h==1))break;w=Math.max(1,w/2);h=Math.max(1,h/2);}while(true);return total;}
     private void trimTextures(){if(textureBytes<=TEXTURE_BUDGET)return;Iterator<Map.Entry<String,TextureEntry>> it=textureCache.entrySet().iterator();while(textureBytes>TEXTURE_BUDGET&&it.hasNext()){Map.Entry<String,TextureEntry> e=it.next();if(visibleTextures.contains(e.getKey()))continue;textureBytes-=e.getValue().bytes;e.getValue().texture.dispose();textureEvictions++;it.remove();}}
-    private void clearScene(){for(Mesh m:meshes)try{m.dispose();}catch(Exception ignored){}for(TextureEntry t:textureCache.values())try{t.texture.dispose();}catch(Exception ignored){}meshes.clear();textureCache.clear();textureBytes=0;renderItems.clear();doorMotion=null;doorRoomMask=0;doorRequest=null;activeDoorToken=0;boxColliders.clear();boxById.clear();meshColliders.clear();interactions.clear();interactionJson="";publishedInteraction=null;publishedNavigationRevision=Long.MIN_VALUE;interactionSnapshots=0;roomByCollider.clear();materials.clear();texturesByIndex.clear();texturesByPathId.clear();samplers.clear();depthWritingVisible.clear();transparentVisible.clear();profileStarted=profileNanos=textureLoads=textureEvictions=0;profileFrames=0;loaded=false;}
+    private void clearScene(){for(Mesh m:meshes)try{m.dispose();}catch(Exception ignored){}for(TextureEntry t:textureCache.values())try{t.texture.dispose();}catch(Exception ignored){}meshes.clear();textureCache.clear();textureBytes=0;renderItems.clear();catPreviewItems.clear();doorMotion=null;doorRoomMask=0;doorRequest=null;activeDoorToken=0;boxColliders.clear();boxById.clear();meshColliders.clear();interactions.clear();interactionJson="";publishedInteraction=null;publishedNavigationRevision=Long.MIN_VALUE;interactionSnapshots=0;roomByCollider.clear();materials.clear();texturesByIndex.clear();texturesByPathId.clear();samplers.clear();depthWritingVisible.clear();transparentVisible.clear();profileStarted=profileNanos=textureLoads=textureEvictions=0;profileFrames=0;loaded=false;}
     private String resolve(String p){if(p==null||p.isEmpty()||p.startsWith("/")||p.contains(".."))return "";return p.startsWith(manifestDirectory)||manifestDirectory.isEmpty()?p:manifestDirectory+p;}
     private static float[] matrix(JSONArray rows){float[] m=new Matrix4().val;if(rows==null||rows.length()!=4)return m;for(int r=0;r<4;r++){JSONArray row=rows.optJSONArray(r);if(row==null)return m;for(int c=0;c<4;c++){float v=(float)row.optDouble(c,0);if((r==2)^(c==2))v=-v;m[c*4+r]=v;}}return m;}
     private static Bounds transformBounds(float[] m,float[] b){float ax=Float.MAX_VALUE,ay=ax,az=ax,bx=-ax,by=-ax,bz=-ax;for(int mask=0;mask<8;mask++){float x=b[0]+((mask&1)==0?-b[3]:b[3]),y=b[1]+((mask&2)==0?-b[4]:b[4]),z=-(b[2]+((mask&4)==0?-b[5]:b[5]));float wx=m[0]*x+m[4]*y+m[8]*z+m[12],wy=m[1]*x+m[5]*y+m[9]*z+m[13],wz=m[2]*x+m[6]*y+m[10]*z+m[14];ax=Math.min(ax,wx);ay=Math.min(ay,wy);az=Math.min(az,wz);bx=Math.max(bx,wx);by=Math.max(by,wy);bz=Math.max(bz,wz);}return new Bounds(ax,ay,az,bx,by,bz);}

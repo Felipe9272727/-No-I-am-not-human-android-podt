@@ -1,0 +1,164 @@
+{
+  "schema": "android-toolchain-validation-v11",
+  "source": "Official Android SDK repository archives; Rust official rustup distribution; Maven Central pinned dependencies.",
+  "android": {
+    "platform": "android-35",
+    "platform_archive": "platform-35_r02.zip",
+    "platform_archive_sha1": "0bb560a90a7a2cbd0dd8348224d518b638fe7949",
+    "build_tools": "35.0.0",
+    "build_tools_archive": "build-tools_r35_linux.zip",
+    "build_tools_archive_sha1": "2cfaa0bbb2336e9ec18ed3ecea84fa2e2af607bc",
+    "ndk": "27.2.12479018 (r27c)",
+    "ndk_archive": "android-ndk-r27c-linux.zip",
+    "ndk_archive_sha1": "090e8083a715fdb1a3e402d0763c388abb03fb4e",
+    "ndk_zip_symlinks_preserved": 35,
+    "build_tool_executable_modes": {
+      "aapt": "0755",
+      "aapt2": "0755",
+      "d8": "0755",
+      "zipalign": "0755",
+      "apksigner": "0755"
+    },
+    "smoke_test": "aarch64-linux-android and x86_64-linux-android C++ shared links succeeded; all PT_LOAD alignments were 16384 bytes."
+  },
+  "rust": {
+    "rustc": "1.85.1 (4eb161250 2025-03-15)",
+    "cargo": "1.85.1 (d73d2caf9 2024-12-31)",
+    "targets": [
+      "aarch64-linux-android",
+      "x86_64-linux-android"
+    ],
+    "host_bridge_locked_release_build": "passed"
+  },
+  "java": {
+    "ecj": "3.38.0",
+    "ecj_sha1": "86b2e4ab1d6aef91cb21f4d2ec364afb75d05b2c"
+  },
+  "runtime_artifacts": [
+    {
+      "file": "tools/android-current/libgdx/1.14.2/gdx-1.14.2.jar",
+      "sha256": "a835710bb135c2c687723b9474d5620f8158af90a96e07ce492f6169d7eee8cc"
+    },
+    {
+      "file": "tools/android-current/libgdx/1.14.2/gdx-backend-android-1.14.2.aar",
+      "sha256": "a87d9cb6458580cc97c9e3c4ba45b7c09524315205999d3dadea6d1fac6eab1d"
+    },
+    {
+      "file": "tools/android-current/libgdx/1.14.2/gdx-jnigen-loader-2.5.2.jar",
+      "sha256": "df81f23cfd6785c52d35e108eeaa3930f559d4d2770a6102e75ca7bfa6f9f27a"
+    },
+    {
+      "file": "tools/android-current/libgdx/1.14.2/gdx-platform-1.14.2-natives-arm64-v8a.jar",
+      "sha256": "222cabc63ba717d1f8937c4e2236eea48a6b5b66d98a40487f2065aea398dc5a"
+    },
+    {
+      "file": "tools/android-current/libgdx/1.14.2/gdx-platform-1.14.2-natives-x86_64.jar",
+      "sha256": "d8a573ef6350008ac44e1231d0499b848d64cf3b468f663189ad94f0d51fc3fe"
+    },
+    {
+      "file": "tools/android-current/libgdx/androidx/collection-jvm-1.4.2.jar",
+      "sha256": "984ce9bd780055eafb8a105aca3f514686bf7b1b6272ec7c645a98ce40fc7db4"
+    },
+    {
+      "file": "tools/android-current/libgdx/androidx/core-1.17.0.aar",
+      "sha256": "e1bd22bbcf5cee3a992dedb7d2d3c3b31c9f761c01e56d00ea443c8aaa981182"
+    },
+    {
+      "file": "tools/android-current/libgdx/androidx/core-viewtree-1.0.0.aar",
+      "sha256": "dc1b678d58ebcf2bfa1587be68ff826694ce3d221251b9ef30d4d4b36297e6de"
+    },
+    {
+      "file": "tools/android-current/libgdx/androidx/kotlin-stdlib-2.0.21.jar",
+      "sha256": "f31cc53f105a7e48c093683bbd5437561d1233920513774b470805641bedbc09"
+    },
+    {
+      "file": "tools/android-current/libgdx/androidx/kotlinx-coroutines-core-jvm-1.8.1.jar",
+      "sha256": "f3d4f5de1c391bbcc20f3b3435ccbac013521e76b6902d7d59635ec15c1f797e"
+    },
+    {
+      "file": "tools/android-current/libgdx/androidx/lifecycle-common-2.6.2.jar",
+      "sha256": "f34831b6c71cd844e1d35d1be49d5e79447c5ab856346531b1e8676fda7374b1"
+    },
+    {
+      "file": "tools/android-current/libgdx/androidx/lifecycle-runtime-2.6.2.aar",
+      "sha256": "4867fd5279742fba8388821930cb2affe06d81a52814e7e41e70392ea0ef887c"
+    },
+    {
+      "file": "tools/android-current/libgdx/androidx/versionedparcelable-1.1.1.aar",
+      "sha256": "57e8d93260d18d5b9007c9eed3c64ad159de90c8609ebfc74a347cbd514535a4"
+    }
+  ],
+  "qa_artifacts": [
+    {
+      "file": "tools/android-current/qa/deps/gdx-1.14.2.jar",
+      "sha1": "919153aed4ce12001e86c38ac3dc5cdfe1954898"
+    },
+    {
+      "file": "tools/android-current/qa/deps/gdx-backend-lwjgl3-1.14.2.jar",
+      "sha1": "b92aa68b24236fcd63d2158439ce8362ef45c05e"
+    },
+    {
+      "file": "tools/android-current/qa/deps/gdx-jnigen-loader-2.5.2.jar",
+      "sha1": "f35e90affe07c46b4f5e5958a1a4c1820c4890e2"
+    },
+    {
+      "file": "tools/android-current/qa/deps/gdx-lwjgl3-angle-1.14.2.jar",
+      "sha1": "199188b3d4bb4505f0d571d9317ed00233831087"
+    },
+    {
+      "file": "tools/android-current/qa/deps/gdx-platform-1.14.2-natives-desktop.jar",
+      "sha1": "95359e0129fe5393bc6f9b597f33e14ae024d0f7"
+    },
+    {
+      "file": "tools/android-current/qa/deps/json-20250517.jar",
+      "sha1": "d67181bbd819ccceb929b580a4e2fcb0c8b17cd8"
+    },
+    {
+      "file": "tools/android-current/qa/deps/lwjgl-3.3.3-natives-linux.jar",
+      "sha1": "1713758e3660ba66e1e954396fd18126038b33c0"
+    },
+    {
+      "file": "tools/android-current/qa/deps/lwjgl-3.3.3.jar",
+      "sha1": "29589b5f87ed335a6c7e7ee6a5775f81f97ecb84"
+    },
+    {
+      "file": "tools/android-current/qa/deps/lwjgl-egl-3.3.3.jar",
+      "sha1": "2f0d613e3f769577548f08b11ae9b7571980aeb1"
+    },
+    {
+      "file": "tools/android-current/qa/deps/lwjgl-glfw-3.3.3-natives-linux.jar",
+      "sha1": "a03684c5e4b1b1dbbe0d29dbbdc27b985b6840f2"
+    },
+    {
+      "file": "tools/android-current/qa/deps/lwjgl-glfw-3.3.3.jar",
+      "sha1": "efa1eb78c5ccd840e9f329717109b5e892d72f8e"
+    },
+    {
+      "file": "tools/android-current/qa/deps/lwjgl-opengl-3.3.3-natives-linux.jar",
+      "sha1": "62c70a4b00ca5391882b0f4b787c1588d24f1c86"
+    },
+    {
+      "file": "tools/android-current/qa/deps/lwjgl-opengl-3.3.3.jar",
+      "sha1": "02f6b0147078396a58979125a4c947664e98293a"
+    },
+    {
+      "file": "tools/android-current/qa/deps/lwjgl-opengles-3.3.3-natives-linux.jar",
+      "sha1": "d59211c8746d50cfb610bd38f8d817a94fbdf013"
+    },
+    {
+      "file": "tools/android-current/qa/deps/lwjgl-opengles-3.3.3.jar",
+      "sha1": "b3a29ff95bdb320122839741a3723338e6ecfa28"
+    }
+  ],
+  "environment": {
+    "ANDROID_SDK_ROOT": "tools/android/sdk",
+    "ANDROID_NDK_HOME": "tools/android/android-ndk-r27c",
+    "CARGO_HOME": "tools/cargo",
+    "RUSTUP_HOME": "tools/rustup",
+    "PATH_prefix": [
+      "tools/cargo/bin",
+      "tools/android/android-ndk-r27c/toolchains/llvm/prebuilt/linux-x86_64/bin"
+    ]
+  },
+  "scope": "Build dependency restoration and trusted toolchain smoke checks only. No Android APK or project C++/NDK ABI build was run."
+}

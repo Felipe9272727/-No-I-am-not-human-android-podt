@@ -36,6 +36,13 @@ PresentationState::PresentationState(const PresentationCatalog& c):catalog_(c) {
  for(const auto& character:catalog_.records())
   if(character.has_initial_pose) live_poses_[character.name]=character.initial_pose_state;
 }
+PresentationState::Snapshot PresentationState::snapshot() const {
+ return {dialog_companion_, emotion_, gun_shown_, active_sign_, immediate_poses_, tomorrow_poses_, live_poses_};
+}
+void PresentationState::restore(const Snapshot& s) {
+ dialog_companion_=s.dialog_companion; emotion_=s.emotion; gun_shown_=s.gun_shown;
+ active_sign_=s.active_sign; immediate_poses_=s.immediate_poses; tomorrow_poses_=s.tomorrow_poses; live_poses_=s.live_poses;
+}
 PresentationResult PresentationState::set_dialog_companion(const std::string& name) {
  const auto* c=catalog_.find(name); if(!c)return PresentationResult::NotFound;
  dialog_companion_=c->name; return PresentationResult::Applied;

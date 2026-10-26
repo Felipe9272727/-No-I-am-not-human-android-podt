@@ -36,12 +36,15 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -93,6 +96,8 @@ public final class MainActivity extends AndroidApplication {
     private volatile boolean initialized;
     private volatile boolean nativeBusy;
     private String loadError;
+    private SaveFileStore saveFiles;
+    private String startupSaveNotice;
     private String previousCrashReport = "";
     private CrashDiagnostics.History previousCrashHistory;
     private boolean previousCrashNoticeShown;
@@ -103,6 +108,7 @@ public final class MainActivity extends AndroidApplication {
     private boolean muteMusic;
     private int renderQuality, lastRenderWidth, lastRenderHeight;
     private boolean showFrameRate;
+    private boolean catPreviewEnabled;
     private MusicPlayer musicPlayer, ambiencePlayer;
     private String selectedMusic = "", selectedAmbience = "";
     private boolean toolsMode;
@@ -125,8 +131,10 @@ public final class MainActivity extends AndroidApplication {
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         CrashDiagnostics.install(this);
+        saveFiles=new SaveFileStore(new File(getFilesDir(),"saves"));
         renderQuality=Math.max(0,Math.min(2,getSharedPreferences("graphics-options",MODE_PRIVATE).getInt("quality",0)));
         showFrameRate=getSharedPreferences("graphics-options",MODE_PRIVATE).getBoolean("show-fps",true);
+        catPreviewEnabled=getSharedPreferences("graphics-options",MODE_PRIVATE).getBoolean("debug-cat-3d",false);
         muteMusic=getSharedPreferences("audio-options",MODE_PRIVATE).getBoolean("mute-music",false);
         musicPlayer=new MusicPlayer(this); ambiencePlayer=new MusicPlayer(this);
         musicPlayer.setMuted(muteMusic); ambiencePlayer.setMuted(muteMusic);
@@ -141,6 +149,7 @@ public final class MainActivity extends AndroidApplication {
         cfg.depth = 24;
         cfg.useAccelerometer = false; cfg.useCompass = false; cfg.useGyroscope = false;
         roomEngine = new RoomEngine();
+        roomEngine.setCatPreviewEnabled(catPreviewEnabled);
         roomEngineView = initializeForView(roomEngine, cfg);
         if (roomEngineView instanceof GLSurfaceView) ((GLSurfaceView) roomEngineView).setZOrderMediaOverlay(true);
         roomEngineView.setVisibility(View.VISIBLE);
@@ -179,14 +188,19 @@ public final class MainActivity extends AndroidApplication {
                 loadUiAnimations(assets.optString("animations_manifest",""));
                 roomEngine.setAssets(assets);
                 loadTranslations();
-                initial = parseState(nativeCreate(readAssetText("narrative/program.json"), readAssetText("narrative/line_metadata.json")));
+                initial = parseState(nativeCreate(NativeJson.ascii(readAssetText("narrative/program.json")), NativeJson.ascii(readAssetText("narrative/line_metadata.json"))));
+                if("state".equals(initial.optString("type")) && initial.isNull("error"))
+                    initial=restoreSavedSlot(initial);
             } catch (Exception e) {
                 loadError = "Não foi possível iniciar o núcleo: " + e.getMessage();
                 initial = parseState("{}");
                 try { initial.put("error", loadError); } catch (JSONException ignored) { }
             }
             final JSONObject result = initial;
-            runOnUiThread(() -> { applyState(result); maybeShowPreviousCrash(); });
+            runOnUiThread(() -> {
+                applyState(result); maybeShowPreviousCrash();
+                if(startupSaveNotice!=null) Toast.makeText(this,startupSaveNotice,Toast.LENGTH_LONG).show();
+            });
         });
     }
 
@@ -275,6 +289,29 @@ public final class MainActivity extends AndroidApplication {
         catch (JSONException e) { JSONObject bad = new JSONObject(); try { bad.put("error", "Resposta inválida do núcleo: " + e.getMessage()); } catch (JSONException ignored) { } return bad; }
     }
 
+    /** Validate the disk slot through the same native decoder used by Continue.
+     * Import only installs the slot: startup remains at the original menu.
+     */
+    private JSONObject restoreSavedSlot(JSONObject initial) throws Exception {
+        for(SaveFileStore.Candidate candidate:saveFiles.candidates()) {
+            JSONObject request=new JSONObject();request.put("action","import_save");
+            request.put("save",new JSONObject(candidate.payload));
+            JSONObject restored=parseState(nativeAction(NativeJson.ascii(request.toString())));
+            if("state".equals(restored.optString("type")) && restored.isNull("error") &&
+               restored.optBoolean("save_available",false)) {
+                saveFiles.accepted(candidate);
+                if(candidate.fromBackup) startupSaveNotice="O save mais recente estava incompleto. A cópia anterior foi recuperada.";
+                return restored;
+            }
+        }
+        if(saveFiles.exists()) {
+            startupSaveNotice="Não foi possível ler o save deste aparelho. Os arquivos foram preservados.";
+            // Clear the rejected import's transient error without changing the slot or campaign.
+            return parseState(nativeAction("{\"action\":\"state\"}"));
+        }
+        return initial;
+    }
+
     private static String stringField(JSONObject object, String key, String fallback) {
         if (object == null || object.isNull(key)) return fallback;
         String value = object.optString(key, fallback);
@@ -357,10 +394,27 @@ public final class MainActivity extends AndroidApplication {
         if (canvas != null) canvas.invalidate();
         nativeWorker.execute(() -> {
             JSONObject next;
-            try { next = parseState(nativeAction(action.toString())); }
+            try { next = parseState(nativeAction(NativeJson.ascii(action.toString()))); }
             catch (Exception e) { next = parseState("{}"); try { next.put("error", "Ação não concluída: " + e.getMessage()); } catch (JSONException ignored) { } }
+            boolean savedOnDevice=false;
+            if("save".equals(action.optString("action")) && "state".equals(next.optString("type")) && next.isNull("error")) {
+                try {
+                    JSONObject exported=parseState(nativeAction("{\"action\":\"export_save\"}"));
+                    JSONObject snapshot=exported.optJSONObject("save");
+                    if(!exported.isNull("error") || snapshot==null)
+                        throw new IOException(exported.optString("error","Estado salvo não disponível"));
+                    saveFiles.write(snapshot.toString());
+                    exported.remove("save");next=exported;savedOnDevice=true;
+                } catch(Exception e) {
+                    try { next.put("error","Não foi possível salvar no aparelho: "+e.getMessage()); } catch(JSONException ignored) { }
+                }
+            }
             JSONObject result = next;
-            runOnUiThread(() -> applyState(result));
+            final boolean saved=savedOnDevice;
+            runOnUiThread(() -> {
+                applyState(result);
+                if(saved) Toast.makeText(this,"Jogo salvo. Use Continuar após reabrir o aplicativo.",Toast.LENGTH_LONG).show();
+            });
         });
     }
 
@@ -517,6 +571,13 @@ public final class MainActivity extends AndroidApplication {
         showFrameRate=!showFrameRate;
         getSharedPreferences("graphics-options",MODE_PRIVATE).edit().putBoolean("show-fps",showFrameRate).apply();
         canvas.invalidate();
+    }
+
+    private void toggleCatPreview() {
+        catPreviewEnabled=!catPreviewEnabled;
+        getSharedPreferences("graphics-options",MODE_PRIVATE).edit().putBoolean("debug-cat-3d",catPreviewEnabled).apply();
+        if(roomEngine!=null)roomEngine.setCatPreviewEnabled(catPreviewEnabled);
+        if(canvas!=null)canvas.invalidate();
     }
 
     private String renderQualityLabel() {
@@ -1078,6 +1139,8 @@ public final class MainActivity extends AndroidApplication {
             button(c,muteMusic?"Músicas desligadas":"Músicas ligadas",680,660,1240,730,0xFFFFFFFF,0,MainActivity.this::toggleMusic);
             button(c,muteIntro?"Som da introdução desligado":"Som da introdução ligado",680,745,1240,815,0xFFFFFFFF,0,()->{muteIntro=!muteIntro;if(introPlayer!=null)introPlayer.setVolume(muteIntro?0f:1f,muteIntro?0f:1f);invalidate();});
             button(c,"Diagnóstico",680,830,1240,900,0xFFFFFFFF,0,MainActivity.this::showRendererDiagnostic);
+            button(c,catPreviewEnabled?"DEBUG: gato 3D ligado":"DEBUG: gato 3D desligado",1310,745,1870,815,0xFFFFFFFF,0,MainActivity.this::toggleCatPreview);
+            wrap(c,"Prévia do modelo original. O gato ainda não foi liberado pela campanha.",1310,850,550,30,4,Color.WHITE,22);
             button(c,"Voltar",680,915,1240,985,0xFFFFFFFF,0,()->{settingsOpen=false;reanchorCampaignClock();updateEngine();invalidate();});
         }
 
@@ -1087,7 +1150,7 @@ public final class MainActivity extends AndroidApplication {
             drawPauseButton(c,"Continue","Continuar",()->{pauseOpen=false;reanchorCampaignClock();updateEngine();invalidate();});
             drawPauseButton(c,"Settings","Opções",MainActivity.this::showOptionsDialog);
             drawPauseButton(c,"Menu","Menu principal",()->{pauseOpen=false;act("menu",null,null);});
-            drawPauseButton(c,"Exit","Salvar sessão",this::saveWorldState);
+            drawPauseButton(c,"Exit","Salvar jogo",this::saveWorldState);
         }
 
         private void drawPauseButton(Canvas c,String control,String label,Runnable action) {

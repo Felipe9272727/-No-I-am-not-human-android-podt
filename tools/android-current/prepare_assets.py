@@ -375,6 +375,29 @@ def stage_world_assets(destination: Path) -> dict:
                                    "texture_count": len(textures),
                                    "source_manifest_sha256": sha256_file(source_manifest)}
     minified_json(source_manifest, world_out / "world_manifest.json", manifest)
+    cat_source = WORLD_SOURCE / "cat3d"
+    cat_manifest_path = cat_source / "cat3d_manifest.json"
+    if cat_manifest_path.is_file():
+        cat = read_json(cat_manifest_path)
+        cat_mesh = cat.get("mesh", {})
+        cat_material = cat.get("material", {})
+        for section, key in ((cat_mesh, "asset"), (cat_material, "texture_asset")):
+            relative = Path(section.get(key, ""))
+            if relative.is_absolute() or ".." in relative.parts or not relative.parts:
+                raise RuntimeError(f"unsafe Cat 3D source asset: {relative}")
+            source = cat_source / relative
+            expected = section.get("sha256") if key == "asset" else section.get("texture_sha256")
+            digest = sha256_file(source)
+            if expected and digest != expected:
+                raise RuntimeError(f"Cat 3D asset hash mismatch: {relative}")
+            target = world_out / relative.name
+            shutil.copyfile(source, target)
+            section["android_asset"] = f"world/{relative.name}"
+            section["staged_sha256"] = digest
+        cat["android_staging"] = {"mesh_bytes": (world_out / Path(cat_mesh["android_asset"]).name).stat().st_size,
+                                  "texture_bytes": (world_out / Path(cat_material["android_asset"]).name).stat().st_size,
+                                  "source_manifest_sha256": sha256_file(cat_manifest_path)}
+        minified_json(cat_manifest_path, world_out / "cat3d_manifest.json", cat)
     subprocess.run([sys.executable, str(ROOT / "tools/mesh-opt/optimize_world.py"),
                     "--assets-root", str(destination), "--apply"], check=True, cwd=ROOT)
     optimized=read_json(world_out / "world_manifest.json")

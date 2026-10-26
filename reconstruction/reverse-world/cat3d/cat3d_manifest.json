@@ -1,0 +1,336 @@
+{
+  "schema_version": 1,
+  "provenance": {
+    "method": "UnityPy static extraction and weighted source bone-matrix bake",
+    "executed_original_binaries": false,
+    "scene_file": "level1",
+    "mesh_file": "sharedassets1.assets",
+    "resource_file": "/workspace/scratch/ad0b61c5ef81/restore-v11/original.zip:No.Im.not.a.Human.v1.3.18/No.Im.not.a.Human.v1.3.18/NoImNotAHuman_Data/sharedassets1.assets.resS",
+    "source_objects": {
+      "cat_game_object": {
+        "path_id": 477,
+        "name": "Naperdysh_idle"
+      },
+      "cat_instance_component": {
+        "path_id": 5254,
+        "class": "CatInstance"
+      },
+      "cat_provider_component": {
+        "path_id": 3832,
+        "class": "CatViewProvider"
+      },
+      "skinned_mesh_renderer": {
+        "path_id": 2557,
+        "game_object_path_id": 439
+      },
+      "mesh": {
+        "path_id": 304,
+        "name": "Body"
+      },
+      "material": {
+        "path_id": 30,
+        "name": "Cat_alpha_mat"
+      },
+      "albedo_texture": {
+        "path_id": 92,
+        "name": "koshka"
+      }
+    },
+    "source_sha256": {
+      "level1": "400e6cfb07bf47df1d0b2ad3446a101870acf3905d5bfa5b68058d2364845dfd",
+      "sharedassets1.assets": "22ca7b058f813f81f1b724e8da8f2e8b64674be9cef4ecc6d52edd860f08ee73",
+      "mesh_asset": "494058c6ea2fdcc9d41519c41f1b3256c5e5fb799c85431f8f95ea15052d729e",
+      "albedo_png": "c2945ae8726b865832208a61e76abded33223bdda581a943617ef5ebcf616e86"
+    }
+  },
+  "visibility": {
+    "scene_active_self": false,
+    "source_gate": "CatSaveData.IsActive; ActivateCat enables the CatInstance GameObject",
+    "purpose": "explicit debug preview only; the native first-morning campaign does not activate the cat"
+  },
+  "preview_pose": {
+    "source_position_array": "CatViewProvider.DayPositions[0]",
+    "source_position_array_offset": 44,
+    "position": [
+      -5.27,
+      0.32,
+      -4.76
+    ],
+    "rotation_y_degrees": -255.839996,
+    "animation_enum": 0,
+    "animation_name": "Sit",
+    "world_matrix_row_major": [
+      [
+        -0.24463059,
+        0.0,
+        0.96961635,
+        -5.27
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.32
+      ],
+      [
+        -0.96961635,
+        0.0,
+        -0.24463059,
+        -4.76
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "pose_bake": "serialized source bone transforms with mesh bind poses and vertex weights",
+    "animation_playback": "not evaluated; source CatPosition animation is Sit",
+    "controller_clips": [
+      "SIT",
+      "LAY"
+    ]
+  },
+  "positions": {
+    "day": [
+      {
+        "position": [
+          -5.27,
+          0.32,
+          -4.76
+        ],
+        "rotation_y_degrees": -255.839996,
+        "animation_enum": 0,
+        "animation_name": "Sit"
+      },
+      {
+        "position": [
+          2.8,
+          1.39,
+          -9.03
+        ],
+        "rotation_y_degrees": 584.700012,
+        "animation_enum": 0,
+        "animation_name": "Sit"
+      },
+      {
+        "position": [
+          -1.21,
+          -0.2,
+          -9.13
+        ],
+        "rotation_y_degrees": -97.400002,
+        "animation_enum": 0,
+        "animation_name": "Sit"
+      }
+    ],
+    "night": [
+      {
+        "position": [
+          -5.21,
+          0.32,
+          -4.86
+        ],
+        "rotation_y_degrees": -70.199997,
+        "animation_enum": 1,
+        "animation_name": "Lay"
+      },
+      {
+        "position": [
+          -4.68,
+          -0.2,
+          -7.73
+        ],
+        "rotation_y_degrees": -288.899994,
+        "animation_enum": 1,
+        "animation_name": "Lay"
+      },
+      {
+        "position": [
+          2.6,
+          0.688,
+          -9.53
+        ],
+        "rotation_y_degrees": -101.400002,
+        "animation_enum": 1,
+        "animation_name": "Lay"
+      }
+    ]
+  },
+  "mesh": {
+    "asset": "cat3d.bin",
+    "vertex_count": 1112,
+    "index_count": 4557,
+    "triangle_count": 1519,
+    "vertex_stride_bytes": 32,
+    "vertex_layout": [
+      "position_f32x3",
+      "normal_f32x3",
+      "uv0_f32x2"
+    ],
+    "index_type": "uint32_le",
+    "local_bounds": {
+      "min": [
+        -0.125836,
+        -0.029767,
+        -0.3985
+      ],
+      "max": [
+        0.359224,
+        0.317791,
+        0.339286
+      ]
+    },
+    "sha256": "494058c6ea2fdcc9d41519c41f1b3256c5e5fb799c85431f8f95ea15052d729e",
+    "source_mesh_vertex_count": 1112,
+    "source_bones": 48,
+    "source_bindposes": 48,
+    "source_skin_weights": 1112,
+    "android_asset": "world/cat3d.bin"
+  },
+  "material": {
+    "name": "Cat_alpha_mat",
+    "shader": "Universal Render Pipeline/Lit",
+    "source_ref": {
+      "file_id": 2,
+      "path_id": 30
+    },
+    "color": [
+      0.8209797739982605,
+      0.8209797739982605,
+      0.8209797739982605,
+      1.0
+    ],
+    "colors": {
+      "_BaseColor": [
+        0.8209797739982605,
+        0.8209797739982605,
+        0.8209797739982605,
+        1.0
+      ],
+      "_Color": [
+        0.8209797739982605,
+        0.8209797739982605,
+        0.8209797739982605,
+        1.0
+      ],
+      "_EmissionColor": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "_SpecColor": [
+        0.19999995827674866,
+        0.19999995827674866,
+        0.19999995827674866,
+        1.0
+      ]
+    },
+    "float_properties": {
+      "_AddPrecomputedVelocity": 0.0,
+      "_AlphaClip": 1.0,
+      "_AlphaToMask": 1.0,
+      "_Blend": 0.0,
+      "_BlendModePreserveSpecular": 1.0,
+      "_BumpScale": 0.5,
+      "_ClearCoatMask": 0.0,
+      "_ClearCoatSmoothness": 0.0,
+      "_Cull": 2.0,
+      "_Cutoff": 0.2639999985694885,
+      "_DetailAlbedoMapScale": 1.0,
+      "_DetailNormalMapScale": 1.0,
+      "_DstBlend": 0.0,
+      "_DstBlendAlpha": 0.0,
+      "_EnvironmentReflections": 1.0,
+      "_GlossMapScale": 1.0,
+      "_Glossiness": 0.0,
+      "_GlossyReflections": 1.0,
+      "_Metallic": 0.0,
+      "_Mode": 0.0,
+      "_OcclusionStrength": 1.0,
+      "_Parallax": 0.019999999552965164,
+      "_QueueOffset": 0.0,
+      "_ReceiveShadows": 1.0,
+      "_Smoothness": 0.0,
+      "_SmoothnessTextureChannel": 0.0,
+      "_SpecularHighlights": 1.0,
+      "_SrcBlend": 1.0,
+      "_SrcBlendAlpha": 1.0,
+      "_Surface": 0.0,
+      "_UVSec": 0.0,
+      "_WorkflowMode": 1.0,
+      "_XRMotionVectorsPass": 1.0,
+      "_ZWrite": 1.0
+    },
+    "custom_render_queue": 2450,
+    "string_tags": {
+      "RenderType": "TransparentCutout"
+    },
+    "texture_refs": [
+      {
+        "property": "_BaseMap",
+        "path_id": 92,
+        "name": "koshka",
+        "scale": [
+          1.0,
+          1.0
+        ],
+        "offset": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "property": "_BumpMap",
+        "path_id": 135,
+        "name": "koshka 1",
+        "scale": [
+          1.0,
+          1.0
+        ],
+        "offset": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "property": "_MainTex",
+        "path_id": 92,
+        "name": "koshka",
+        "scale": [
+          1.0,
+          1.0
+        ],
+        "offset": [
+          0.0,
+          0.0
+        ]
+      }
+    ],
+    "texture_asset": "cat_koshka.png",
+    "texture_dimensions": [
+      512,
+      512
+    ],
+    "texture_mode": "RGBA",
+    "texture_sha256": "c2945ae8726b865832208a61e76abded33223bdda581a943617ef5ebcf616e86",
+    "sampler": {
+      "filter_mode": 0,
+      "wrap_u": 0,
+      "wrap_v": 0,
+      "aniso": 1
+    },
+    "alpha_clip": true,
+    "alpha_cutoff": 0.2639999985694885,
+    "cull": 2,
+    "z_write": true,
+    "android_asset": "world/cat_koshka.png"
+  },
+  "source": {
+    "manifest": "cat3d_manifest.json",
+    "mesh_asset": "world/cat3d.bin",
+    "texture_asset": "world/cat_koshka.png"
+  }
+}

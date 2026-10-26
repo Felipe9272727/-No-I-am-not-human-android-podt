@@ -1,0 +1,278 @@
+{
+  "evidence": {
+    "asset": "level1",
+    "provider_component_path_id": 3826,
+    "provider_type": "_Code.Infrastructure.StateObjects.StateObjectsViewProvider",
+    "provider_raw_size": 572,
+    "schema": "MonoBehaviour prefix (32 bytes), serialized StateObjet[]; each record is enum int32 plus GameObject[] of PPtrs",
+    "enum_source": "_Code.Infrastructure.StateObjects.EStateObjectType.cs in recovered C# source"
+  },
+  "state_objects": [
+    {
+      "enum_value": 0,
+      "enum_name": "Carpet",
+      "states": [
+        {
+          "index": 0,
+          "game_object_path_id": 297,
+          "game_object_name": "Ковер 1"
+        },
+        {
+          "index": 1,
+          "game_object_path_id": 1298,
+          "game_object_name": "Ковёр 2"
+        }
+      ]
+    },
+    {
+      "enum_value": 1,
+      "enum_name": "Ground",
+      "states": [
+        {
+          "index": 0,
+          "game_object_path_id": 1326,
+          "game_object_name": "Земля 1"
+        },
+        {
+          "index": 1,
+          "game_object_path_id": 880,
+          "game_object_name": "Земля 2"
+        },
+        {
+          "index": 2,
+          "game_object_path_id": 456,
+          "game_object_name": "Земля 3"
+        },
+        {
+          "index": 3,
+          "game_object_path_id": 306,
+          "game_object_name": "Земля 4 "
+        }
+      ]
+    },
+    {
+      "enum_value": 2,
+      "enum_name": "WindowBoardsTriggers",
+      "states": [
+        {
+          "index": 0,
+          "game_object_path_id": null,
+          "game_object_name": null
+        },
+        {
+          "index": 1,
+          "game_object_path_id": 133,
+          "game_object_name": "WindowBoards"
+        }
+      ]
+    },
+    {
+      "enum_value": 3,
+      "enum_name": "PeepholeEndingTrigger",
+      "states": [
+        {
+          "index": 0,
+          "game_object_path_id": null,
+          "game_object_name": null
+        },
+        {
+          "index": 1,
+          "game_object_path_id": 264,
+          "game_object_name": "PeepholeEnding"
+        }
+      ]
+    },
+    {
+      "enum_value": 4,
+      "enum_name": "HatchEnter",
+      "states": [
+        {
+          "index": 0,
+          "game_object_path_id": null,
+          "game_object_name": null
+        },
+        {
+          "index": 1,
+          "game_object_path_id": 207,
+          "game_object_name": "Hatch"
+        }
+      ]
+    },
+    {
+      "enum_value": 5,
+      "enum_name": "Apple",
+      "states": [
+        {
+          "index": 0,
+          "game_object_path_id": null,
+          "game_object_name": null
+        },
+        {
+          "index": 1,
+          "game_object_path_id": 553,
+          "game_object_name": "Apple"
+        }
+      ]
+    },
+    {
+      "enum_value": 6,
+      "enum_name": "Clock",
+      "states": [
+        {
+          "index": 0,
+          "game_object_path_id": null,
+          "game_object_name": null
+        },
+        {
+          "index": 1,
+          "game_object_path_id": 851,
+          "game_object_name": "Clock"
+        }
+      ]
+    },
+    {
+      "enum_value": 7,
+      "enum_name": "Mushroom",
+      "states": [
+        {
+          "index": 0,
+          "game_object_path_id": null,
+          "game_object_name": null
+        },
+        {
+          "index": 1,
+          "game_object_path_id": 379,
+          "game_object_name": "Гриб"
+        }
+      ]
+    },
+    {
+      "enum_value": 8,
+      "enum_name": "Mushroomlist",
+      "states": [
+        {
+          "index": 0,
+          "game_object_path_id": null,
+          "game_object_name": null
+        },
+        {
+          "index": 1,
+          "game_object_path_id": 640,
+          "game_object_name": "Mushroomlist"
+        }
+      ]
+    },
+    {
+      "enum_value": 9,
+      "enum_name": "CultistsSheets",
+      "states": [
+        {
+          "index": 0,
+          "game_object_path_id": null,
+          "game_object_name": null
+        },
+        {
+          "index": 1,
+          "game_object_path_id": 875,
+          "game_object_name": "CultistsSheets"
+        }
+      ]
+    },
+    {
+      "enum_value": 10,
+      "enum_name": "Husband",
+      "states": [
+        {
+          "index": 0,
+          "game_object_path_id": null,
+          "game_object_name": null
+        },
+        {
+          "index": 1,
+          "game_object_path_id": 613,
+          "game_object_name": "Husband"
+        }
+      ]
+    },
+    {
+      "enum_value": 12,
+      "enum_name": "TunnelBlocker",
+      "states": [
+        {
+          "index": 0,
+          "game_object_path_id": 566,
+          "game_object_name": " Преграда из камней 1"
+        },
+        {
+          "index": 1,
+          "game_object_path_id": null,
+          "game_object_name": null
+        }
+      ]
+    },
+    {
+      "enum_value": 13,
+      "enum_name": "Beer1",
+      "states": [
+        {
+          "index": 0,
+          "game_object_path_id": null,
+          "game_object_name": null
+        },
+        {
+          "index": 1,
+          "game_object_path_id": 539,
+          "game_object_name": "Beer1"
+        }
+      ]
+    },
+    {
+      "enum_value": 14,
+      "enum_name": "Beer2",
+      "states": [
+        {
+          "index": 0,
+          "game_object_path_id": null,
+          "game_object_name": null
+        },
+        {
+          "index": 1,
+          "game_object_path_id": 660,
+          "game_object_name": "Beer2"
+        }
+      ]
+    },
+    {
+      "enum_value": 15,
+      "enum_name": "BlackHole",
+      "states": [
+        {
+          "index": 0,
+          "game_object_path_id": null,
+          "game_object_name": null
+        },
+        {
+          "index": 1,
+          "game_object_path_id": 230,
+          "game_object_name": "HoleCollider"
+        }
+      ]
+    },
+    {
+      "enum_value": 16,
+      "enum_name": "HoleInteract",
+      "states": [
+        {
+          "index": 0,
+          "game_object_path_id": null,
+          "game_object_name": null
+        },
+        {
+          "index": 1,
+          "game_object_path_id": 254,
+          "game_object_name": "TheHole"
+        }
+      ]
+    }
+  ]
+}
