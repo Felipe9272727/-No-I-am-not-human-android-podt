@@ -36,17 +36,17 @@ unchanged native libraries and staged assets. Restore its assets/ members under
 `reconstruction/android-current/app/src/main/assets`, then run:
 
 ```sh
-python3 tools/android-current/build_apk.py --skip-assets --reference-apk <current-apk> --version-code 7 --version-name 0.7-hardware-hud --output deliverables/NINAH-Port-Fluidez.apk
+python3 tools/android-current/build_apk.py --skip-assets --reference-apk <current-apk> --version-code 11 --version-name 0.11-cat-save --output deliverables/NINAH-Port-Gato-Save.apk
 ```
 
-The reference APK must match LATEST_BUILD.json and its 52-file C++/Rust source
+The reference APK must match LATEST_BUILD.json and its 53-file C++/Rust source
 fingerprint. Changes to native sources require a real native rebuild.
 `python3 tools/android-current/qa/run_gles_test.py` exercises host Mesa GLES2,
 including the narrowly scoped shader-compiler fallback. This does not replace
 Android execution or the user phone crash report.
 
 Before delivering, run `python3 tools/android-current/qa/check_apk_shaders.py
-deliverables/NINAH-Port-Fluidez.apk --render`. The 12 namespaced GDX resources
+deliverables/NINAH-Port-Gato-Save.apk --render`. The 12 namespaced GDX resources
 (including six GLSL files) must be packaged in the APK, not supplied by a
 development jar. See `shader_v04_validation.json` for the isolated check.
 
@@ -102,3 +102,12 @@ Run WorldInteractionTest and RenderLoopPolicyTest in addition to existing Java
 and GLES checks. Host captures do not exercise Android Canvas acceleration;
 private Options/Diagnostic reports actual hardware/software Canvas, HUD timing
 and input redraw counts for a physical-device test.
+
+
+## Current v0.11 recovery
+
+The delivered `NINAH-Port-Gato-Save.apk` contains all staged assets, including the small original cat mesh, cutout texture and separate manifest. Restore all of its `assets/` entries under the current app asset directory and use `--skip-assets`. The source manifest under `reconstruction/reverse-world/cat3d/` is metadata only; source BIN/PNG media are deliberately absent from Git. To regenerate them, run `tools/reverse-world/export_cat3d.py` against the static Unity data and the original archive's texture sidecar as documented in `reconstruction/reverse-world/CAT3D.md`, then stage normally.
+
+The native-source fingerprint now covers 53 inputs; v0.8/v0.9/v0.10 JNI libraries do not match the current native save implementation. A reference build may use only the exact v0.11 APK hash recorded in LATEST_BUILD.json and an identical current native fingerprint. Otherwise rebuild Rust and C++ for both ABIs. NDK extraction must preserve Unix symlinks (35 in r27c), and Build-Tools executables including d8 must be executable. Run the host campaign test in its isolated build directory; do not reuse objects from diagnostic runs.
+
+Private Android disk saves are installed-app data, not bundled in the APK. Manual **Salvar jogo**, close/reopen, then **Continuar** still needs a phone test. The debug cat option defaults off and is separate from campaign save data.

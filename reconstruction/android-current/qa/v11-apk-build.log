@@ -1,0 +1,2108 @@
++ /workspace/scratch/ad0b61c5ef81/ninah-port/tools/android/sdk/build-tools/35.0.0/aapt2 compile --dir /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/res -o /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/resources-0.zip
++ /workspace/scratch/ad0b61c5ef81/ninah-port/tools/android/sdk/build-tools/35.0.0/aapt2 compile --dir /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/aar-res/gdx-backend-android-1.14.2 -o /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/resources-1.zip
++ /workspace/scratch/ad0b61c5ef81/ninah-port/tools/android/sdk/build-tools/35.0.0/aapt2 compile --dir /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/aar-res/core-1.17.0 -o /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/resources-2.zip
++ /workspace/scratch/ad0b61c5ef81/ninah-port/tools/android/sdk/build-tools/35.0.0/aapt2 compile --dir /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/aar-res/versionedparcelable-1.1.1 -o /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/resources-3.zip
++ /workspace/scratch/ad0b61c5ef81/ninah-port/tools/android/sdk/build-tools/35.0.0/aapt2 compile --dir /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/aar-res/lifecycle-runtime-2.6.2 -o /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/resources-4.zip
++ /workspace/scratch/ad0b61c5ef81/ninah-port/tools/android/sdk/build-tools/35.0.0/aapt2 compile --dir /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/aar-res/core-viewtree-1.0.0 -o /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/resources-5.zip
++ /workspace/scratch/ad0b61c5ef81/ninah-port/tools/android/sdk/build-tools/35.0.0/aapt2 link -o /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/base.apk --manifest /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/AndroidManifest.xml -I /workspace/scratch/ad0b61c5ef81/ninah-port/tools/android/sdk/platforms/android-35/android.jar -A /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/packaged-assets --java /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/generated --output-text-symbols /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/symbols --extra-packages com.badlogic.gdx.backends.android:androidx.core:androidx.versionedparcelable:androidx.lifecycle:androidx.core.viewtree --min-sdk-version 23 --target-sdk-version 35 --version-code 11 --version-name 0.11-cat-save --rename-manifest-package org.reconstruction.port.preview --auto-add-overlay -0 mp4 -0 ogg -0 wav -0 mp3 -R /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/resources-0.zip -R /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/resources-1.zip -R /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/resources-2.zip -R /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/resources-3.zip -R /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/resources-4.zip -R /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/resources-5.zip
++ /workspace/scratch/ad0b61c5ef81/ninah-port/tools/android-current/java/javac -source 17 -target 17 -classpath /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/android-api-classpath.jar:/workspace/scratch/ad0b61c5ef81/ninah-port/tools/android-current/libgdx/1.14.2/gdx-1.14.2.jar:/workspace/scratch/ad0b61c5ef81/ninah-port/tools/android-current/libgdx/1.14.2/gdx-jnigen-loader-2.5.2.jar:/workspace/scratch/ad0b61c5ef81/ninah-port/tools/android-current/libgdx/androidx/collection-jvm-1.4.2.jar:/workspace/scratch/ad0b61c5ef81/ninah-port/tools/android-current/libgdx/androidx/kotlin-stdlib-2.0.21.jar:/workspace/scratch/ad0b61c5ef81/ninah-port/tools/android-current/libgdx/androidx/lifecycle-common-2.6.2.jar:/workspace/scratch/ad0b61c5ef81/ninah-port/tools/android-current/libgdx/androidx/kotlinx-coroutines-core-jvm-1.8.1.jar:/workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/engine-classes/gdx-backend-android-1.14.2-classes.jar:/workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/engine-classes/core-1.17.0-classes.jar:/workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/engine-classes/versionedparcelable-1.1.1-classes.jar:/workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/engine-classes/lifecycle-runtime-2.6.2-classes.jar:/workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/engine-classes/core-viewtree-1.0.0-classes.jar -d /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/classes /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/CrashDiagnostics.java /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/CrashHistoryPolicy.java /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/DoorMotion.java /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/FrameSequence.java /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/MainActivity.java /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/MusicPlayer.java /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/NativeJson.java /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/RenderResolution.java /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/RoomComposition.java /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/RoomEngine.java /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/SaveFileStore.java /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/SleepTransition.java /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/TombstoneSummary.java /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/WorldRenderer.java /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/generated/androidx/core/R.java /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/generated/androidx/core/viewtree/R.java /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/generated/androidx/lifecycle/R.java /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/generated/androidx/versionedparcelable/R.java /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/generated/com/badlogic/gdx/backends/android/R.java /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/generated/org/reconstruction/port/preview/R.java
+----------
+1. WARNING in /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/MainActivity.java (at line 38)
+	import android.widget.TextView;
+	       ^^^^^^^^^^^^^^^^^^^^^^^
+The import android.widget.TextView is never used
+----------
+2. WARNING in /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/MainActivity.java (at line 83)
+	private final Handler ui = new Handler();
+	                               ^^^^^^^^^
+The constructor Handler() is deprecated
+----------
+3. WARNING in /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/MainActivity.java (at line 142)
+	window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+	                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The method setSystemUiVisibility(int) from the type View is deprecated
+----------
+4. WARNING in /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/MainActivity.java (at line 142)
+	window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+	                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^
+The field View.SYSTEM_UI_FLAG_FULLSCREEN is deprecated
+----------
+5. WARNING in /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/MainActivity.java (at line 142)
+	window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+	                                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The field View.SYSTEM_UI_FLAG_HIDE_NAVIGATION is deprecated
+----------
+6. WARNING in /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/MainActivity.java (at line 143)
+	View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+	     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The field View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY is deprecated
+----------
+7. WARNING in /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/MainActivity.java (at line 143)
+	View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+	                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The field View.SYSTEM_UI_FLAG_LAYOUT_STABLE is deprecated
+----------
+8. WARNING in /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/MainActivity.java (at line 144)
+	View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+	     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The field View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN is deprecated
+----------
+9. WARNING in /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/MainActivity.java (at line 144)
+	View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+	                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The field View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION is deprecated
+----------
+10. WARNING in /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/MainActivity.java (at line 864)
+	boolean isToolsMode() { return toolsMode; }
+	        ^^^^^^^^^^^^^
+The method isToolsMode() from the type MainActivity.GameCanvas is never used locally
+----------
+11. WARNING in /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/MainActivity.java (at line 1256)
+	private int uiAlpha(JSONObject item,JSONObject image) { return Color.alpha(uiColor(item,image)); }
+	            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The method uiAlpha(JSONObject, JSONObject) from the type MainActivity.GameCanvas is never used locally
+----------
+12. WARNING in /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/MainActivity.java (at line 1304)
+	private int parseUiColor(String value) {
+	            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+The method parseUiColor(String) from the type MainActivity.GameCanvas is never used locally
+----------
+13. WARNING in /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/MainActivity.java (at line 1515)
+	private void addNeighbourHit(int room) {
+	             ^^^^^^^^^^^^^^^^^^^^^^^^^
+The method addNeighbourHit(int) from the type MainActivity.GameCanvas is never used locally
+----------
+14. WARNING in /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/MainActivity.java (at line 1535)
+	private void showRoomChooser() {
+	             ^^^^^^^^^^^^^^^^^
+The method showRoomChooser() from the type MainActivity.GameCanvas is never used locally
+----------
+15. WARNING in /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/MainActivity.java (at line 1540)
+	private void showFullDialogue(JSONObject d) {
+	             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The method showFullDialogue(JSONObject) from the type MainActivity.GameCanvas is never used locally
+----------
+16. WARNING in /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/MainActivity.java (at line 1546)
+	private void showOptionsDialog(JSONArray options) {
+	             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The method showOptionsDialog(JSONArray) from the type MainActivity.GameCanvas is never used locally
+----------
+17. WARNING in /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/MainActivity.java (at line 1607)
+	private String trim(String s,int n){return s==null?"":s.length()<=n?s:s.substring(0,Math.max(1,n-1))+"…";}
+	               ^^^^^^^^^^^^^^^^^^^^
+The method trim(String, int) from the type MainActivity.GameCanvas is never used locally
+----------
+----------
+18. WARNING in /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/WorldRenderer.java (at line 317)
+	int count=data.chunks.get(0).getNumIndices();for(int i=0;i<data.chunks.size();i++){Mesh mesh=data.chunks.get(i);catPreviewItems.add(new RenderItem("source-cat-preview-"+i,-1,mesh,0,mesh.getNumIndices(),transform,material,bounds));}
+	    ^^^^^
+The value of the local variable count is not used
+----------
+19. WARNING in /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/WorldRenderer.java (at line 499)
+	final String id;final Mesh mesh;final int sourceRendererId,offset,count;final Matrix4 matrix;final MaterialInfo material;final Bounds baseBounds;Bounds bounds;DoorMotion.Door door;
+	             ^^
+The value of the field WorldRenderer.RenderItem.id is not used
+----------
+20. WARNING in /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/WorldRenderer.java (at line 499)
+	final String id;final Mesh mesh;final int sourceRendererId,offset,count;final Matrix4 matrix;final MaterialInfo material;final Bounds baseBounds;Bounds bounds;DoorMotion.Door door;
+	                           ^^^^
+The value of the field WorldRenderer.RenderItem.mesh is not used
+----------
+21. WARNING in /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/app/src/main/java/org/reconstruction/current/WorldRenderer.java (at line 499)
+	final String id;final Mesh mesh;final int sourceRendererId,offset,count;final Matrix4 matrix;final MaterialInfo material;final Bounds baseBounds;Bounds bounds;DoorMotion.Door door;
+	                                                           ^^^^^^
+The value of the field WorldRenderer.RenderItem.offset is not used
+----------
+21 problems (21 warnings)
++ /workspace/scratch/ad0b61c5ef81/ninah-port/tools/android/sdk/build-tools/35.0.0/d8 --min-api 23 --lib /workspace/scratch/ad0b61c5ef81/ninah-port/tools/android/sdk/platforms/android-35/android.jar --output /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/dex /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/classes.jar /workspace/scratch/ad0b61c5ef81/ninah-port/tools/android-current/libgdx/1.14.2/gdx-1.14.2.jar /workspace/scratch/ad0b61c5ef81/ninah-port/tools/android-current/libgdx/1.14.2/gdx-jnigen-loader-2.5.2.jar /workspace/scratch/ad0b61c5ef81/ninah-port/tools/android-current/libgdx/androidx/collection-jvm-1.4.2.jar /workspace/scratch/ad0b61c5ef81/ninah-port/tools/android-current/libgdx/androidx/kotlin-stdlib-2.0.21.jar /workspace/scratch/ad0b61c5ef81/ninah-port/tools/android-current/libgdx/androidx/lifecycle-common-2.6.2.jar /workspace/scratch/ad0b61c5ef81/ninah-port/tools/android-current/libgdx/androidx/kotlinx-coroutines-core-jvm-1.8.1.jar /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/engine-classes/gdx-backend-android-1.14.2-classes.jar /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/engine-classes/core-1.17.0-classes.jar /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/engine-classes/versionedparcelable-1.1.1-classes.jar /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/engine-classes/lifecycle-runtime-2.6.2-classes.jar /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/engine-classes/core-viewtree-1.0.0-classes.jar
+Warning in /workspace/scratch/ad0b61c5ef81/ninah-port/tools/android-current/libgdx/androidx/kotlinx-coroutines-core-jvm-1.8.1.jar:kotlinx/coroutines/debug/AgentPremain$DebugProbesTransformer.class:
+Type `java.lang.instrument.ClassFileTransformer` was not found, it is required for default or static interface methods desugaring of `kotlinx.coroutines.debug.AgentPremain$DebugProbesTransformer`
+Warning in /workspace/scratch/ad0b61c5ef81/ninah-port/tools/android-current/libgdx/androidx/kotlinx-coroutines-core-jvm-1.8.1.jar:kotlinx/coroutines/debug/AgentPremain.class:
+Type `sun.misc.SignalHandler` was not found, it is required for default or static interface methods desugaring of `kotlinx.coroutines.debug.AgentPremain$$InternalSyntheticLambda$2$677acd6fb4ca1651eb1c76ebe61d8c1a9f5aeadf35534bff63c38388e03cb9a0$0`
+Info: Stripped invalid locals information from 2 methods.
+Info in /workspace/scratch/ad0b61c5ef81/ninah-port/tools/android-current/libgdx/androidx/kotlinx-coroutines-core-jvm-1.8.1.jar:kotlinx/coroutines/flow/FlowKt__BuildersKt$asFlow$$inlined$unsafeFlow$10.class:
+Methods with invalid locals information:
+  java.lang.Object kotlinx.coroutines.flow.FlowKt__BuildersKt$asFlow$$inlined$unsafeFlow$10.collect(kotlinx.coroutines.flow.FlowCollector, kotlin.coroutines.Continuation)
+  Attempt to define local of type long as element$iv:java.lang.Object
+Info in /workspace/scratch/ad0b61c5ef81/ninah-port/tools/android-current/libgdx/androidx/kotlinx-coroutines-core-jvm-1.8.1.jar:kotlinx/coroutines/flow/FlowKt__BuildersKt$asFlow$$inlined$unsafeFlow$9.class:
+Methods with invalid locals information:
+  java.lang.Object kotlinx.coroutines.flow.FlowKt__BuildersKt$asFlow$$inlined$unsafeFlow$9.collect(kotlinx.coroutines.flow.FlowCollector, kotlin.coroutines.Continuation)
+  Attempt to define local of type int as element$iv:java.lang.Object
+Info: Some warnings are typically a sign of using an outdated Java toolchain. To fix, recompile the source with an updated toolchain.
++ /workspace/scratch/ad0b61c5ef81/ninah-port/tools/android/android-ndk-r27c/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android23-clang++ -shared -std=c++17 -O2 -fPIC -fvisibility=hidden -Wall -Wextra -Werror -pedantic -static-libstdc++ -Wl,--no-undefined -Wl,--build-id=sha1 -Wl,-z,max-page-size=16384 -Wl,-z,relro -Wl,-z,now -Wl,-z,noexecstack -Wl,-soname,libninah_current.so -I /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/include -I /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/generated /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/arrivals.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/characters.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/command_input.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/core.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/courier.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/dialogue_commands.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/dialogue_services.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/dialogue_session.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/emotions.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/endings.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/inventory.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/occupants.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/options.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/phone.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/presentation.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/progression.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/rooms.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/scene_commands.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/story_state.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/native/current_game.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/bridge/target/aarch64-linux-android/release/libninah_yarn_bridge.a -ldl -lm -llog -o /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/lib/arm64-v8a/libninah_current.so
++ /workspace/scratch/ad0b61c5ef81/ninah-port/tools/android/android-ndk-r27c/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-nm -D --defined-only /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/lib/arm64-v8a/libninah_current.so
++ /workspace/scratch/ad0b61c5ef81/ninah-port/tools/android/android-ndk-r27c/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android23-clang++ -shared -std=c++17 -O2 -fPIC -fvisibility=hidden -Wall -Wextra -Werror -pedantic -static-libstdc++ -Wl,--no-undefined -Wl,--build-id=sha1 -Wl,-z,max-page-size=16384 -Wl,-z,relro -Wl,-z,now -Wl,-z,noexecstack -Wl,-soname,libninah_current.so -I /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/include -I /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/generated /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/arrivals.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/characters.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/command_input.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/core.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/courier.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/dialogue_commands.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/dialogue_services.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/dialogue_session.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/emotions.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/endings.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/inventory.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/occupants.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/options.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/phone.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/presentation.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/progression.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/rooms.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/scene_commands.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/src/story_state.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/native/current_game.cpp /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/native-game/bridge/target/x86_64-linux-android/release/libninah_yarn_bridge.a -ldl -lm -llog -o /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/lib/x86_64/libninah_current.so
++ /workspace/scratch/ad0b61c5ef81/ninah-port/tools/android/android-ndk-r27c/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-nm -D --defined-only /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/lib/x86_64/libninah_current.so
++ /workspace/scratch/ad0b61c5ef81/ninah-port/tools/android/sdk/build-tools/35.0.0/zipalign -f -P 16 4 /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/base.apk /workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/build/apk-build-gyubyfw9/aligned.apk
+[Signing invocation omitted from public log; signature verification retained.]
++ /workspace/scratch/ad0b61c5ef81/ninah-port/tools/android/sdk/build-tools/35.0.0/apksigner verify --verbose /workspace/scratch/ad0b61c5ef81/ninah-port/deliverables/NINAH-Port-Gato-Save.apk
+Verifies
+Verified using v1 scheme (JAR signing): true
+Verified using v2 scheme (APK Signature Scheme v2): true
+Verified using v3 scheme (APK Signature Scheme v3): true
+Verified using v3.1 scheme (APK Signature Scheme v3.1): false
+Verified using v4 scheme (APK Signature Scheme v4): false
+Verified for SourceStamp: false
+Number of signers: 1
++ /workspace/scratch/ad0b61c5ef81/ninah-port/tools/android/sdk/build-tools/35.0.0/zipalign -c -P 16 -v 4 /workspace/scratch/ad0b61c5ef81/ninah-port/deliverables/NINAH-Port-Gato-Save.apk
+Verifying alignment of /workspace/scratch/ad0b61c5ef81/ninah-port/deliverables/NINAH-Port-Gato-Save.apk (4)...
+      49 AndroidManifest.xml (OK - compressed)
+     984 res/drawable/design_ic_visibility.xml (OK - compressed)
+    1475 res/drawable/design_ic_visibility_off.xml (OK - compressed)
+    2161 res/drawable/ic_call_answer.xml (OK - compressed)
+    2890 res/drawable/ic_call_answer_low.xml (OK - compressed)
+    3601 res/drawable/ic_call_answer_video.xml (OK - compressed)
+    4100 res/drawable/ic_call_answer_video_low.xml (OK - compressed)
+    4563 res/drawable/ic_call_decline.xml (OK - compressed)
+    5365 res/drawable/ic_call_decline_low.xml (OK - compressed)
+    6158 res/drawable-v21/notification_action_background.xml (OK - compressed)
+    6685 res/drawable/notification_bg.xml (OK - compressed)
+    7003 res/drawable/notification_bg_low.xml (OK - compressed)
+    7330 res/drawable/notification_icon_background.xml (OK - compressed)
+    7580 res/drawable/notification_tile_bg.xml (OK - compressed)
+    7844 res/drawable-mdpi-v4/notification_bg_low_normal.9.png (OK)
+    8152 res/drawable-mdpi-v4/notification_bg_low_pressed.9.png (OK)
+    8460 res/drawable-mdpi-v4/notification_bg_normal.9.png (OK)
+    8768 res/drawable-mdpi-v4/notification_bg_normal_pressed.9.png (OK)
+    9088 res/drawable-mdpi-v4/notify_panel_notification_icon_bg.png (OK)
+    9276 res/drawable-hdpi-v4/notification_bg_low_normal.9.png (OK)
+    9580 res/drawable-hdpi-v4/notification_bg_low_pressed.9.png (OK)
+    9892 res/drawable-hdpi-v4/notification_bg_normal.9.png (OK)
+   10200 res/drawable-hdpi-v4/notification_bg_normal_pressed.9.png (OK)
+   10524 res/drawable-hdpi-v4/notification_oversize_large_icon_bg.png (OK)
+   11528 res/drawable-hdpi-v4/notify_panel_notification_icon_bg.png (OK)
+   11728 res/drawable-xhdpi-v4/notification_bg_low_normal.9.png (OK)
+   12040 res/drawable-xhdpi-v4/notification_bg_low_pressed.9.png (OK)
+   12380 res/drawable-xhdpi-v4/notification_bg_normal.9.png (OK)
+   12696 res/drawable-xhdpi-v4/notification_bg_normal_pressed.9.png (OK)
+   13040 res/drawable-xhdpi-v4/notify_panel_notification_icon_bg.png (OK)
+   13236 res/layout/custom_dialog.xml (OK - compressed)
+   13616 res/layout/ime_base_split_test_activity.xml (OK - compressed)
+   13901 res/layout/ime_secondary_split_test_activity.xml (OK - compressed)
+   14384 res/layout-v21/notification_action.xml (OK - compressed)
+   14947 res/layout-v21/notification_action_tombstone.xml (OK - compressed)
+   15562 res/layout-v21/notification_template_custom_big.xml (OK - compressed)
+   16429 res/layout-v21/notification_template_icon_group.xml (OK - compressed)
+   16929 res/layout/notification_template_part_chronometer.xml (OK - compressed)
+   17264 res/layout/notification_template_part_time.xml (OK - compressed)
+   17576 resources.arsc (OK)
+   69603 assets/animations/animation_manifest.json (OK - compressed)
+   82320 assets/intro/Intro_Final_2_NO_SUBTITLES.mp4 (OK)
+44625257 assets/licenses/THIRD_PARTY_NOTICES.txt (OK - compressed)
+44625923 assets/licenses/androidx/core-1.17.0-LICENSE.txt (OK - compressed)
+44629554 assets/licenses/apache-2.0-LICENSE.txt (OK - compressed)
+44633579 assets/licenses/meshoptimizer-LICENSE-MIT.txt (OK - compressed)
+44634293 assets/licenses/nlohmann-json-LICENSE-MIT.txt (OK - compressed)
+44635018 assets/licenses/rust/block-buffer-0.10.4-LICENSE-APACHE.txt (OK - compressed)
+44639025 assets/licenses/rust/block-buffer-0.10.4-LICENSE-MIT.txt (OK - compressed)
+44639750 assets/licenses/rust/cfg-if-1.0.5-LICENSE-APACHE.txt (OK - compressed)
+44643751 assets/licenses/rust/cfg-if-1.0.5-LICENSE-MIT.txt (OK - compressed)
+44644467 assets/licenses/rust/cpufeatures-0.2.17-LICENSE-APACHE.txt (OK - compressed)
+44648473 assets/licenses/rust/cpufeatures-0.2.17-LICENSE-MIT.txt (OK - compressed)
+44649204 assets/licenses/rust/crypto-common-0.1.7-LICENSE-APACHE.txt (OK - compressed)
+44653211 assets/licenses/rust/crypto-common-0.1.7-LICENSE-MIT.txt (OK - compressed)
+44653924 assets/licenses/rust/digest-0.10.7-LICENSE-APACHE.txt (OK - compressed)
+44657925 assets/licenses/rust/digest-0.10.7-LICENSE-MIT.txt (OK - compressed)
+44658637 assets/licenses/rust/generic-array-0.14.7-LICENSE.txt (OK - compressed)
+44659379 assets/licenses/rust/itoa-1.0.18-LICENSE-APACHE.txt (OK - compressed)
+44662993 assets/licenses/rust/itoa-1.0.18-LICENSE-MIT.txt (OK - compressed)
+44663669 assets/licenses/rust/memchr-2.8.3-COPYING.txt (OK - compressed)
+44663841 assets/licenses/rust/memchr-2.8.3-LICENSE-MIT.txt (OK - compressed)
+44664565 assets/licenses/rust/serde_core-1.0.229-LICENSE-APACHE.txt (OK - compressed)
+44668186 assets/licenses/rust/serde_core-1.0.229-LICENSE-MIT.txt (OK - compressed)
+44668875 assets/licenses/rust/serde_json-1.0.154-LICENSE-APACHE.txt (OK - compressed)
+44672496 assets/licenses/rust/serde_json-1.0.154-LICENSE-MIT.txt (OK - compressed)
+44673178 assets/licenses/rust/sha2-0.10.9-LICENSE-APACHE.txt (OK - compressed)
+44677177 assets/licenses/rust/sha2-0.10.9-LICENSE-MIT.txt (OK - compressed)
+44677932 assets/licenses/rust/typenum-1.20.1-LICENSE-APACHE.txt (OK - compressed)
+44681941 assets/licenses/rust/typenum-1.20.1-LICENSE-MIT.txt (OK - compressed)
+44682664 assets/licenses/rust/typenum-1.20.1-LICENSE.txt (OK)
+44682770 assets/licenses/rust/version_check-0.9.5-LICENSE-APACHE.txt (OK - compressed)
+44686778 assets/licenses/rust/version_check-0.9.5-LICENSE-MIT.txt (OK - compressed)
+44687500 assets/licenses/rust/zmij-1.0.23-LICENSE-MIT.txt (OK - compressed)
+44688164 assets/menu/mainMenu_bg.png (OK)
+45474552 assets/menu/sharedassets0_1288_mainmenu_mask_1.png (OK)
+45475376 assets/menu/sharedassets0_1380_mainmenu_light_0.png (OK)
+45478976 assets/menu/sharedassets0_1616_mainMenu_House.png (OK)
+45983956 assets/menu/sharedassets0_1692_trioskaz_banner_main.png (OK)
+46111856 assets/menu/sharedassets0_1769_button_2.png (OK)
+46115212 assets/menu/sharedassets0_1863_No_im_not_a_human_logo.png (OK)
+46599368 assets/menu/sharedassets0_1986_mainMenu_circle.png (OK)
+46922332 assets/menu/sharedassets0_2016_Fake_collection_background.png (OK)
+47805496 assets/menu/sharedassets0_2048_mainMenu_bg.png (OK)
+48591884 assets/menu/sharedassets0_2213_mainmenu_eyes_0.png (OK)
+48629396 assets/menu/sharedassets0_2228_fake_wishlist_mainmenu_3.png (OK)
+48631440 assets/menu/sharedassets0_2309_mainmenu_teeth_11.png (OK)
+48662904 assets/menu/sharedassets0_2367_mainmenu_mask_0.png (OK)
+48663624 assets/menu/sharedassets0_2455_mainmenu_light_1.png (OK)
+48666700 assets/music/ambience_house.ogg (OK)
+49204456 assets/music/burning_light.ogg (OK)
+50431288 assets/music/day.ogg (OK)
+52617904 assets/music/day_02.ogg (OK)
+55188780 assets/music/gun_music.ogg (OK)
+56355060 assets/music/main_menu.ogg (OK)
+57322404 assets/music/night1.ogg (OK)
+60258212 assets/music/night3.ogg (OK)
+63063808 assets/music/night_02_01.ogg (OK)
+66378360 assets/music/night_02_02.ogg (OK)
+69577696 assets/music/noise_1_loop.ogg (OK)
+70218532 assets/music/noise_2_loop.ogg (OK)
+70866456 assets/music/noise_3_loop.ogg (OK)
+71553060 assets/music/noise_4_loop.ogg (OK)
+72264956 assets/music_manifest.json (OK - compressed)
+72268086 assets/narrative/line_metadata.json (OK - compressed)
+72474245 assets/narrative/program.json (OK - compressed)
+72799770 assets/narrative/texts_ptbr.json (OK - compressed)
+73884284 assets/presentation/assets.json (OK - compressed)
+73897362 assets/presentation/room_layers.json (OK - compressed)
+73900460 assets/presentation/ui/ui_manifest.json (OK - compressed)
+74107632 assets/sprites/sharedassets0_108.png (OK)
+74110724 assets/sprites/sharedassets0_1172.png (OK)
+74855284 assets/sprites/sharedassets0_1173.png (OK)
+75096440 assets/sprites/sharedassets0_1174.png (OK)
+75257308 assets/sprites/sharedassets0_1175.png (OK)
+75706388 assets/sprites/sharedassets0_1176.png (OK)
+75905276 assets/sprites/sharedassets0_1177.png (OK)
+76028152 assets/sprites/sharedassets0_1178.png (OK)
+76298356 assets/sprites/sharedassets0_1179.png (OK)
+76451840 assets/sprites/sharedassets0_1181.png (OK)
+76740940 assets/sprites/sharedassets0_1182.png (OK)
+76883704 assets/sprites/sharedassets0_1183.png (OK)
+77021048 assets/sprites/sharedassets0_1184.png (OK)
+77308720 assets/sprites/sharedassets0_1186.png (OK)
+77487296 assets/sprites/sharedassets0_1187.png (OK)
+77729844 assets/sprites/sharedassets0_1188.png (OK)
+77908212 assets/sprites/sharedassets0_1189.png (OK)
+78108960 assets/sprites/sharedassets0_1190.png (OK)
+78176564 assets/sprites/sharedassets0_1191.png (OK)
+78418256 assets/sprites/sharedassets0_1192.png (OK)
+78556548 assets/sprites/sharedassets0_1193.png (OK)
+78690576 assets/sprites/sharedassets0_1194.png (OK)
+78828420 assets/sprites/sharedassets0_1195.png (OK)
+79052504 assets/sprites/sharedassets0_1196.png (OK)
+79271724 assets/sprites/sharedassets0_1197.png (OK)
+79373844 assets/sprites/sharedassets0_1198.png (OK)
+79498692 assets/sprites/sharedassets0_1200.png (OK)
+79624832 assets/sprites/sharedassets0_1201.png (OK)
+79804744 assets/sprites/sharedassets0_1202.png (OK)
+79954424 assets/sprites/sharedassets0_1205.png (OK)
+80154804 assets/sprites/sharedassets0_1206.png (OK)
+80372528 assets/sprites/sharedassets0_1207.png (OK)
+80435140 assets/sprites/sharedassets0_1208.png (OK)
+80569108 assets/sprites/sharedassets0_1210.png (OK)
+80711824 assets/sprites/sharedassets0_1212.png (OK)
+81210188 assets/sprites/sharedassets0_1213.png (OK)
+81247412 assets/sprites/sharedassets0_1214.png (OK)
+81408704 assets/sprites/sharedassets0_1215.png (OK)
+81506868 assets/sprites/sharedassets0_1217.png (OK)
+81685056 assets/sprites/sharedassets0_1218.png (OK)
+81955476 assets/sprites/sharedassets0_1219.png (OK)
+82085868 assets/sprites/sharedassets0_1220.png (OK)
+82186264 assets/sprites/sharedassets0_1221.png (OK)
+82349004 assets/sprites/sharedassets0_1223.png (OK)
+82478504 assets/sprites/sharedassets0_1224.png (OK)
+82631832 assets/sprites/sharedassets0_1225.png (OK)
+82787092 assets/sprites/sharedassets0_1226.png (OK)
+82950800 assets/sprites/sharedassets0_1227.png (OK)
+83098916 assets/sprites/sharedassets0_1228.png (OK)
+83392836 assets/sprites/sharedassets0_1230.png (OK)
+83594128 assets/sprites/sharedassets0_1231.png (OK)
+84103876 assets/sprites/sharedassets0_1232.png (OK)
+84339352 assets/sprites/sharedassets0_1233.png (OK)
+84569340 assets/sprites/sharedassets0_1234.png (OK)
+84723496 assets/sprites/sharedassets0_1235.png (OK)
+84868392 assets/sprites/sharedassets0_1236.png (OK)
+85110564 assets/sprites/sharedassets0_1237.png (OK)
+85379344 assets/sprites/sharedassets0_1239.png (OK)
+85547836 assets/sprites/sharedassets0_1240.png (OK)
+86288500 assets/sprites/sharedassets0_1241.png (OK)
+86515164 assets/sprites/sharedassets0_1242.png (OK)
+86591976 assets/sprites/sharedassets0_1244.png (OK)
+86710332 assets/sprites/sharedassets0_1248.png (OK)
+86840012 assets/sprites/sharedassets0_1249.png (OK)
+86964188 assets/sprites/sharedassets0_1250.png (OK)
+87499464 assets/sprites/sharedassets0_1251.png (OK)
+87595776 assets/sprites/sharedassets0_1252.png (OK)
+87684704 assets/sprites/sharedassets0_1254.png (OK)
+87970368 assets/sprites/sharedassets0_1255.png (OK)
+88233448 assets/sprites/sharedassets0_1256.png (OK)
+88373224 assets/sprites/sharedassets0_1257.png (OK)
+88553332 assets/sprites/sharedassets0_1258.png (OK)
+88667524 assets/sprites/sharedassets0_1259.png (OK)
+88910432 assets/sprites/sharedassets0_1260.png (OK)
+89064548 assets/sprites/sharedassets0_1261.png (OK)
+89365700 assets/sprites/sharedassets0_1262.png (OK)
+89536284 assets/sprites/sharedassets0_1263.png (OK)
+89648844 assets/sprites/sharedassets0_1264.png (OK)
+89762540 assets/sprites/sharedassets0_1265.png (OK)
+89893244 assets/sprites/sharedassets0_1266.png (OK)
+89970220 assets/sprites/sharedassets0_1267.png (OK)
+90124252 assets/sprites/sharedassets0_1268.png (OK)
+90266544 assets/sprites/sharedassets0_1269.png (OK)
+90364240 assets/sprites/sharedassets0_1271.png (OK)
+90487968 assets/sprites/sharedassets0_1272.png (OK)
+90583048 assets/sprites/sharedassets0_1273.png (OK)
+90622256 assets/sprites/sharedassets0_1275.png (OK)
+90746336 assets/sprites/sharedassets0_1276.png (OK)
+91047404 assets/sprites/sharedassets0_1277.png (OK)
+91194224 assets/sprites/sharedassets0_1278.png (OK)
+91371148 assets/sprites/sharedassets0_1279.png (OK)
+91549436 assets/sprites/sharedassets0_1281.png (OK)
+91724512 assets/sprites/sharedassets0_1282.png (OK)
+91967692 assets/sprites/sharedassets0_1283.png (OK)
+92186796 assets/sprites/sharedassets0_1284.png (OK)
+92403080 assets/sprites/sharedassets0_1285.png (OK)
+92480224 assets/sprites/sharedassets0_1286.png (OK)
+92643040 assets/sprites/sharedassets0_1287.png (OK)
+92882368 assets/sprites/sharedassets0_1289.png (OK)
+93392952 assets/sprites/sharedassets0_1290.png (OK)
+93521572 assets/sprites/sharedassets0_1291.png (OK)
+93656092 assets/sprites/sharedassets0_1292.png (OK)
+93786816 assets/sprites/sharedassets0_1293.png (OK)
+94533328 assets/sprites/sharedassets0_1294.png (OK)
+94571632 assets/sprites/sharedassets0_1295.png (OK)
+94810068 assets/sprites/sharedassets0_1296.png (OK)
+95096516 assets/sprites/sharedassets0_1297.png (OK)
+95159752 assets/sprites/sharedassets0_1298.png (OK)
+95314932 assets/sprites/sharedassets0_1299.png (OK)
+95384056 assets/sprites/sharedassets0_1300.png (OK)
+95487880 assets/sprites/sharedassets0_1301.png (OK)
+95632764 assets/sprites/sharedassets0_1302.png (OK)
+95773228 assets/sprites/sharedassets0_1303.png (OK)
+96034428 assets/sprites/sharedassets0_1304.png (OK)
+96092620 assets/sprites/sharedassets0_1305.png (OK)
+96630788 assets/sprites/sharedassets0_1307.png (OK)
+96745960 assets/sprites/sharedassets0_1308.png (OK)
+96906980 assets/sprites/sharedassets0_1309.png (OK)
+96943224 assets/sprites/sharedassets0_1310.png (OK)
+97058808 assets/sprites/sharedassets0_1311.png (OK)
+97248924 assets/sprites/sharedassets0_1313.png (OK)
+97319412 assets/sprites/sharedassets0_1315.png (OK)
+97426452 assets/sprites/sharedassets0_1316.png (OK)
+97555220 assets/sprites/sharedassets0_1317.png (OK)
+97772544 assets/sprites/sharedassets0_1319.png (OK)
+97848348 assets/sprites/sharedassets0_1320.png (OK)
+98110428 assets/sprites/sharedassets0_1321.png (OK)
+98363280 assets/sprites/sharedassets0_1322.png (OK)
+98970320 assets/sprites/sharedassets0_1323.png (OK)
+99121668 assets/sprites/sharedassets0_1324.png (OK)
+99276704 assets/sprites/sharedassets0_1325.png (OK)
+99431140 assets/sprites/sharedassets0_1326.png (OK)
+99608480 assets/sprites/sharedassets0_1328.png (OK)
+99645784 assets/sprites/sharedassets0_1329.png (OK)
+99786952 assets/sprites/sharedassets0_1331.png (OK)
+100337452 assets/sprites/sharedassets0_1333.png (OK)
+100538468 assets/sprites/sharedassets0_1334.png (OK)
+100622208 assets/sprites/sharedassets0_1335.png (OK)
+100740312 assets/sprites/sharedassets0_1336.png (OK)
+100845532 assets/sprites/sharedassets0_1337.png (OK)
+101105132 assets/sprites/sharedassets0_1338.png (OK)
+101231792 assets/sprites/sharedassets0_1340.png (OK)
+101526528 assets/sprites/sharedassets0_1342.png (OK)
+101563664 assets/sprites/sharedassets0_1343.png (OK)
+101717704 assets/sprites/sharedassets0_1344.png (OK)
+101951436 assets/sprites/sharedassets0_1345.png (OK)
+102097540 assets/sprites/sharedassets0_1346.png (OK)
+102152156 assets/sprites/sharedassets0_1347.png (OK)
+102262816 assets/sprites/sharedassets0_1348.png (OK)
+102476708 assets/sprites/sharedassets0_1349.png (OK)
+102634096 assets/sprites/sharedassets0_1350.png (OK)
+102696940 assets/sprites/sharedassets0_1352.png (OK)
+102855584 assets/sprites/sharedassets0_1353.png (OK)
+103010348 assets/sprites/sharedassets0_1354.png (OK)
+103208788 assets/sprites/sharedassets0_1356.png (OK)
+103457360 assets/sprites/sharedassets0_1358.png (OK)
+103566228 assets/sprites/sharedassets0_1359.png (OK)
+103656624 assets/sprites/sharedassets0_1361.png (OK)
+103836716 assets/sprites/sharedassets0_1362.png (OK)
+103919196 assets/sprites/sharedassets0_1363.png (OK)
+104431604 assets/sprites/sharedassets0_1364.png (OK)
+104570488 assets/sprites/sharedassets0_1366.png (OK)
+105131824 assets/sprites/sharedassets0_1368.png (OK)
+105332592 assets/sprites/sharedassets0_1369.png (OK)
+105628480 assets/sprites/sharedassets0_1370.png (OK)
+105802592 assets/sprites/sharedassets0_1371.png (OK)
+105882236 assets/sprites/sharedassets0_1373.png (OK)
+106076120 assets/sprites/sharedassets0_1375.png (OK)
+106129976 assets/sprites/sharedassets0_1376.png (OK)
+106408040 assets/sprites/sharedassets0_1377.png (OK)
+106478144 assets/sprites/sharedassets0_1378.png (OK)
+106940444 assets/sprites/sharedassets0_1379.png (OK)
+106979464 assets/sprites/sharedassets0_1381.png (OK)
+107086504 assets/sprites/sharedassets0_1382.png (OK)
+107298068 assets/sprites/sharedassets0_1383.png (OK)
+107386016 assets/sprites/sharedassets0_1384.png (OK)
+107504524 assets/sprites/sharedassets0_1385.png (OK)
+107668876 assets/sprites/sharedassets0_1386.png (OK)
+107879980 assets/sprites/sharedassets0_1387.png (OK)
+107915636 assets/sprites/sharedassets0_1389.png (OK)
+108067336 assets/sprites/sharedassets0_1391.png (OK)
+108283448 assets/sprites/sharedassets0_1392.png (OK)
+108461356 assets/sprites/sharedassets0_1393.png (OK)
+108714740 assets/sprites/sharedassets0_1394.png (OK)
+108892760 assets/sprites/sharedassets0_1395.png (OK)
+109009628 assets/sprites/sharedassets0_1396.png (OK)
+109046808 assets/sprites/sharedassets0_1397.png (OK)
+109147792 assets/sprites/sharedassets0_1398.png (OK)
+109227576 assets/sprites/sharedassets0_1399.png (OK)
+109386104 assets/sprites/sharedassets0_1400.png (OK)
+109586616 assets/sprites/sharedassets0_1401.png (OK)
+110332496 assets/sprites/sharedassets0_1402.png (OK)
+110455528 assets/sprites/sharedassets0_1403.png (OK)
+110550708 assets/sprites/sharedassets0_1404.png (OK)
+110767764 assets/sprites/sharedassets0_1405.png (OK)
+110852808 assets/sprites/sharedassets0_1406.png (OK)
+110993296 assets/sprites/sharedassets0_1407.png (OK)
+111101860 assets/sprites/sharedassets0_1408.png (OK)
+111178268 assets/sprites/sharedassets0_1409.png (OK)
+111258140 assets/sprites/sharedassets0_1410.png (OK)
+111323364 assets/sprites/sharedassets0_1412.png (OK)
+111413108 assets/sprites/sharedassets0_1413.png (OK)
+111576180 assets/sprites/sharedassets0_1414.png (OK)
+111721096 assets/sprites/sharedassets0_1416.png (OK)
+111872828 assets/sprites/sharedassets0_1417.png (OK)
+112050696 assets/sprites/sharedassets0_1418.png (OK)
+112587976 assets/sprites/sharedassets0_1419.png (OK)
+112627208 assets/sprites/sharedassets0_1420.png (OK)
+112780128 assets/sprites/sharedassets0_1422.png (OK)
+112922232 assets/sprites/sharedassets0_1423.png (OK)
+112934900 assets/sprites/sharedassets0_1425.png (OK)
+112972088 assets/sprites/sharedassets0_1426.png (OK)
+113132532 assets/sprites/sharedassets0_1427.png (OK)
+113186836 assets/sprites/sharedassets0_1428.png (OK)
+113378636 assets/sprites/sharedassets0_1429.png (OK)
+113556452 assets/sprites/sharedassets0_1430.png (OK)
+113708720 assets/sprites/sharedassets0_1431.png (OK)
+113964288 assets/sprites/sharedassets0_1433.png (OK)
+114116908 assets/sprites/sharedassets0_1434.png (OK)
+114219148 assets/sprites/sharedassets0_1436.png (OK)
+114318700 assets/sprites/sharedassets0_1437.png (OK)
+114431200 assets/sprites/sharedassets0_1438.png (OK)
+114701636 assets/sprites/sharedassets0_1439.png (OK)
+114911260 assets/sprites/sharedassets0_1440.png (OK)
+115069176 assets/sprites/sharedassets0_1441.png (OK)
+115192724 assets/sprites/sharedassets0_1442.png (OK)
+115347384 assets/sprites/sharedassets0_1443.png (OK)
+115619880 assets/sprites/sharedassets0_1444.png (OK)
+115753892 assets/sprites/sharedassets0_1445.png (OK)
+116041124 assets/sprites/sharedassets0_1446.png (OK)
+116220268 assets/sprites/sharedassets0_1447.png (OK)
+116486616 assets/sprites/sharedassets0_1448.png (OK)
+117022740 assets/sprites/sharedassets0_1450.png (OK)
+117125152 assets/sprites/sharedassets0_1451.png (OK)
+117178740 assets/sprites/sharedassets0_1452.png (OK)
+117239640 assets/sprites/sharedassets0_1453.png (OK)
+117307024 assets/sprites/sharedassets0_1454.png (OK)
+117541792 assets/sprites/sharedassets0_1455.png (OK)
+117623852 assets/sprites/sharedassets0_1456.png (OK)
+117863040 assets/sprites/sharedassets0_1458.png (OK)
+118009636 assets/sprites/sharedassets0_1459.png (OK)
+118175860 assets/sprites/sharedassets0_1460.png (OK)
+118631460 assets/sprites/sharedassets0_1461.png (OK)
+118843056 assets/sprites/sharedassets0_1462.png (OK)
+118936924 assets/sprites/sharedassets0_1463.png (OK)
+119501244 assets/sprites/sharedassets0_1464.png (OK)
+119633380 assets/sprites/sharedassets0_1465.png (OK)
+119779292 assets/sprites/sharedassets0_1466.png (OK)
+119957800 assets/sprites/sharedassets0_1467.png (OK)
+120072260 assets/sprites/sharedassets0_1468.png (OK)
+120201444 assets/sprites/sharedassets0_1469.png (OK)
+120444068 assets/sprites/sharedassets0_1470.png (OK)
+120598676 assets/sprites/sharedassets0_1471.png (OK)
+120704848 assets/sprites/sharedassets0_1472.png (OK)
+120926184 assets/sprites/sharedassets0_1473.png (OK)
+120965108 assets/sprites/sharedassets0_1475.png (OK)
+121070648 assets/sprites/sharedassets0_1477.png (OK)
+121309740 assets/sprites/sharedassets0_1479.png (OK)
+121493272 assets/sprites/sharedassets0_1480.png (OK)
+121673372 assets/sprites/sharedassets0_1482.png (OK)
+121825124 assets/sprites/sharedassets0_1483.png (OK)
+122113884 assets/sprites/sharedassets0_1484.png (OK)
+122175672 assets/sprites/sharedassets0_1485.png (OK)
+122344012 assets/sprites/sharedassets0_1487.png (OK)
+122382604 assets/sprites/sharedassets0_1488.png (OK)
+122532792 assets/sprites/sharedassets0_1489.png (OK)
+122570056 assets/sprites/sharedassets0_1490.png (OK)
+122654168 assets/sprites/sharedassets0_1491.png (OK)
+122888848 assets/sprites/sharedassets0_1492.png (OK)
+123021192 assets/sprites/sharedassets0_1493.png (OK)
+123435228 assets/sprites/sharedassets0_1494.png (OK)
+123581124 assets/sprites/sharedassets0_1495.png (OK)
+123824852 assets/sprites/sharedassets0_1496.png (OK)
+123987984 assets/sprites/sharedassets0_1497.png (OK)
+124145912 assets/sprites/sharedassets0_1498.png (OK)
+124263036 assets/sprites/sharedassets0_1499.png (OK)
+124426048 assets/sprites/sharedassets0_1500.png (OK)
+124612244 assets/sprites/sharedassets0_1502.png (OK)
+124650528 assets/sprites/sharedassets0_1503.png (OK)
+124828120 assets/sprites/sharedassets0_1505.png (OK)
+124908476 assets/sprites/sharedassets0_1506.png (OK)
+125069124 assets/sprites/sharedassets0_1507.png (OK)
+125230780 assets/sprites/sharedassets0_1508.png (OK)
+125391516 assets/sprites/sharedassets0_1509.png (OK)
+125548172 assets/sprites/sharedassets0_1510.png (OK)
+125617820 assets/sprites/sharedassets0_1511.png (OK)
+125719060 assets/sprites/sharedassets0_1512.png (OK)
+125790996 assets/sprites/sharedassets0_1513.png (OK)
+125935960 assets/sprites/sharedassets0_1515.png (OK)
+126147172 assets/sprites/sharedassets0_1516.png (OK)
+126246736 assets/sprites/sharedassets0_1517.png (OK)
+126357452 assets/sprites/sharedassets0_1519.png (OK)
+126509236 assets/sprites/sharedassets0_1520.png (OK)
+126713952 assets/sprites/sharedassets0_1521.png (OK)
+126917716 assets/sprites/sharedassets0_1522.png (OK)
+127057760 assets/sprites/sharedassets0_1523.png (OK)
+127095064 assets/sprites/sharedassets0_1524.png (OK)
+127272380 assets/sprites/sharedassets0_1525.png (OK)
+127511452 assets/sprites/sharedassets0_1528.png (OK)
+127615036 assets/sprites/sharedassets0_1529.png (OK)
+127707152 assets/sprites/sharedassets0_1530.png (OK)
+127922932 assets/sprites/sharedassets0_1531.png (OK)
+128073364 assets/sprites/sharedassets0_1532.png (OK)
+128236256 assets/sprites/sharedassets0_1533.png (OK)
+128491728 assets/sprites/sharedassets0_1534.png (OK)
+129100988 assets/sprites/sharedassets0_1535.png (OK)
+129193016 assets/sprites/sharedassets0_1536.png (OK)
+129231352 assets/sprites/sharedassets0_1537.png (OK)
+129331588 assets/sprites/sharedassets0_1539.png (OK)
+129460812 assets/sprites/sharedassets0_1540.png (OK)
+129620352 assets/sprites/sharedassets0_1541.png (OK)
+129685488 assets/sprites/sharedassets0_1542.png (OK)
+129755472 assets/sprites/sharedassets0_1543.png (OK)
+130041412 assets/sprites/sharedassets0_1544.png (OK)
+130165300 assets/sprites/sharedassets0_1545.png (OK)
+130247044 assets/sprites/sharedassets0_1546.png (OK)
+130431932 assets/sprites/sharedassets0_1548.png (OK)
+130561000 assets/sprites/sharedassets0_1549.png (OK)
+130671580 assets/sprites/sharedassets0_155.png (OK)
+130677436 assets/sprites/sharedassets0_1550.png (OK)
+130744544 assets/sprites/sharedassets0_1551.png (OK)
+130841272 assets/sprites/sharedassets0_1552.png (OK)
+130999240 assets/sprites/sharedassets0_1553.png (OK)
+131101468 assets/sprites/sharedassets0_1555.png (OK)
+131645052 assets/sprites/sharedassets0_1556.png (OK)
+131685348 assets/sprites/sharedassets0_1558.png (OK)
+131695764 assets/sprites/sharedassets0_1559.png (OK)
+131865296 assets/sprites/sharedassets0_1560.png (OK)
+131906492 assets/sprites/sharedassets0_1561.png (OK)
+132038416 assets/sprites/sharedassets0_1566.png (OK)
+132183068 assets/sprites/sharedassets0_1567.png (OK)
+132276128 assets/sprites/sharedassets0_1569.png (OK)
+132381648 assets/sprites/sharedassets0_1570.png (OK)
+132514072 assets/sprites/sharedassets0_1571.png (OK)
+132554588 assets/sprites/sharedassets0_1572.png (OK)
+132602720 assets/sprites/sharedassets0_1573.png (OK)
+132665240 assets/sprites/sharedassets0_1574.png (OK)
+132777960 assets/sprites/sharedassets0_1575.png (OK)
+132784104 assets/sprites/sharedassets0_1576.png (OK)
+132923824 assets/sprites/sharedassets0_1577.png (OK)
+133021920 assets/sprites/sharedassets0_1578.png (OK)
+133040984 assets/sprites/sharedassets0_1579.png (OK)
+133046812 assets/sprites/sharedassets0_1580.png (OK)
+133096276 assets/sprites/sharedassets0_1581.png (OK)
+133107648 assets/sprites/sharedassets0_1582.png (OK)
+133174232 assets/sprites/sharedassets0_1583.png (OK)
+133251220 assets/sprites/sharedassets0_1584.png (OK)
+133329840 assets/sprites/sharedassets0_1585.png (OK)
+133497116 assets/sprites/sharedassets0_1586.png (OK)
+133582256 assets/sprites/sharedassets0_1587.png (OK)
+133630224 assets/sprites/sharedassets0_1588.png (OK)
+133763704 assets/sprites/sharedassets0_1589.png (OK)
+133985024 assets/sprites/sharedassets0_1590.png (OK)
+134066028 assets/sprites/sharedassets0_1592.png (OK)
+134076740 assets/sprites/sharedassets0_1593.png (OK)
+134083912 assets/sprites/sharedassets0_1594.png (OK)
+134093752 assets/sprites/sharedassets0_1595.png (OK)
+134172176 assets/sprites/sharedassets0_1598.png (OK)
+134280596 assets/sprites/sharedassets0_1599.png (OK)
+134287808 assets/sprites/sharedassets0_1600.png (OK)
+134424248 assets/sprites/sharedassets0_1601.png (OK)
+134442532 assets/sprites/sharedassets0_1602.png (OK)
+134528544 assets/sprites/sharedassets0_1603.png (OK)
+134583800 assets/sprites/sharedassets0_1604.png (OK)
+135037584 assets/sprites/sharedassets0_1605.png (OK)
+135043364 assets/sprites/sharedassets0_1606.png (OK)
+135376056 assets/sprites/sharedassets0_1607.png (OK)
+135553068 assets/sprites/sharedassets0_1608.png (OK)
+135639512 assets/sprites/sharedassets0_1609.png (OK)
+135783140 assets/sprites/sharedassets0_1610.png (OK)
+135864172 assets/sprites/sharedassets0_1611.png (OK)
+135911108 assets/sprites/sharedassets0_1612.png (OK)
+135993000 assets/sprites/sharedassets0_1613.png (OK)
+136107688 assets/sprites/sharedassets0_1614.png (OK)
+136148808 assets/sprites/sharedassets0_1615.png (OK)
+136180324 assets/sprites/sharedassets0_1617.png (OK)
+136203528 assets/sprites/sharedassets0_1620.png (OK)
+136216932 assets/sprites/sharedassets0_1622.png (OK)
+136357436 assets/sprites/sharedassets0_1623.png (OK)
+136419584 assets/sprites/sharedassets0_1624.png (OK)
+136527164 assets/sprites/sharedassets0_1625.png (OK)
+136569120 assets/sprites/sharedassets0_1626.png (OK)
+136604776 assets/sprites/sharedassets0_1627.png (OK)
+136684180 assets/sprites/sharedassets0_1628.png (OK)
+136706784 assets/sprites/sharedassets0_1629.png (OK)
+136885872 assets/sprites/sharedassets0_1630.png (OK)
+137030588 assets/sprites/sharedassets0_1631.png (OK)
+137035888 assets/sprites/sharedassets0_1632.png (OK)
+137075584 assets/sprites/sharedassets0_1633.png (OK)
+137156856 assets/sprites/sharedassets0_1634.png (OK)
+137249852 assets/sprites/sharedassets0_1636.png (OK)
+137344452 assets/sprites/sharedassets0_1637.png (OK)
+137386372 assets/sprites/sharedassets0_1638.png (OK)
+137549000 assets/sprites/sharedassets0_1639.png (OK)
+137599808 assets/sprites/sharedassets0_1640.png (OK)
+137795728 assets/sprites/sharedassets0_1641.png (OK)
+137938064 assets/sprites/sharedassets0_1644.png (OK)
+137981612 assets/sprites/sharedassets0_1646.png (OK)
+138028668 assets/sprites/sharedassets0_1647.png (OK)
+138069184 assets/sprites/sharedassets0_1648.png (OK)
+138113092 assets/sprites/sharedassets0_1649.png (OK)
+138229484 assets/sprites/sharedassets0_165.png (OK)
+138232120 assets/sprites/sharedassets0_1650.png (OK)
+138289004 assets/sprites/sharedassets0_1652.png (OK)
+138377328 assets/sprites/sharedassets0_1653.png (OK)
+138414124 assets/sprites/sharedassets0_1654.png (OK)
+138449596 assets/sprites/sharedassets0_1655.png (OK)
+138460276 assets/sprites/sharedassets0_1656.png (OK)
+138622684 assets/sprites/sharedassets0_1657.png (OK)
+138631304 assets/sprites/sharedassets0_1658.png (OK)
+138728960 assets/sprites/sharedassets0_1659.png (OK)
+138740148 assets/sprites/sharedassets0_1660.png (OK)
+138968664 assets/sprites/sharedassets0_1661.png (OK)
+139099744 assets/sprites/sharedassets0_1662.png (OK)
+139218960 assets/sprites/sharedassets0_1663.png (OK)
+139268984 assets/sprites/sharedassets0_1664.png (OK)
+139288028 assets/sprites/sharedassets0_1665.png (OK)
+139493524 assets/sprites/sharedassets0_1666.png (OK)
+139508308 assets/sprites/sharedassets0_1667.png (OK)
+139609744 assets/sprites/sharedassets0_1668.png (OK)
+139709864 assets/sprites/sharedassets0_1669.png (OK)
+139798432 assets/sprites/sharedassets0_1670.png (OK)
+139912604 assets/sprites/sharedassets0_1672.png (OK)
+140025980 assets/sprites/sharedassets0_1673.png (OK)
+140081440 assets/sprites/sharedassets0_1674.png (OK)
+140131300 assets/sprites/sharedassets0_1675.png (OK)
+140170648 assets/sprites/sharedassets0_1676.png (OK)
+140362036 assets/sprites/sharedassets0_1677.png (OK)
+140773364 assets/sprites/sharedassets0_1678.png (OK)
+140898632 assets/sprites/sharedassets0_1679.png (OK)
+140965476 assets/sprites/sharedassets0_1680.png (OK)
+141038940 assets/sprites/sharedassets0_1681.png (OK)
+141106216 assets/sprites/sharedassets0_1682.png (OK)
+141119592 assets/sprites/sharedassets0_1683.png (OK)
+141136796 assets/sprites/sharedassets0_1684.png (OK)
+141356208 assets/sprites/sharedassets0_1685.png (OK)
+141432208 assets/sprites/sharedassets0_1686.png (OK)
+141456360 assets/sprites/sharedassets0_1687.png (OK)
+141646156 assets/sprites/sharedassets0_1688.png (OK)
+141673372 assets/sprites/sharedassets0_1689.png (OK)
+141801308 assets/sprites/sharedassets0_1690.png (OK)
+141902636 assets/sprites/sharedassets0_1691.png (OK)
+141976152 assets/sprites/sharedassets0_1693.png (OK)
+142050916 assets/sprites/sharedassets0_1695.png (OK)
+142066652 assets/sprites/sharedassets0_1696.png (OK)
+142215576 assets/sprites/sharedassets0_1699.png (OK)
+142237588 assets/sprites/sharedassets0_1700.png (OK)
+142277476 assets/sprites/sharedassets0_1701.png (OK)
+142414048 assets/sprites/sharedassets0_1702.png (OK)
+142423652 assets/sprites/sharedassets0_1703.png (OK)
+142859304 assets/sprites/sharedassets0_1705.png (OK)
+142865360 assets/sprites/sharedassets0_1707.png (OK)
+142898396 assets/sprites/sharedassets0_1708.png (OK)
+142940160 assets/sprites/sharedassets0_1709.png (OK)
+142947068 assets/sprites/sharedassets0_1711.png (OK)
+143094068 assets/sprites/sharedassets0_1712.png (OK)
+143292036 assets/sprites/sharedassets0_1713.png (OK)
+143430364 assets/sprites/sharedassets0_1714.png (OK)
+143523936 assets/sprites/sharedassets0_1715.png (OK)
+143664940 assets/sprites/sharedassets0_1716.png (OK)
+144439700 assets/sprites/sharedassets0_1717.png (OK)
+144493072 assets/sprites/sharedassets0_1718.png (OK)
+144566768 assets/sprites/sharedassets0_1719.png (OK)
+144667800 assets/sprites/sharedassets0_1720.png (OK)
+144737644 assets/sprites/sharedassets0_1721.png (OK)
+144818136 assets/sprites/sharedassets0_1723.png (OK)
+144940064 assets/sprites/sharedassets0_1724.png (OK)
+144978320 assets/sprites/sharedassets0_1725.png (OK)
+145021308 assets/sprites/sharedassets0_1726.png (OK)
+145063184 assets/sprites/sharedassets0_1727.png (OK)
+145063328 assets/sprites/sharedassets0_1728.png (OK)
+145119380 assets/sprites/sharedassets0_1729.png (OK)
+145256940 assets/sprites/sharedassets0_1730.png (OK)
+145327896 assets/sprites/sharedassets0_1731.png (OK)
+145347416 assets/sprites/sharedassets0_1732.png (OK)
+145365192 assets/sprites/sharedassets0_1733.png (OK)
+145653664 assets/sprites/sharedassets0_1734.png (OK)
+145705632 assets/sprites/sharedassets0_1735.png (OK)
+145921596 assets/sprites/sharedassets0_1737.png (OK)
+145928888 assets/sprites/sharedassets0_1738.png (OK)
+145984088 assets/sprites/sharedassets0_1739.png (OK)
+146114724 assets/sprites/sharedassets0_1740.png (OK)
+146136088 assets/sprites/sharedassets0_1741.png (OK)
+146279276 assets/sprites/sharedassets0_1742.png (OK)
+146336868 assets/sprites/sharedassets0_1743.png (OK)
+146353440 assets/sprites/sharedassets0_1744.png (OK)
+146528540 assets/sprites/sharedassets0_1745.png (OK)
+146631448 assets/sprites/sharedassets0_1746.png (OK)
+146653352 assets/sprites/sharedassets0_1747.png (OK)
+146670808 assets/sprites/sharedassets0_1748.png (OK)
+146805660 assets/sprites/sharedassets0_1749.png (OK)
+146828516 assets/sprites/sharedassets0_1752.png (OK)
+147020384 assets/sprites/sharedassets0_1753.png (OK)
+147061184 assets/sprites/sharedassets0_1754.png (OK)
+147142000 assets/sprites/sharedassets0_1755.png (OK)
+147255792 assets/sprites/sharedassets0_1756.png (OK)
+147264760 assets/sprites/sharedassets0_1757.png (OK)
+147281284 assets/sprites/sharedassets0_1758.png (OK)
+147374240 assets/sprites/sharedassets0_1759.png (OK)
+147416388 assets/sprites/sharedassets0_1760.png (OK)
+147524060 assets/sprites/sharedassets0_1762.png (OK)
+147529552 assets/sprites/sharedassets0_1763.png (OK)
+147575412 assets/sprites/sharedassets0_1764.png (OK)
+147585000 assets/sprites/sharedassets0_1765.png (OK)
+147823060 assets/sprites/sharedassets0_1766.png (OK)
+147838476 assets/sprites/sharedassets0_1768.png (OK)
+147928512 assets/sprites/sharedassets0_1771.png (OK)
+147935364 assets/sprites/sharedassets0_1772.png (OK)
+148025668 assets/sprites/sharedassets0_1773.png (OK)
+148098100 assets/sprites/sharedassets0_1775.png (OK)
+148149784 assets/sprites/sharedassets0_1776.png (OK)
+148270332 assets/sprites/sharedassets0_1777.png (OK)
+148304704 assets/sprites/sharedassets0_1778.png (OK)
+148309884 assets/sprites/sharedassets0_1779.png (OK)
+148477232 assets/sprites/sharedassets0_1780.png (OK)
+148604892 assets/sprites/sharedassets0_1781.png (OK)
+148713084 assets/sprites/sharedassets0_1782.png (OK)
+148717860 assets/sprites/sharedassets0_1783.png (OK)
+148889528 assets/sprites/sharedassets0_1784.png (OK)
+148918888 assets/sprites/sharedassets0_1785.png (OK)
+148928480 assets/sprites/sharedassets0_1786.png (OK)
+148941516 assets/sprites/sharedassets0_1787.png (OK)
+149016964 assets/sprites/sharedassets0_1788.png (OK)
+149034756 assets/sprites/sharedassets0_1789.png (OK)
+149155448 assets/sprites/sharedassets0_1790.png (OK)
+149241684 assets/sprites/sharedassets0_1791.png (OK)
+149300680 assets/sprites/sharedassets0_1792.png (OK)
+149448924 assets/sprites/sharedassets0_1793.png (OK)
+149501632 assets/sprites/sharedassets0_1794.png (OK)
+149556064 assets/sprites/sharedassets0_1795.png (OK)
+149658608 assets/sprites/sharedassets0_1796.png (OK)
+149775024 assets/sprites/sharedassets0_1797.png (OK)
+149785648 assets/sprites/sharedassets0_1798.png (OK)
+149852612 assets/sprites/sharedassets0_1799.png (OK)
+149870908 assets/sprites/sharedassets0_1800.png (OK)
+149917564 assets/sprites/sharedassets0_1802.png (OK)
+150048828 assets/sprites/sharedassets0_1803.png (OK)
+150094988 assets/sprites/sharedassets0_1804.png (OK)
+150110576 assets/sprites/sharedassets0_1805.png (OK)
+150114904 assets/sprites/sharedassets0_1806.png (OK)
+150123788 assets/sprites/sharedassets0_1807.png (OK)
+150134540 assets/sprites/sharedassets0_1808.png (OK)
+150143804 assets/sprites/sharedassets0_1810.png (OK)
+150151884 assets/sprites/sharedassets0_1811.png (OK)
+150159240 assets/sprites/sharedassets0_1812.png (OK)
+150168736 assets/sprites/sharedassets0_1813.png (OK)
+150214548 assets/sprites/sharedassets0_1814.png (OK)
+150259396 assets/sprites/sharedassets0_1815.png (OK)
+150293852 assets/sprites/sharedassets0_1816.png (OK)
+150631052 assets/sprites/sharedassets0_1819.png (OK)
+150780020 assets/sprites/sharedassets0_1821.png (OK)
+150867324 assets/sprites/sharedassets0_1822.png (OK)
+150932640 assets/sprites/sharedassets0_1823.png (OK)
+150962220 assets/sprites/sharedassets0_1824.png (OK)
+151012580 assets/sprites/sharedassets0_1825.png (OK)
+151509332 assets/sprites/sharedassets0_1826.png (OK)
+151530736 assets/sprites/sharedassets0_1827.png (OK)
+151578044 assets/sprites/sharedassets0_1828.png (OK)
+151623908 assets/sprites/sharedassets0_1829.png (OK)
+151691056 assets/sprites/sharedassets0_1830.png (OK)
+151782904 assets/sprites/sharedassets0_1831.png (OK)
+151818940 assets/sprites/sharedassets0_1832.png (OK)
+151884704 assets/sprites/sharedassets0_1833.png (OK)
+151954440 assets/sprites/sharedassets0_1835.png (OK)
+152289284 assets/sprites/sharedassets0_1836.png (OK)
+152434240 assets/sprites/sharedassets0_1837.png (OK)
+152481052 assets/sprites/sharedassets0_1838.png (OK)
+152544596 assets/sprites/sharedassets0_1839.png (OK)
+152558320 assets/sprites/sharedassets0_1840.png (OK)
+152569328 assets/sprites/sharedassets0_1841.png (OK)
+152610736 assets/sprites/sharedassets0_1842.png (OK)
+152760284 assets/sprites/sharedassets0_1843.png (OK)
+152883736 assets/sprites/sharedassets0_1844.png (OK)
+152889240 assets/sprites/sharedassets0_1845.png (OK)
+153009184 assets/sprites/sharedassets0_1846.png (OK)
+153193128 assets/sprites/sharedassets0_1847.png (OK)
+153228368 assets/sprites/sharedassets0_1848.png (OK)
+153431764 assets/sprites/sharedassets0_1849.png (OK)
+153471256 assets/sprites/sharedassets0_1850.png (OK)
+153587220 assets/sprites/sharedassets0_1851.png (OK)
+153670176 assets/sprites/sharedassets0_1852.png (OK)
+153727636 assets/sprites/sharedassets0_1853.png (OK)
+153765420 assets/sprites/sharedassets0_1854.png (OK)
+153830028 assets/sprites/sharedassets0_1855.png (OK)
+153890748 assets/sprites/sharedassets0_1856.png (OK)
+153934252 assets/sprites/sharedassets0_1857.png (OK)
+153988672 assets/sprites/sharedassets0_1858.png (OK)
+154043948 assets/sprites/sharedassets0_1861.png (OK)
+154087220 assets/sprites/sharedassets0_1862.png (OK)
+154216184 assets/sprites/sharedassets0_1864.png (OK)
+154265704 assets/sprites/sharedassets0_1866.png (OK)
+154354900 assets/sprites/sharedassets0_1867.png (OK)
+154364300 assets/sprites/sharedassets0_1868.png (OK)
+154465800 assets/sprites/sharedassets0_1869.png (OK)
+154962152 assets/sprites/sharedassets0_1870.png (OK)
+155088140 assets/sprites/sharedassets0_1871.png (OK)
+155238404 assets/sprites/sharedassets0_1872.png (OK)
+155248276 assets/sprites/sharedassets0_1873.png (OK)
+155288800 assets/sprites/sharedassets0_1874.png (OK)
+155295448 assets/sprites/sharedassets0_1875.png (OK)
+155366744 assets/sprites/sharedassets0_1877.png (OK)
+155377128 assets/sprites/sharedassets0_1878.png (OK)
+155544044 assets/sprites/sharedassets0_1879.png (OK)
+155594316 assets/sprites/sharedassets0_1880.png (OK)
+155634232 assets/sprites/sharedassets0_1881.png (OK)
+155680488 assets/sprites/sharedassets0_1882.png (OK)
+155809776 assets/sprites/sharedassets0_1883.png (OK)
+155992304 assets/sprites/sharedassets0_1884.png (OK)
+156154648 assets/sprites/sharedassets0_1886.png (OK)
+156195968 assets/sprites/sharedassets0_1887.png (OK)
+156262292 assets/sprites/sharedassets0_1888.png (OK)
+156358704 assets/sprites/sharedassets0_1889.png (OK)
+156433016 assets/sprites/sharedassets0_1890.png (OK)
+156524504 assets/sprites/sharedassets0_1891.png (OK)
+156560060 assets/sprites/sharedassets0_1892.png (OK)
+156575384 assets/sprites/sharedassets0_1893.png (OK)
+156591176 assets/sprites/sharedassets0_1894.png (OK)
+156722128 assets/sprites/sharedassets0_1895.png (OK)
+156764428 assets/sprites/sharedassets0_1897.png (OK)
+156881316 assets/sprites/sharedassets0_1898.png (OK)
+156897680 assets/sprites/sharedassets0_1899.png (OK)
+156937356 assets/sprites/sharedassets0_1900.png (OK)
+157086328 assets/sprites/sharedassets0_1901.png (OK)
+157153924 assets/sprites/sharedassets0_1902.png (OK)
+157312516 assets/sprites/sharedassets0_1903.png (OK)
+157354420 assets/sprites/sharedassets0_1904.png (OK)
+157376584 assets/sprites/sharedassets0_1905.png (OK)
+157982568 assets/sprites/sharedassets0_1906.png (OK)
+158134136 assets/sprites/sharedassets0_1907.png (OK)
+158166684 assets/sprites/sharedassets0_1908.png (OK)
+158170564 assets/sprites/sharedassets0_1909.png (OK)
+158179944 assets/sprites/sharedassets0_1910.png (OK)
+158199512 assets/sprites/sharedassets0_1911.png (OK)
+158293832 assets/sprites/sharedassets0_1912.png (OK)
+158337588 assets/sprites/sharedassets0_1913.png (OK)
+158346460 assets/sprites/sharedassets0_1914.png (OK)
+158382956 assets/sprites/sharedassets0_1915.png (OK)
+158578360 assets/sprites/sharedassets0_1916.png (OK)
+158598168 assets/sprites/sharedassets0_1917.png (OK)
+158702452 assets/sprites/sharedassets0_1919.png (OK)
+158834312 assets/sprites/sharedassets0_1920.png (OK)
+158917424 assets/sprites/sharedassets0_1922.png (OK)
+159111028 assets/sprites/sharedassets0_1923.png (OK)
+159175304 assets/sprites/sharedassets0_1924.png (OK)
+159185092 assets/sprites/sharedassets0_1925.png (OK)
+159349664 assets/sprites/sharedassets0_1926.png (OK)
+159394400 assets/sprites/sharedassets0_1927.png (OK)
+159475092 assets/sprites/sharedassets0_1928.png (OK)
+159674620 assets/sprites/sharedassets0_1930.png (OK)
+159688724 assets/sprites/sharedassets0_1931.png (OK)
+159747896 assets/sprites/sharedassets0_1932.png (OK)
+159753776 assets/sprites/sharedassets0_1933.png (OK)
+159803192 assets/sprites/sharedassets0_1934.png (OK)
+159885884 assets/sprites/sharedassets0_1936.png (OK)
+159973316 assets/sprites/sharedassets0_1937.png (OK)
+160083280 assets/sprites/sharedassets0_1939.png (OK)
+160317072 assets/sprites/sharedassets0_1940.png (OK)
+160358464 assets/sprites/sharedassets0_1941.png (OK)
+160520952 assets/sprites/sharedassets0_1942.png (OK)
+160567140 assets/sprites/sharedassets0_1944.png (OK)
+160593984 assets/sprites/sharedassets0_1945.png (OK)
+160683756 assets/sprites/sharedassets0_1946.png (OK)
+160718928 assets/sprites/sharedassets0_1947.png (OK)
+160826600 assets/sprites/sharedassets0_1948.png (OK)
+160854164 assets/sprites/sharedassets0_1949.png (OK)
+160918904 assets/sprites/sharedassets0_1950.png (OK)
+161019208 assets/sprites/sharedassets0_1951.png (OK)
+161065524 assets/sprites/sharedassets0_1953.png (OK)
+161586416 assets/sprites/sharedassets0_1956.png (OK)
+161693952 assets/sprites/sharedassets0_1957.png (OK)
+161725708 assets/sprites/sharedassets0_1959.png (OK)
+161774204 assets/sprites/sharedassets0_196.png (OK)
+161778808 assets/sprites/sharedassets0_1960.png (OK)
+161819252 assets/sprites/sharedassets0_1961.png (OK)
+161928380 assets/sprites/sharedassets0_1962.png (OK)
+162002064 assets/sprites/sharedassets0_1963.png (OK)
+162044512 assets/sprites/sharedassets0_1964.png (OK)
+162089204 assets/sprites/sharedassets0_1965.png (OK)
+162129112 assets/sprites/sharedassets0_1966.png (OK)
+162271332 assets/sprites/sharedassets0_1967.png (OK)
+162335664 assets/sprites/sharedassets0_1969.png (OK)
+162433828 assets/sprites/sharedassets0_1970.png (OK)
+162468628 assets/sprites/sharedassets0_1971.png (OK)
+162547500 assets/sprites/sharedassets0_1972.png (OK)
+162667780 assets/sprites/sharedassets0_1973.png (OK)
+162741772 assets/sprites/sharedassets0_1974.png (OK)
+162786368 assets/sprites/sharedassets0_1975.png (OK)
+162815028 assets/sprites/sharedassets0_1977.png (OK)
+162978736 assets/sprites/sharedassets0_1978.png (OK)
+163003944 assets/sprites/sharedassets0_1979.png (OK)
+163058864 assets/sprites/sharedassets0_1981.png (OK)
+163146376 assets/sprites/sharedassets0_1982.png (OK)
+163276028 assets/sprites/sharedassets0_1983.png (OK)
+163317800 assets/sprites/sharedassets0_1984.png (OK)
+163398948 assets/sprites/sharedassets0_1985.png (OK)
+163433208 assets/sprites/sharedassets0_1988.png (OK)
+163990236 assets/sprites/sharedassets0_1989.png (OK)
+164001320 assets/sprites/sharedassets0_1990.png (OK)
+164042792 assets/sprites/sharedassets0_1991.png (OK)
+164069272 assets/sprites/sharedassets0_1992.png (OK)
+164140968 assets/sprites/sharedassets0_1993.png (OK)
+164228384 assets/sprites/sharedassets0_1994.png (OK)
+164442208 assets/sprites/sharedassets0_1995.png (OK)
+164499744 assets/sprites/sharedassets0_1996.png (OK)
+164568800 assets/sprites/sharedassets0_1998.png (OK)
+164601964 assets/sprites/sharedassets0_1999.png (OK)
+164643644 assets/sprites/sharedassets0_2001.png (OK)
+164723780 assets/sprites/sharedassets0_2002.png (OK)
+165164752 assets/sprites/sharedassets0_2003.png (OK)
+165386568 assets/sprites/sharedassets0_2004.png (OK)
+165524856 assets/sprites/sharedassets0_2005.png (OK)
+165638816 assets/sprites/sharedassets0_2006.png (OK)
+165682644 assets/sprites/sharedassets0_2007.png (OK)
+165776368 assets/sprites/sharedassets0_2008.png (OK)
+165827312 assets/sprites/sharedassets0_2009.png (OK)
+165950900 assets/sprites/sharedassets0_2010.png (OK)
+165951044 assets/sprites/sharedassets0_2011.png (OK)
+165987840 assets/sprites/sharedassets0_2012.png (OK)
+166124060 assets/sprites/sharedassets0_2013.png (OK)
+166199624 assets/sprites/sharedassets0_2014.png (OK)
+166210008 assets/sprites/sharedassets0_2015.png (OK)
+166284796 assets/sprites/sharedassets0_2017.png (OK)
+166427044 assets/sprites/sharedassets0_2018.png (OK)
+166580988 assets/sprites/sharedassets0_2019.png (OK)
+166591876 assets/sprites/sharedassets0_2020.png (OK)
+166666408 assets/sprites/sharedassets0_2021.png (OK)
+166684848 assets/sprites/sharedassets0_2023.png (OK)
+166758904 assets/sprites/sharedassets0_2024.png (OK)
+166858488 assets/sprites/sharedassets0_2025.png (OK)
+166882860 assets/sprites/sharedassets0_2026.png (OK)
+166980756 assets/sprites/sharedassets0_2027.png (OK)
+167021992 assets/sprites/sharedassets0_2028.png (OK)
+167071812 assets/sprites/sharedassets0_2029.png (OK)
+167097212 assets/sprites/sharedassets0_2030.png (OK)
+167212256 assets/sprites/sharedassets0_2031.png (OK)
+167224020 assets/sprites/sharedassets0_2032.png (OK)
+167271168 assets/sprites/sharedassets0_2033.png (OK)
+167323708 assets/sprites/sharedassets0_2034.png (OK)
+167426380 assets/sprites/sharedassets0_2035.png (OK)
+167437740 assets/sprites/sharedassets0_2038.png (OK)
+167513288 assets/sprites/sharedassets0_2040.png (OK)
+167544976 assets/sprites/sharedassets0_2041.png (OK)
+167744192 assets/sprites/sharedassets0_2042.png (OK)
+167779500 assets/sprites/sharedassets0_2043.png (OK)
+167874496 assets/sprites/sharedassets0_2044.png (OK)
+167881736 assets/sprites/sharedassets0_2045.png (OK)
+167946228 assets/sprites/sharedassets0_2046.png (OK)
+167954484 assets/sprites/sharedassets0_2047.png (OK)
+167960348 assets/sprites/sharedassets0_2050.png (OK)
+168035196 assets/sprites/sharedassets0_2051.png (OK)
+168151984 assets/sprites/sharedassets0_2052.png (OK)
+168220064 assets/sprites/sharedassets0_2053.png (OK)
+168324912 assets/sprites/sharedassets0_2054.png (OK)
+168415520 assets/sprites/sharedassets0_2056.png (OK)
+168437412 assets/sprites/sharedassets0_2057.png (OK)
+168605076 assets/sprites/sharedassets0_2059.png (OK)
+168742068 assets/sprites/sharedassets0_2060.png (OK)
+168953268 assets/sprites/sharedassets0_2061.png (OK)
+169096576 assets/sprites/sharedassets0_2063.png (OK)
+169103956 assets/sprites/sharedassets0_2064.png (OK)
+169177316 assets/sprites/sharedassets0_2065.png (OK)
+169185584 assets/sprites/sharedassets0_2066.png (OK)
+169281784 assets/sprites/sharedassets0_2067.png (OK)
+169418972 assets/sprites/sharedassets0_2068.png (OK)
+169462276 assets/sprites/sharedassets0_2069.png (OK)
+169636976 assets/sprites/sharedassets0_2070.png (OK)
+169672972 assets/sprites/sharedassets0_2071.png (OK)
+169771644 assets/sprites/sharedassets0_2072.png (OK)
+169818576 assets/sprites/sharedassets0_2073.png (OK)
+169903900 assets/sprites/sharedassets0_2074.png (OK)
+170015516 assets/sprites/sharedassets0_2075.png (OK)
+170113588 assets/sprites/sharedassets0_2076.png (OK)
+170168160 assets/sprites/sharedassets0_2077.png (OK)
+170176016 assets/sprites/sharedassets0_2078.png (OK)
+170191084 assets/sprites/sharedassets0_2079.png (OK)
+170327500 assets/sprites/sharedassets0_208.png (OK)
+170330376 assets/sprites/sharedassets0_2080.png (OK)
+170485264 assets/sprites/sharedassets0_2081.png (OK)
+170605700 assets/sprites/sharedassets0_2082.png (OK)
+170643688 assets/sprites/sharedassets0_2083.png (OK)
+170803400 assets/sprites/sharedassets0_2084.png (OK)
+170920468 assets/sprites/sharedassets0_2085.png (OK)
+170963436 assets/sprites/sharedassets0_2087.png (OK)
+171090008 assets/sprites/sharedassets0_2088.png (OK)
+171260172 assets/sprites/sharedassets0_2089.png (OK)
+171401160 assets/sprites/sharedassets0_2090.png (OK)
+171457784 assets/sprites/sharedassets0_2091.png (OK)
+171527740 assets/sprites/sharedassets0_2092.png (OK)
+171563696 assets/sprites/sharedassets0_2093.png (OK)
+171598496 assets/sprites/sharedassets0_2094.png (OK)
+171642968 assets/sprites/sharedassets0_2095.png (OK)
+172005828 assets/sprites/sharedassets0_2096.png (OK)
+172062636 assets/sprites/sharedassets0_2097.png (OK)
+172088712 assets/sprites/sharedassets0_2098.png (OK)
+172260472 assets/sprites/sharedassets0_2099.png (OK)
+172330504 assets/sprites/sharedassets0_2100.png (OK)
+172492852 assets/sprites/sharedassets0_2101.png (OK)
+172660172 assets/sprites/sharedassets0_2102.png (OK)
+172742692 assets/sprites/sharedassets0_2103.png (OK)
+172784288 assets/sprites/sharedassets0_2104.png (OK)
+172873372 assets/sprites/sharedassets0_2105.png (OK)
+172990688 assets/sprites/sharedassets0_2106.png (OK)
+172997208 assets/sprites/sharedassets0_2107.png (OK)
+173003856 assets/sprites/sharedassets0_2109.png (OK)
+173097140 assets/sprites/sharedassets0_2110.png (OK)
+173110428 assets/sprites/sharedassets0_2111.png (OK)
+173259284 assets/sprites/sharedassets0_2113.png (OK)
+173305900 assets/sprites/sharedassets0_2114.png (OK)
+173354544 assets/sprites/sharedassets0_2115.png (OK)
+173367576 assets/sprites/sharedassets0_2116.png (OK)
+173431380 assets/sprites/sharedassets0_2117.png (OK)
+173545844 assets/sprites/sharedassets0_2118.png (OK)
+173687948 assets/sprites/sharedassets0_2119.png (OK)
+173693560 assets/sprites/sharedassets0_2120.png (OK)
+173755916 assets/sprites/sharedassets0_2121.png (OK)
+173804300 assets/sprites/sharedassets0_2122.png (OK)
+174005380 assets/sprites/sharedassets0_2123.png (OK)
+174231084 assets/sprites/sharedassets0_2124.png (OK)
+174344440 assets/sprites/sharedassets0_2126.png (OK)
+174446528 assets/sprites/sharedassets0_2127.png (OK)
+174613788 assets/sprites/sharedassets0_2128.png (OK)
+174687500 assets/sprites/sharedassets0_2129.png (OK)
+174838744 assets/sprites/sharedassets0_2131.png (OK)
+174897624 assets/sprites/sharedassets0_2132.png (OK)
+175036296 assets/sprites/sharedassets0_2133.png (OK)
+175162236 assets/sprites/sharedassets0_2134.png (OK)
+175274988 assets/sprites/sharedassets0_2135.png (OK)
+175485584 assets/sprites/sharedassets0_2136.png (OK)
+175566564 assets/sprites/sharedassets0_2137.png (OK)
+175728648 assets/sprites/sharedassets0_2138.png (OK)
+175998068 assets/sprites/sharedassets0_2139.png (OK)
+176161508 assets/sprites/sharedassets0_2141.png (OK)
+176427688 assets/sprites/sharedassets0_2143.png (OK)
+176635572 assets/sprites/sharedassets0_2144.png (OK)
+176820652 assets/sprites/sharedassets0_2145.png (OK)
+176980848 assets/sprites/sharedassets0_2146.png (OK)
+177221552 assets/sprites/sharedassets0_2147.png (OK)
+177372952 assets/sprites/sharedassets0_2148.png (OK)
+177433988 assets/sprites/sharedassets0_2149.png (OK)
+177709160 assets/sprites/sharedassets0_2150.png (OK)
+177995204 assets/sprites/sharedassets0_2151.png (OK)
+178095072 assets/sprites/sharedassets0_2152.png (OK)
+178191048 assets/sprites/sharedassets0_2153.png (OK)
+178332284 assets/sprites/sharedassets0_2154.png (OK)
+178492892 assets/sprites/sharedassets0_2155.png (OK)
+178624620 assets/sprites/sharedassets0_2156.png (OK)
+178779892 assets/sprites/sharedassets0_2158.png (OK)
+178910992 assets/sprites/sharedassets0_2159.png (OK)
+179001856 assets/sprites/sharedassets0_216.png (OK)
+179006320 assets/sprites/sharedassets0_2160.png (OK)
+179473324 assets/sprites/sharedassets0_2161.png (OK)
+179559500 assets/sprites/sharedassets0_2162.png (OK)
+179638580 assets/sprites/sharedassets0_2163.png (OK)
+179734196 assets/sprites/sharedassets0_2166.png (OK)
+179885380 assets/sprites/sharedassets0_2167.png (OK)
+179947420 assets/sprites/sharedassets0_2168.png (OK)
+180140728 assets/sprites/sharedassets0_2169.png (OK)
+180294828 assets/sprites/sharedassets0_2170.png (OK)
+180539128 assets/sprites/sharedassets0_2171.png (OK)
+180762748 assets/sprites/sharedassets0_2172.png (OK)
+180899480 assets/sprites/sharedassets0_2173.png (OK)
+180939804 assets/sprites/sharedassets0_2177.png (OK)
+180976984 assets/sprites/sharedassets0_2178.png (OK)
+181183812 assets/sprites/sharedassets0_2179.png (OK)
+181235696 assets/sprites/sharedassets0_2180.png (OK)
+181450856 assets/sprites/sharedassets0_2181.png (OK)
+181537092 assets/sprites/sharedassets0_2182.png (OK)
+181689240 assets/sprites/sharedassets0_2183.png (OK)
+182108128 assets/sprites/sharedassets0_2185.png (OK)
+182259860 assets/sprites/sharedassets0_2186.png (OK)
+182413964 assets/sprites/sharedassets0_2187.png (OK)
+182469904 assets/sprites/sharedassets0_2188.png (OK)
+182655312 assets/sprites/sharedassets0_2189.png (OK)
+183152276 assets/sprites/sharedassets0_2190.png (OK)
+183326732 assets/sprites/sharedassets0_2192.png (OK)
+183492016 assets/sprites/sharedassets0_2193.png (OK)
+183622868 assets/sprites/sharedassets0_2194.png (OK)
+183765040 assets/sprites/sharedassets0_2195.png (OK)
+183866024 assets/sprites/sharedassets0_2196.png (OK)
+183965784 assets/sprites/sharedassets0_2197.png (OK)
+184028156 assets/sprites/sharedassets0_2198.png (OK)
+184192276 assets/sprites/sharedassets0_2199.png (OK)
+184450748 assets/sprites/sharedassets0_2201.png (OK)
+184696888 assets/sprites/sharedassets0_2202.png (OK)
+184833100 assets/sprites/sharedassets0_2203.png (OK)
+185085804 assets/sprites/sharedassets0_2204.png (OK)
+185349808 assets/sprites/sharedassets0_2205.png (OK)
+185451072 assets/sprites/sharedassets0_2207.png (OK)
+185605732 assets/sprites/sharedassets0_2208.png (OK)
+185772156 assets/sprites/sharedassets0_2209.png (OK)
+185865320 assets/sprites/sharedassets0_2210.png (OK)
+186016668 assets/sprites/sharedassets0_2212.png (OK)
+186120396 assets/sprites/sharedassets0_2214.png (OK)
+186130240 assets/sprites/sharedassets0_2216.png (OK)
+186211820 assets/sprites/sharedassets0_2217.png (OK)
+186492604 assets/sprites/sharedassets0_2218.png (OK)
+186591588 assets/sprites/sharedassets0_2219.png (OK)
+186744544 assets/sprites/sharedassets0_2221.png (OK)
+186979600 assets/sprites/sharedassets0_2222.png (OK)
+187113912 assets/sprites/sharedassets0_2223.png (OK)
+187256840 assets/sprites/sharedassets0_2225.png (OK)
+187405424 assets/sprites/sharedassets0_2226.png (OK)
+187566024 assets/sprites/sharedassets0_2227.png (OK)
+187790868 assets/sprites/sharedassets0_2230.png (OK)
+188302492 assets/sprites/sharedassets0_2231.png (OK)
+188424416 assets/sprites/sharedassets0_2232.png (OK)
+188447924 assets/sprites/sharedassets0_2233.png (OK)
+188668596 assets/sprites/sharedassets0_2234.png (OK)
+188772124 assets/sprites/sharedassets0_2235.png (OK)
+188876868 assets/sprites/sharedassets0_2236.png (OK)
+188955416 assets/sprites/sharedassets0_2237.png (OK)
+189166192 assets/sprites/sharedassets0_2238.png (OK)
+189366188 assets/sprites/sharedassets0_2240.png (OK)
+189765760 assets/sprites/sharedassets0_2241.png (OK)
+189889252 assets/sprites/sharedassets0_2242.png (OK)
+190177040 assets/sprites/sharedassets0_2243.png (OK)
+190329360 assets/sprites/sharedassets0_2244.png (OK)
+190507836 assets/sprites/sharedassets0_2245.png (OK)
+190600860 assets/sprites/sharedassets0_2247.png (OK)
+190886456 assets/sprites/sharedassets0_2248.png (OK)
+190915372 assets/sprites/sharedassets0_2249.png (OK)
+191030064 assets/sprites/sharedassets0_2250.png (OK)
+191127128 assets/sprites/sharedassets0_2251.png (OK)
+191426304 assets/sprites/sharedassets0_2254.png (OK)
+191527016 assets/sprites/sharedassets0_2255.png (OK)
+191788064 assets/sprites/sharedassets0_2256.png (OK)
+191906560 assets/sprites/sharedassets0_2257.png (OK)
+192069484 assets/sprites/sharedassets0_2258.png (OK)
+192368204 assets/sprites/sharedassets0_2259.png (OK)
+192438672 assets/sprites/sharedassets0_2260.png (OK)
+192559324 assets/sprites/sharedassets0_2264.png (OK)
+192799284 assets/sprites/sharedassets0_2265.png (OK)
+193017556 assets/sprites/sharedassets0_2266.png (OK)
+193185104 assets/sprites/sharedassets0_2267.png (OK)
+193370072 assets/sprites/sharedassets0_2268.png (OK)
+193522812 assets/sprites/sharedassets0_2269.png (OK)
+193713488 assets/sprites/sharedassets0_2270.png (OK)
+193889968 assets/sprites/sharedassets0_2271.png (OK)
+194011976 assets/sprites/sharedassets0_2272.png (OK)
+194417060 assets/sprites/sharedassets0_2274.png (OK)
+194519972 assets/sprites/sharedassets0_2276.png (OK)
+194720668 assets/sprites/sharedassets0_2277.png (OK)
+194819784 assets/sprites/sharedassets0_2278.png (OK)
+194920388 assets/sprites/sharedassets0_2279.png (OK)
+195074768 assets/sprites/sharedassets0_2280.png (OK)
+195226476 assets/sprites/sharedassets0_2281.png (OK)
+195344352 assets/sprites/sharedassets0_2282.png (OK)
+195474564 assets/sprites/sharedassets0_2283.png (OK)
+195571728 assets/sprites/sharedassets0_2284.png (OK)
+195664676 assets/sprites/sharedassets0_2285.png (OK)
+195771964 assets/sprites/sharedassets0_2286.png (OK)
+195886028 assets/sprites/sharedassets0_2287.png (OK)
+196010376 assets/sprites/sharedassets0_2288.png (OK)
+196221644 assets/sprites/sharedassets0_2289.png (OK)
+196445328 assets/sprites/sharedassets0_2290.png (OK)
+196568508 assets/sprites/sharedassets0_2292.png (OK)
+196704944 assets/sprites/sharedassets0_2293.png (OK)
+196886984 assets/sprites/sharedassets0_2294.png (OK)
+197011344 assets/sprites/sharedassets0_2295.png (OK)
+197166708 assets/sprites/sharedassets0_2296.png (OK)
+197235664 assets/sprites/sharedassets0_2297.png (OK)
+197332688 assets/sprites/sharedassets0_2299.png (OK)
+197452232 assets/sprites/sharedassets0_2300.png (OK)
+197576432 assets/sprites/sharedassets0_2301.png (OK)
+197754044 assets/sprites/sharedassets0_2302.png (OK)
+197791268 assets/sprites/sharedassets0_2303.png (OK)
+197893532 assets/sprites/sharedassets0_2304.png (OK)
+198000772 assets/sprites/sharedassets0_2305.png (OK)
+198091376 assets/sprites/sharedassets0_2306.png (OK)
+198306216 assets/sprites/sharedassets0_2307.png (OK)
+198360104 assets/sprites/sharedassets0_2308.png (OK)
+198479168 assets/sprites/sharedassets0_2310.png (OK)
+198589928 assets/sprites/sharedassets0_2311.png (OK)
+198712628 assets/sprites/sharedassets0_2313.png (OK)
+198817108 assets/sprites/sharedassets0_2314.png (OK)
+198934492 assets/sprites/sharedassets0_2315.png (OK)
+199398136 assets/sprites/sharedassets0_2316.png (OK)
+199565200 assets/sprites/sharedassets0_2317.png (OK)
+199722508 assets/sprites/sharedassets0_2318.png (OK)
+199770288 assets/sprites/sharedassets0_2319.png (OK)
+199937360 assets/sprites/sharedassets0_2320.png (OK)
+200182908 assets/sprites/sharedassets0_2321.png (OK)
+200419984 assets/sprites/sharedassets0_2322.png (OK)
+200582648 assets/sprites/sharedassets0_2323.png (OK)
+200802632 assets/sprites/sharedassets0_2324.png (OK)
+201014476 assets/sprites/sharedassets0_2325.png (OK)
+201235396 assets/sprites/sharedassets0_2329.png (OK)
+201349356 assets/sprites/sharedassets0_2330.png (OK)
+201430684 assets/sprites/sharedassets0_2331.png (OK)
+201640568 assets/sprites/sharedassets0_2332.png (OK)
+201808144 assets/sprites/sharedassets0_2334.png (OK)
+201843800 assets/sprites/sharedassets0_2335.png (OK)
+202409948 assets/sprites/sharedassets0_2336.png (OK)
+202564904 assets/sprites/sharedassets0_2337.png (OK)
+202835664 assets/sprites/sharedassets0_2338.png (OK)
+203395200 assets/sprites/sharedassets0_2339.png (OK)
+203547132 assets/sprites/sharedassets0_2340.png (OK)
+203725212 assets/sprites/sharedassets0_2341.png (OK)
+203876648 assets/sprites/sharedassets0_2342.png (OK)
+204124724 assets/sprites/sharedassets0_2343.png (OK)
+204245168 assets/sprites/sharedassets0_2344.png (OK)
+204388612 assets/sprites/sharedassets0_2345.png (OK)
+204546332 assets/sprites/sharedassets0_2346.png (OK)
+204956164 assets/sprites/sharedassets0_2347.png (OK)
+205022700 assets/sprites/sharedassets0_2348.png (OK)
+205181620 assets/sprites/sharedassets0_2349.png (OK)
+205333400 assets/sprites/sharedassets0_235.png (OK)
+205336416 assets/sprites/sharedassets0_2350.png (OK)
+205573228 assets/sprites/sharedassets0_2352.png (OK)
+205671388 assets/sprites/sharedassets0_2353.png (OK)
+205792572 assets/sprites/sharedassets0_2355.png (OK)
+205882576 assets/sprites/sharedassets0_2356.png (OK)
+206154096 assets/sprites/sharedassets0_2357.png (OK)
+206257040 assets/sprites/sharedassets0_2358.png (OK)
+206353576 assets/sprites/sharedassets0_2359.png (OK)
+206454440 assets/sprites/sharedassets0_2360.png (OK)
+206564624 assets/sprites/sharedassets0_2361.png (OK)
+206670612 assets/sprites/sharedassets0_2362.png (OK)
+206935988 assets/sprites/sharedassets0_2364.png (OK)
+207189404 assets/sprites/sharedassets0_2365.png (OK)
+207346188 assets/sprites/sharedassets0_2368.png (OK)
+207583252 assets/sprites/sharedassets0_2370.png (OK)
+207761800 assets/sprites/sharedassets0_2371.png (OK)
+207894288 assets/sprites/sharedassets0_2373.png (OK)
+207963308 assets/sprites/sharedassets0_2374.png (OK)
+208068588 assets/sprites/sharedassets0_2375.png (OK)
+208289240 assets/sprites/sharedassets0_2376.png (OK)
+208462708 assets/sprites/sharedassets0_2377.png (OK)
+209023120 assets/sprites/sharedassets0_2378.png (OK)
+209154228 assets/sprites/sharedassets0_2380.png (OK)
+209306372 assets/sprites/sharedassets0_2381.png (OK)
+209459404 assets/sprites/sharedassets0_2382.png (OK)
+209677580 assets/sprites/sharedassets0_2383.png (OK)
+209770556 assets/sprites/sharedassets0_2384.png (OK)
+209958380 assets/sprites/sharedassets0_2385.png (OK)
+210172328 assets/sprites/sharedassets0_2386.png (OK)
+210330908 assets/sprites/sharedassets0_2387.png (OK)
+210396600 assets/sprites/sharedassets0_2388.png (OK)
+210611152 assets/sprites/sharedassets0_2389.png (OK)
+210762356 assets/sprites/sharedassets0_2390.png (OK)
+210920152 assets/sprites/sharedassets0_2391.png (OK)
+211077464 assets/sprites/sharedassets0_2392.png (OK)
+211163864 assets/sprites/sharedassets0_2393.png (OK)
+211316132 assets/sprites/sharedassets0_2394.png (OK)
+211401268 assets/sprites/sharedassets0_2395.png (OK)
+211500812 assets/sprites/sharedassets0_2396.png (OK)
+211537576 assets/sprites/sharedassets0_2397.png (OK)
+211688552 assets/sprites/sharedassets0_2399.png (OK)
+211844660 assets/sprites/sharedassets0_2400.png (OK)
+211998644 assets/sprites/sharedassets0_2401.png (OK)
+212036984 assets/sprites/sharedassets0_2402.png (OK)
+212101384 assets/sprites/sharedassets0_2403.png (OK)
+212180292 assets/sprites/sharedassets0_2404.png (OK)
+212315256 assets/sprites/sharedassets0_2405.png (OK)
+212472256 assets/sprites/sharedassets0_2407.png (OK)
+212623728 assets/sprites/sharedassets0_2408.png (OK)
+212882944 assets/sprites/sharedassets0_2409.png (OK)
+212965684 assets/sprites/sharedassets0_2410.png (OK)
+213535056 assets/sprites/sharedassets0_2411.png (OK)
+213668192 assets/sprites/sharedassets0_2412.png (OK)
+214219604 assets/sprites/sharedassets0_2414.png (OK)
+214433868 assets/sprites/sharedassets0_2415.png (OK)
+214615200 assets/sprites/sharedassets0_2416.png (OK)
+214793752 assets/sprites/sharedassets0_2417.png (OK)
+214972572 assets/sprites/sharedassets0_2418.png (OK)
+215216612 assets/sprites/sharedassets0_2419.png (OK)
+215369644 assets/sprites/sharedassets0_2420.png (OK)
+215604196 assets/sprites/sharedassets0_2421.png (OK)
+215758772 assets/sprites/sharedassets0_2422.png (OK)
+215810880 assets/sprites/sharedassets0_2423.png (OK)
+215964364 assets/sprites/sharedassets0_2424.png (OK)
+216116724 assets/sprites/sharedassets0_2425.png (OK)
+216331520 assets/sprites/sharedassets0_2427.png (OK)
+216500136 assets/sprites/sharedassets0_2428.png (OK)
+216553068 assets/sprites/sharedassets0_2429.png (OK)
+217162720 assets/sprites/sharedassets0_2431.png (OK)
+217249680 assets/sprites/sharedassets0_2432.png (OK)
+217297848 assets/sprites/sharedassets0_2433.png (OK)
+217429088 assets/sprites/sharedassets0_2434.png (OK)
+217567188 assets/sprites/sharedassets0_2435.png (OK)
+218065712 assets/sprites/sharedassets0_2436.png (OK)
+218336500 assets/sprites/sharedassets0_2437.png (OK)
+218417652 assets/sprites/sharedassets0_2438.png (OK)
+218832984 assets/sprites/sharedassets0_2439.png (OK)
+218982076 assets/sprites/sharedassets0_2440.png (OK)
+219253320 assets/sprites/sharedassets0_2441.png (OK)
+219365984 assets/sprites/sharedassets0_2442.png (OK)
+219556588 assets/sprites/sharedassets0_2443.png (OK)
+219663024 assets/sprites/sharedassets0_2445.png (OK)
+219950128 assets/sprites/sharedassets0_2446.png (OK)
+220161016 assets/sprites/sharedassets0_2449.png (OK)
+220768512 assets/sprites/sharedassets0_245.png (OK)
+220773100 assets/sprites/sharedassets0_2450.png (OK)
+221059176 assets/sprites/sharedassets0_2451.png (OK)
+221200296 assets/sprites/sharedassets0_2453.png (OK)
+221314852 assets/sprites/sharedassets0_2454.png (OK)
+221619284 assets/sprites/sharedassets0_2456.png (OK)
+221734052 assets/sprites/sharedassets0_2457.png (OK)
+221866920 assets/sprites/sharedassets0_2459.png (OK)
+222159644 assets/sprites/sharedassets0_2461.png (OK)
+222610028 assets/sprites/sharedassets0_2462.png (OK)
+222724844 assets/sprites/sharedassets0_2463.png (OK)
+223287056 assets/sprites/sharedassets0_2464.png (OK)
+223442260 assets/sprites/sharedassets0_2466.png (OK)
+223541252 assets/sprites/sharedassets0_2468.png (OK)
+223777068 assets/sprites/sharedassets0_2472.png (OK)
+223929808 assets/sprites/sharedassets0_2473.png (OK)
+224011716 assets/sprites/sharedassets0_2474.png (OK)
+224121044 assets/sprites/sharedassets0_2475.png (OK)
+224330436 assets/sprites/sharedassets0_2476.png (OK)
+224366400 assets/sprites/sharedassets0_2477.png (OK)
+224490912 assets/sprites/sharedassets0_2478.png (OK)
+224642532 assets/sprites/sharedassets0_2479.png (OK)
+224796232 assets/sprites/sharedassets0_248.png (OK)
+224798376 assets/sprites/sharedassets0_2480.png (OK)
+225295256 assets/sprites/sharedassets0_2481.png (OK)
+225394736 assets/sprites/sharedassets0_2482.png (OK)
+225961452 assets/sprites/sharedassets0_2483.png (OK)
+226140164 assets/sprites/sharedassets0_2484.png (OK)
+226291536 assets/sprites/sharedassets0_2486.png (OK)
+226582576 assets/sprites/sharedassets0_2488.png (OK)
+226728584 assets/sprites/sharedassets0_2489.png (OK)
+226844136 assets/sprites/sharedassets0_2490.png (OK)
+227059688 assets/sprites/sharedassets0_2491.png (OK)
+227234060 assets/sprites/sharedassets0_2493.png (OK)
+227330656 assets/sprites/sharedassets0_2495.png (OK)
+228078060 assets/sprites/sharedassets0_2497.png (OK)
+228155068 assets/sprites/sharedassets0_2498.png (OK)
+228313276 assets/sprites/sharedassets0_2499.png (OK)
+228372648 assets/sprites/sharedassets0_2500.png (OK)
+228539000 assets/sprites/sharedassets0_2501.png (OK)
+228690920 assets/sprites/sharedassets0_2503.png (OK)
+228843268 assets/sprites/sharedassets0_2504.png (OK)
+229025584 assets/sprites/sharedassets0_2506.png (OK)
+229180080 assets/sprites/sharedassets0_2507.png (OK)
+229282184 assets/sprites/sharedassets0_2508.png (OK)
+229834604 assets/sprites/sharedassets0_2509.png (OK)
+230308124 assets/sprites/sharedassets0_2510.png (OK)
+230861360 assets/sprites/sharedassets0_2511.png (OK)
+230964168 assets/sprites/sharedassets0_2512.png (OK)
+231070276 assets/sprites/sharedassets0_2513.png (OK)
+231161668 assets/sprites/sharedassets0_2514.png (OK)
+231198932 assets/sprites/sharedassets0_2515.png (OK)
+231600020 assets/sprites/sharedassets0_2516.png (OK)
+231844624 assets/sprites/sharedassets0_2517.png (OK)
+231880280 assets/sprites/sharedassets0_2518.png (OK)
+232058636 assets/sprites/sharedassets0_2519.png (OK)
+232210388 assets/sprites/sharedassets0_252.png (OK)
+232214260 assets/sprites/sharedassets0_2520.png (OK)
+232423772 assets/sprites/sharedassets0_2523.png (OK)
+232583116 assets/sprites/sharedassets0_2524.png (OK)
+232773140 assets/sprites/sharedassets0_2526.png (OK)
+232873280 assets/sprites/sharedassets0_2527.png (OK)
+232949656 assets/sprites/sharedassets0_2528.png (OK)
+233026572 assets/sprites/sharedassets0_2530.png (OK)
+233137752 assets/sprites/sharedassets0_2531.png (OK)
+233215104 assets/sprites/sharedassets0_2532.png (OK)
+233328944 assets/sprites/sharedassets0_2534.png (OK)
+233459584 assets/sprites/sharedassets0_2535.png (OK)
+233563772 assets/sprites/sharedassets0_2536.png (OK)
+233646020 assets/sprites/sharedassets0_2537.png (OK)
+233806064 assets/sprites/sharedassets0_2540.png (OK)
+234050832 assets/sprites/sharedassets0_272.png (OK)
+234054520 assets/sprites/sharedassets0_274.png (OK)
+234058384 assets/sprites/sharedassets0_279.png (OK)
+234061956 assets/sprites/sharedassets0_302.png (OK)
+234066576 assets/sprites/sharedassets0_321.png (OK)
+234070200 assets/sprites/sharedassets0_337.png (OK)
+234075772 assets/sprites/sharedassets0_350.png (OK)
+234079828 assets/sprites/sharedassets0_357.png (OK)
+234083372 assets/sprites/sharedassets0_39.png (OK)
+234086280 assets/sprites/sharedassets0_402.png (OK)
+234089660 assets/sprites/sharedassets0_417.png (OK)
+234092872 assets/sprites/sharedassets0_430.png (OK)
+234095148 assets/sprites/sharedassets0_455.png (OK)
+234098372 assets/sprites/sharedassets0_496.png (OK)
+234101856 assets/sprites/sharedassets0_507.png (OK)
+234107556 assets/sprites/sharedassets0_510.png (OK)
+234111612 assets/sprites/sharedassets0_550.png (OK)
+234116656 assets/sprites/sharedassets0_577.png (OK)
+234120796 assets/sprites/sharedassets0_585.png (OK)
+234125028 assets/sprites/sharedassets0_590.png (OK)
+234129832 assets/sprites/sharedassets0_593.png (OK)
+234133668 assets/sprites/sharedassets0_599.png (OK)
+234139452 assets/sprites/sharedassets0_615.png (OK)
+234143792 assets/sprites/sharedassets0_619.png (OK)
+234146924 assets/sprites/sharedassets0_625.png (OK)
+234151144 assets/sprites/sharedassets0_650.png (OK)
+234156188 assets/sprites/sharedassets0_664.png (OK)
+234159072 assets/sprites/sharedassets0_668.png (OK)
+234162796 assets/sprites/sharedassets0_679.png (OK)
+234165848 assets/sprites/sharedassets0_685.png (OK)
+234171464 assets/sprites/sharedassets0_686.png (OK)
+234175836 assets/sprites/sharedassets0_687.png (OK)
+234179764 assets/sprites/sharedassets0_702.png (OK)
+234183216 assets/sprites/sharedassets0_716.png (OK)
+234187948 assets/sprites/sharedassets0_724.png (OK)
+234191628 assets/sprites/sharedassets0_728.png (OK)
+234194640 assets/sprites/sharedassets0_730.png (OK)
+234200232 assets/sprites/sharedassets0_746.png (OK)
+234203656 assets/sprites/sharedassets0_759.png (OK)
+234207376 assets/sprites/sharedassets1_575.png (OK)
+234985664 assets/sprites/sharedassets1_599.png (OK)
+236179012 assets/sprites/sharedassets1_616.png (OK)
+236773408 assets/sprites/sharedassets1_619.png (OK)
+236888196 assets/sprites/sharedassets1_628.png (OK)
+237202080 assets/sprites/sharedassets1_629.png (OK)
+238372228 assets/sprites/sharedassets1_634.png (OK)
+239523268 assets/sprites/sharedassets1_637.png (OK)
+240551376 assets/sprites/sharedassets1_645.png (OK)
+240700548 assets/ui/exported_fonts/atlas_sharedassets0_36.png (OK)
+240949389 assets/ui/exported_fonts/resources_80_Caveat-SemiBold.ttf (OK - compressed)
+241090571 assets/ui/exported_fonts/sharedassets0_1162_NotoNaskhArabic-Regular.ttf (OK - compressed)
+241185088 assets/ui/exported_fonts/sharedassets0_1163_VCR_OSD_Mono_Cyr.ttf (OK - compressed)
+241195333 assets/ui/exported_fonts/sharedassets0_1167_AnonymousPro-Regular.ttf (OK - compressed)
+241247287 assets/ui/exported_fonts/sharedassets0_1169_ChakraPetch-SemiBold.ttf (OK - compressed)
+241283704 assets/ui/exported_images/sharedassets0_1172_fake_tv_noise_3.png (OK)
+242028304 assets/ui/exported_images/sharedassets0_1209_fake_tooth_frame_animation_0.png (OK)
+242117416 assets/ui/exported_images/sharedassets0_1222_fake_tooth_frame_animation_6.png (OK)
+242201280 assets/ui/exported_images/sharedassets0_1238_fake_UI_pause_windows3_2.png (OK)
+242206656 assets/ui/exported_images/sharedassets0_1240_fake_tv_noise_0.png (OK)
+242947360 assets/ui/exported_images/sharedassets0_1253_fake_UI_keyboard_buttons2_2__0.png (OK)
+242953352 assets/ui/exported_images/sharedassets0_1293_fake_tv_noise_2.png (OK)
+243699900 assets/ui/exported_images/sharedassets0_1341_fake_UI_pause_windows1_0.png (OK)
+243711868 assets/ui/exported_images/sharedassets0_1355_fake_tooth_frame_animation_5.png (OK)
+243798712 assets/ui/exported_images/sharedassets0_1360_fake_tooth_frame_animation_4.png (OK)
+243885800 assets/ui/exported_images/sharedassets0_1390_fake_UI_pause_background_0.png (OK)
+245694732 assets/ui/exported_images/sharedassets0_1401_fake_tv_noise_1.png (OK)
+246440652 assets/ui/exported_images/sharedassets0_1415_fake_tooth_frame_animation_2.png (OK)
+246526964 assets/ui/exported_images/sharedassets0_1421_fake_UI_pause_windows3_1.png (OK)
+246527836 assets/ui/exported_images/sharedassets0_1501_fake_tooth_frame_animation_3.png (OK)
+246615024 assets/ui/exported_images/sharedassets0_1518_fake_tooth_frame_animation_1.png (OK)
+246703472 assets/ui/exported_images/sharedassets0_1615_fake_jena_corpse.png (OK)
+246735008 assets/ui/exported_images/sharedassets0_1626_fake_ear_1.png (OK)
+246770688 assets/ui/exported_images/sharedassets0_1643_haflCirc_grad.png (OK)
+246792244 assets/ui/exported_images/sharedassets0_1659_human_pupil_7.png (OK)
+246803456 assets/ui/exported_images/sharedassets0_1661_fake_photo_1.png (OK)
+246934568 assets/ui/exported_images/sharedassets0_1716_Bedroom_background.png (OK)
+247709344 assets/ui/exported_images/sharedassets0_1727_pixel.png (OK)
+247709516 assets/ui/exported_images/sharedassets0_1740_Livingroom2_obj2.png (OK)
+247730908 assets/ui/exported_images/sharedassets0_1744_fake_formerfema1.png (OK)
+247906040 assets/ui/exported_images/sharedassets0_1761_fake_3day_2window.png (OK)
+248052752 assets/ui/exported_images/sharedassets0_1833_fake_sassy6.png (OK)
+248122516 assets/ui/exported_images/sharedassets0_1919_human_hands_10.png (OK)
+248254396 assets/ui/exported_images/sharedassets0_1958_Fake_skip2.png (OK)
+248256056 assets/ui/exported_images/sharedassets0_1962_fake_esenin_2.png (OK)
+248329764 assets/ui/exported_images/sharedassets0_1976_Fake_skip1.png (OK)
+248331140 assets/ui/exported_images/sharedassets0_2010_void.png (OK)
+248331312 assets/ui/exported_images/sharedassets0_2021_human_white_5_29.png (OK)
+248349776 assets/ui/exported_images/sharedassets0_2029_fake_tooth_1.png (OK)
+248375204 assets/ui/exported_images/sharedassets0_2037_fake_hands_frame.png (OK)
+248388552 assets/ui/exported_images/sharedassets0_2038_Bathroom_wash.png (OK)
+248464136 assets/ui/exported_images/sharedassets0_2176_fake_UI_keyboard_buttons_5.png (OK)
+248468532 assets/ui/exported_images/sharedassets0_2191_fake_UI_pause_windows3_0.png (OK)
+248469892 assets/ui/exported_images/sharedassets0_2312_fake_UI_pause_windows1_1.png (OK)
+248493312 assets/ui/exported_images/sharedassets0_2363_fake_UI_pause_windows3_4.png (OK)
+248493568 assets/ui/exported_images/sharedassets0_2365_armpit_6_5.png (OK)
+248650388 assets/ui/exported_images/sharedassets0_2458_fake_UI_pause_windows3_3.png (OK)
+248651592 assets/ui/exported_images/sharedassets0_2495_fake_tv_noise_4.png (OK)
+249399032 assets/ui/exported_images/sharedassets0_2505_fake_UI_pause_windows2_1.png (OK)
+249418812 assets/ui/exported_images/sharedassets0_2539_fake_UI_pause_windows3_5.png (OK)
+249419096 assets/ui/exported_images/sharedassets1_385_fake_buttons_1_10.png (OK)
+249422112 assets/ui/exported_images/sharedassets1_386_fake_UI_dialogue_energy_double_icon1_0.png (OK)
+249423388 assets/ui/exported_images/sharedassets1_387_fake_radio_scale.png (OK)
+249441468 assets/ui/exported_images/sharedassets1_390_fake_UI_energy_0.png (OK)
+249444088 assets/ui/exported_images/sharedassets1_403_fake_curtain_2.png (OK)
+249473144 assets/ui/exported_images/sharedassets1_422_fake_buttons_1_5.png (OK)
+249475804 assets/ui/exported_images/sharedassets1_425_fake_fridge_insect1_9.png (OK)
+249476532 assets/ui/exported_images/sharedassets1_430_fake_fridge_background_1_0.png (OK)
+249492420 assets/ui/exported_images/sharedassets1_433_fake_curtain_3.png (OK)
+249523356 assets/ui/exported_images/sharedassets1_435_fake_fridge_insect1_5.png (OK)
+249524080 assets/ui/exported_images/sharedassets1_442_fake_fridge_insect1_8.png (OK)
+249524824 assets/ui/exported_images/sharedassets1_444_fake_fridge_insect1_1.png (OK)
+249525560 assets/ui/exported_images/sharedassets1_447_fake_UI_pause_background_1.png (OK)
+251388008 assets/ui/exported_images/sharedassets1_449_fake_buttons_1_1.png (OK)
+251389972 assets/ui/exported_images/sharedassets1_453_fake_buttons_1_6.png (OK)
+251392628 assets/ui/exported_images/sharedassets1_454_fake_fridge_insect2_3.png (OK)
+251394076 assets/ui/exported_images/sharedassets1_459_fake_fridge_insect1_6.png (OK)
+251394844 assets/ui/exported_images/sharedassets1_461_fake_fridge_insect1_11.png (OK)
+251395288 assets/ui/exported_images/sharedassets1_463_fake_fridge_insect2_1.png (OK)
+251396584 assets/ui/exported_images/sharedassets1_470_fake_eyes_frame_animation_2.png (OK)
+251432276 assets/ui/exported_images/sharedassets1_481_fake_UI_notification_0.png (OK)
+251433612 assets/ui/exported_images/sharedassets1_485_fake_UI_notification_1.png (OK)
+251450304 assets/ui/exported_images/sharedassets1_486_fake_eyes_frame_animation_4.png (OK)
+251486112 assets/ui/exported_images/sharedassets1_493_fake_eyes_frame_animation_7.png (OK)
+251521736 assets/ui/exported_images/sharedassets1_494_fake_radio_cursor.png (OK)
+251522296 assets/ui/exported_images/sharedassets1_496_fake_buttons_1_3.png (OK)
+251525000 assets/ui/exported_images/sharedassets1_499_fake_UI_pause_background_3.png (OK)
+253393616 assets/ui/exported_images/sharedassets1_500_fake_diary2_6.png (OK)
+253767736 assets/ui/exported_images/sharedassets1_515_fake_eyes_frame_animation_0.png (OK)
+253801868 assets/ui/exported_images/sharedassets1_519_fake_UI_pause_background_4.png (OK)
+255669104 assets/ui/exported_images/sharedassets1_523_fake_buttons_1_9.png (OK)
+255672008 assets/ui/exported_images/sharedassets1_525_fake_radio_button_up.png (OK)
+255672640 assets/ui/exported_images/sharedassets1_531_fake_UI_energy_1.png (OK)
+255673488 assets/ui/exported_images/sharedassets1_537_fake_curtain_0.png (OK)
+255703424 assets/ui/exported_images/sharedassets1_552_fake_buttons_1_7.png (OK)
+255706188 assets/ui/exported_images/sharedassets1_565_fake_fridge_insect1_4.png (OK)
+255706944 assets/ui/exported_images/sharedassets1_574_Kitchen_beer_8.png (OK)
+255720728 assets/ui/exported_images/sharedassets1_575_Utilityroom_background.png (OK)
+256499044 assets/ui/exported_images/sharedassets1_576_Bedroom_nightstand.png (OK)
+256533440 assets/ui/exported_images/sharedassets1_577_Bedroom_curtain.png (OK)
+256582612 assets/ui/exported_images/sharedassets1_579_TV.png (OK)
+256676456 assets/ui/exported_images/sharedassets1_584__.png (OK)
+257352272 assets/ui/exported_images/sharedassets1_586_Kitchen_shelf.png (OK)
+257393356 assets/ui/exported_images/sharedassets1_587_fake_hands_back.png (OK)
+257434280 assets/ui/exported_images/sharedassets1_588_fake_2window_0day.png (OK)
+258010652 assets/ui/exported_images/sharedassets1_593_Livingroom2_newspaper.png (OK)
+258020248 assets/ui/exported_images/sharedassets1_594_fake_ear_frame.png (OK)
+258032348 assets/ui/exported_images/sharedassets1_595_Livingroom2_baby.png (OK)
+258043268 assets/ui/exported_images/sharedassets1_597_fake_UI_notification_item_window.png (OK)
+258061024 assets/ui/exported_images/sharedassets1_598__.png (OK)
+258067428 assets/ui/exported_images/sharedassets1_599_Bathroom_background.png (OK)
+259260804 assets/ui/exported_images/sharedassets1_600_Livingroom1_cross.png (OK)
+259263000 assets/ui/exported_images/sharedassets1_601_fake_1window_6day.png (OK)
+260001224 assets/ui/exported_images/sharedassets1_605_fake_fridge_background.png (OK)
+260970244 assets/ui/exported_images/sharedassets1_606_fake_UI_radio_window.png (OK)
+260995640 assets/ui/exported_images/sharedassets1_607_Utilityroom_boxes.png (OK)
+261007936 assets/ui/exported_images/sharedassets1_608_fake_5day_1window.png (OK)
+261066376 assets/ui/exported_images/sharedassets1_609_fake_1day_3window.png (OK)
+261070344 assets/ui/exported_images/sharedassets1_610_itchLink.png (OK)
+261075932 assets/ui/exported_images/sharedassets1_612_Kitchen_obj1.png (OK)
+261254508 assets/ui/exported_images/sharedassets1_614_steamLink.png (OK)
+261257648 assets/ui/exported_images/sharedassets1_615_fake_UI_radio_instruction.png (OK)
+261644464 assets/ui/exported_images/sharedassets1_616__1.png (OK)
+262238888 assets/ui/exported_images/sharedassets1_617_Livingroom2_sheets.png (OK)
+262613024 assets/ui/exported_images/sharedassets1_618_Bathroom_baby.png (OK)
+262619284 assets/ui/exported_images/sharedassets1_619_char1.png (OK)
+262734100 assets/ui/exported_images/sharedassets1_621_Livingroom1_toy.png (OK)
+262737920 assets/ui/exported_images/sharedassets1_622_Bedroom_clock.png (OK)
+262758692 assets/ui/exported_images/sharedassets1_623_Bedroom_note.png (OK)
+262763536 assets/ui/exported_images/sharedassets1_625_armpit_frame.png (OK)
+262781188 assets/ui/exported_images/sharedassets1_627_fake_UI_radio_poloska.png (OK)
+262791016 assets/ui/exported_images/sharedassets1_629_Livingroom2_background.png (OK)
+263961192 assets/ui/exported_images/sharedassets1_632_Livingroom1_apple.png (OK)
+263963424 assets/ui/exported_images/sharedassets1_633_fake_radio_1.png (OK)
+264422452 assets/ui/exported_images/sharedassets1_634_Kitchen_background.png (OK)
+265573512 assets/ui/exported_images/sharedassets1_636_fake_tube.png (OK)
+265737776 assets/ui/exported_images/sharedassets1_637_Livingroom1_background.png (OK)
+266765912 assets/ui/exported_images/sharedassets1_639_Livingroom2_photo.png (OK)
+266784492 assets/ui/exported_images/sharedassets1_640_Livingroom2_obj1.png (OK)
+267117932 assets/ui/exported_images/sharedassets1_642_photo_2024-05-26_23-41-23_3_.png (OK)
+267538016 assets/ui/exported_images/sharedassets1_643_tv_mask.png (OK)
+267539544 assets/ui/exported_images/sharedassets1_644_Bathroom_window.png (OK)
+267567596 assets/ui/exported_images/sharedassets1_645_peepholeOverlay.png (OK)
+267716784 assets/ui/exported_images/sharedassets1_646_fake_UI_window_text.png (OK)
+267721624 assets/ui/exported_images/sharedassets1_648_Bedroom_note_close_up_.png (OK)
+267882176 assets/ui/exported_images/sharedassets1_652_fake_buttons_1_13.png (OK)
+267885300 assets/ui/exported_images/sharedassets1_659_fake_curtain_1.png (OK)
+267915152 assets/ui/exported_images/sharedassets1_683_fake_fridge_background_1_1.png (OK)
+267924896 assets/ui/exported_images/sharedassets1_684_fake_radio_knob.png (OK)
+267931144 assets/ui/exported_images/sharedassets1_695_fake_gun_idle_0.png (OK)
+267993372 assets/ui/exported_images/sharedassets1_703_fake_buttons_1_0.png (OK)
+267995460 assets/ui/exported_images/sharedassets1_706_fake_fridge_insect1_2.png (OK)
+267996172 assets/ui/exported_images/sharedassets1_716_fake_curtain_4.png (OK)
+268026000 assets/ui/exported_images/sharedassets1_717_fake_UI_dialogue_talk_window1_0.png (OK)
+268046028 assets/ui/exported_images/sharedassets1_718_fake_UI_pause_background_5.png (OK)
+269910400 assets/ui/exported_images/sharedassets1_721_fake_fridge_insect1_10.png (OK)
+269911116 assets/ui/exported_images/sharedassets1_726_fake_UI_dialogue_talk_window1_1.png (OK)
+269931404 assets/ui/exported_images/sharedassets1_729_fake_UI_save_icon_1.png (OK)
+269937464 assets/ui/exported_images/sharedassets1_731_fake_fridge_insect1_3.png (OK)
+269938192 assets/ui/exported_images/sharedassets1_733_fake_buttons_1_8.png (OK)
+269940728 assets/ui/exported_images/sharedassets1_737_fake_cigarettes_0.png (OK)
+269993332 assets/ui/exported_images/sharedassets1_750_fake_fridge_insect1_7.png (OK)
+269994060 assets/ui/exported_images/sharedassets1_751_fake_UI_save_icon_0.png (OK)
+270000104 assets/ui/exported_images/sharedassets1_753_fake_fridge_insect2_2.png (OK)
+270001460 assets/ui/exported_images/sharedassets1_754_fake_UI_save_icon_2.png (OK)
+270007928 assets/ui/exported_images/sharedassets1_755_fake_buttons_1_2.png (OK)
+270010348 assets/ui/exported_images/sharedassets1_758_fake_eyes_frame_animation_6.png (OK)
+270045984 assets/ui/exported_images/sharedassets1_766_fake_eyes_frame_animation_3.png (OK)
+270081948 assets/ui/exported_images/sharedassets1_768_fake_eyes_frame_animation_5.png (OK)
+270117652 assets/ui/exported_images/sharedassets1_770_fake_UI_pause_background_2.png (OK)
+271980280 assets/ui/exported_images/sharedassets1_771_fake_eyes_frame_animation_1.png (OK)
+272015800 assets/ui/exported_images/sharedassets1_774_fake_UI_pause_background_7.png (OK)
+273883044 assets/ui/exported_images/sharedassets1_777_fake_buttons_1_4.png (OK)
+273885696 assets/ui/exported_images/sharedassets1_779_fake_fridge_insect2_0.png (OK)
+273887088 assets/ui/exported_images/sharedassets1_781_fake_buttons_1_11.png (OK)
+273890168 assets/ui/exported_images/sharedassets1_786_fake_buttons_1_12.png (OK)
+273893064 assets/ui/exported_images/sharedassets1_793_fake_fridge_insect1_0.png (OK)
+273893500 assets/ui/exported_images/sharedassets1_801_fake_UI_pause_background_6.png (OK)
+275756223 assets/world/cat3d.bin (OK - compressed)
+275785359 assets/world/cat3d_manifest.json (OK - compressed)
+275787684 assets/world/cat_koshka.png (OK)
+276006095 assets/world/models_android/mesh_level1_f2_p241.bin (OK - compressed)
+276006261 assets/world/models_android/mesh_level1_f2_p242.bin (OK - compressed)
+276006636 assets/world/models_android/mesh_level1_f2_p243.bin (OK - compressed)
+276013879 assets/world/models_android/mesh_level1_f2_p244.bin (OK - compressed)
+276014623 assets/world/models_android/mesh_level1_f2_p245.bin (OK - compressed)
+276019728 assets/world/models_android/mesh_level1_f2_p246.bin (OK - compressed)
+276020085 assets/world/models_android/mesh_level1_f2_p247.bin (OK - compressed)
+276020293 assets/world/models_android/mesh_level1_f2_p248.bin (OK - compressed)
+276021219 assets/world/models_android/mesh_level1_f2_p249.bin (OK - compressed)
+276033156 assets/world/models_android/mesh_level1_f2_p250.bin (OK - compressed)
+276053511 assets/world/models_android/mesh_level1_f2_p251.bin (OK - compressed)
+276059691 assets/world/models_android/mesh_level1_f2_p252.bin (OK - compressed)
+276060056 assets/world/models_android/mesh_level1_f2_p253.bin (OK - compressed)
+276079339 assets/world/models_android/mesh_level1_f2_p254.bin (OK - compressed)
+276083608 assets/world/models_android/mesh_level1_f2_p255.bin (OK - compressed)
+276124517 assets/world/models_android/mesh_level1_f2_p256.bin (OK - compressed)
+276124880 assets/world/models_android/mesh_level1_f2_p257.bin (OK - compressed)
+276167817 assets/world/models_android/mesh_level1_f2_p258.bin (OK - compressed)
+276179559 assets/world/models_android/mesh_level1_f2_p259.bin (OK - compressed)
+276179710 assets/world/models_android/mesh_level1_f2_p260.bin (OK - compressed)
+276180480 assets/world/models_android/mesh_level1_f2_p261.bin (OK - compressed)
+276187381 assets/world/models_android/mesh_level1_f2_p262.bin (OK - compressed)
+276188207 assets/world/models_android/mesh_level1_f2_p263.bin (OK - compressed)
+276258098 assets/world/models_android/mesh_level1_f2_p264.bin (OK - compressed)
+276273914 assets/world/models_android/mesh_level1_f2_p265.bin (OK - compressed)
+276275179 assets/world/models_android/mesh_level1_f2_p266.bin (OK - compressed)
+276286971 assets/world/models_android/mesh_level1_f2_p267.bin (OK - compressed)
+276299913 assets/world/models_android/mesh_level1_f2_p268.bin (OK - compressed)
+276302532 assets/world/models_android/mesh_level1_f2_p269.bin (OK - compressed)
+276302887 assets/world/models_android/mesh_level1_f2_p270.bin (OK - compressed)
+276303250 assets/world/models_android/mesh_level1_f2_p271.bin (OK - compressed)
+276319698 assets/world/models_android/mesh_level1_f2_p272.bin (OK - compressed)
+276320069 assets/world/models_android/mesh_level1_f2_p273.bin (OK - compressed)
+276378808 assets/world/models_android/mesh_level1_f2_p274.bin (OK - compressed)
+276394694 assets/world/models_android/mesh_level1_f2_p275.bin (OK - compressed)
+276447938 assets/world/models_android/mesh_level1_f2_p276.bin (OK - compressed)
+276450070 assets/world/models_android/mesh_level1_f2_p277.bin (OK - compressed)
+276450208 assets/world/models_android/mesh_level1_f2_p278.bin (OK - compressed)
+276453944 assets/world/models_android/mesh_level1_f2_p279.bin (OK - compressed)
+276454309 assets/world/models_android/mesh_level1_f2_p280.bin (OK - compressed)
+276455800 assets/world/models_android/mesh_level1_f2_p281.bin (OK - compressed)
+276455927 assets/world/models_android/mesh_level1_f2_p282.bin (OK - compressed)
+276471251 assets/world/models_android/mesh_level1_f2_p283.bin (OK - compressed)
+276472195 assets/world/models_android/mesh_level1_f2_p284.bin (OK - compressed)
+276479287 assets/world/models_android/mesh_level1_f2_p285.bin (OK - compressed)
+276536032 assets/world/models_android/mesh_level1_f2_p286.bin (OK - compressed)
+276538328 assets/world/models_android/mesh_level1_f2_p287.bin (OK - compressed)
+276539062 assets/world/models_android/mesh_level1_f2_p288.bin (OK - compressed)
+276539427 assets/world/models_android/mesh_level1_f2_p289.bin (OK - compressed)
+276540399 assets/world/models_android/mesh_level1_f2_p290.bin (OK - compressed)
+276549316 assets/world/models_android/mesh_level1_f2_p291.bin (OK - compressed)
+276551363 assets/world/models_android/mesh_level1_f2_p292.bin (OK - compressed)
+276554927 assets/world/models_android/mesh_level1_f2_p293.bin (OK - compressed)
+277630792 assets/world/models_android/mesh_level1_f2_p294.bin (OK - compressed)
+277631149 assets/world/models_android/mesh_level1_f2_p295.bin (OK - compressed)
+277631514 assets/world/models_android/mesh_level1_f2_p296.bin (OK - compressed)
+277633756 assets/world/models_android/mesh_level1_f2_p297.bin (OK - compressed)
+277634118 assets/world/models_android/mesh_level1_f2_p298.bin (OK - compressed)
+277634480 assets/world/models_android/mesh_level1_f2_p301.bin (OK - compressed)
+277634837 assets/world/models_android/mesh_level1_f2_p302.bin (OK - compressed)
+277635208 assets/world/models_android/mesh_level1_f2_p303.bin (OK - compressed)
+277635942 assets/world/models_android/mesh_level1_f2_p305.bin (OK - compressed)
+277645193 assets/world/models_android/mesh_level1_f2_p306.bin (OK - compressed)
+277661768 assets/world/models_android/mesh_level1_f2_p307.bin (OK - compressed)
+277672368 assets/world/models_android/mesh_level1_f2_p311.bin (OK - compressed)
+277674881 assets/world/models_android/mesh_level1_f2_p312.bin (OK - compressed)
+277675256 assets/world/models_android/mesh_level1_f2_p313.bin (OK - compressed)
+277682184 assets/world/models_android/mesh_level1_f2_p314.bin (OK - compressed)
+277682990 assets/world/models_android/mesh_level1_f2_p315.bin (OK - compressed)
+277696370 assets/world/models_android/mesh_level1_f2_p316.bin (OK - compressed)
+277696730 assets/world/models_android/mesh_level1_f2_p317.bin (OK - compressed)
+277697085 assets/world/models_android/mesh_level1_f2_p318.bin (OK - compressed)
+277697237 assets/world/models_android/mesh_level1_f2_p319.bin (OK - compressed)
+277697608 assets/world/models_android/mesh_level1_f2_p320.bin (OK - compressed)
+277697966 assets/world/models_android/mesh_level1_f2_p321.bin (OK - compressed)
+277698326 assets/world/models_android/mesh_level1_f2_p322.bin (OK - compressed)
+277700729 assets/world/models_android/mesh_level1_f2_p323.bin (OK - compressed)
+277706922 assets/world/models_android/mesh_level1_f2_p324.bin (OK - compressed)
+277709145 assets/world/models_android/mesh_level1_f2_p325.bin (OK - compressed)
+277715062 assets/world/models_android/mesh_level1_f2_p326.bin (OK - compressed)
+277715888 assets/world/models_android/mesh_level1_f2_p327.bin (OK - compressed)
+277720914 assets/world/models_android/mesh_level1_f2_p328.bin (OK - compressed)
+277837865 assets/world/models_android/mesh_level1_f2_p329.bin (OK - compressed)
+277842165 assets/world/models_android/mesh_level1_f2_p330.bin (OK - compressed)
+277849378 assets/world/models_android/mesh_level1_f2_p331.bin (OK - compressed)
+277850542 assets/world/models_android/mesh_level1_f2_p332.bin (OK - compressed)
+277857332 assets/world/models_android/mesh_level1_f2_p333.bin (OK - compressed)
+277857690 assets/world/models_android/mesh_level1_f2_p334.bin (OK - compressed)
+277864815 assets/world/models_android/mesh_level1_f2_p335.bin (OK - compressed)
+277865172 assets/world/models_android/mesh_level1_f2_p336.bin (OK - compressed)
+277878827 assets/world/models_android/mesh_level1_f2_p337.bin (OK - compressed)
+277881041 assets/world/models_android/mesh_level1_f2_p338.bin (OK - compressed)
+277963857 assets/world/models_android/mesh_level1_f2_p339.bin (OK - compressed)
+277972506 assets/world/models_android/mesh_level1_f2_p340.bin (OK - compressed)
+277973875 assets/world/models_android/mesh_level1_f2_p341.bin (OK - compressed)
+278005533 assets/world/models_android/mesh_level1_f2_p342.bin (OK - compressed)
+278006999 assets/world/models_android/mesh_level1_f2_p343.bin (OK - compressed)
+278007372 assets/world/models_android/mesh_level1_f5_p10202.bin (OK - compressed)
+278007629 assets/world/models_android/mesh_level1_f5_p10209.bin (OK - compressed)
+278009258 assets/world/models_android/mesh_level1_f5_p10210.bin (OK - compressed)
+278009440 assets/world/textures_android/000_texture_sharedassets1_assets_f0_p224_60c621fc7d42__.png (OK)
+278405364 assets/world/textures_android/001_texture_sharedassets1_assets_f0_p78_e79324670671__.png (OK)
+280703120 assets/world/textures_android/002_texture_sharedassets1_assets_f0_p216_d8dad750b353__.png (OK)
+281289708 assets/world/textures_android/003_texture_sharedassets1_assets_f0_p208_41cc22269447_voronoise_8_2048_folds_1.png (OK)
+281938720 assets/world/textures_android/004_texture_sharedassets1_assets_f0_p234_397784449e9e_puddle_norm.png (OK)
+282119968 assets/world/textures_android/005_texture_sharedassets1_assets_f0_p202_e3d91346846a__.png (OK)
+282179624 assets/world/textures_android/006_texture_resources_assets_f0_p28_788784916028__.png (OK)
+282540912 assets/world/textures_android/007_texture_sharedassets1_assets_f0_p170_26c9a182fcd8_pin_tex.png (OK)
+282549424 assets/world/textures_android/008_texture_sharedassets1_assets_f0_p195_d694dfc997ef_paper.png (OK)
+282553720 assets/world/textures_android/009_texture_sharedassets1_assets_f0_p218_42baf6d7c540__.png (OK)
+283234340 assets/world/textures_android/010_texture_sharedassets1_assets_f0_p119_2a7f5886b3bb__.png (OK)
+283379440 assets/world/textures_android/011_texture_sharedassets1_assets_f0_p215_6fc87fd6eb73_perlin_5_2048.png (OK)
+283953912 assets/world/textures_android/012_texture_sharedassets1_assets_f0_p144_9ce8087d2ec9__.png (OK)
+286023516 assets/world/textures_android/013_texture_sharedassets1_assets_f0_p231_61545903f901__.png (OK)
+288136968 assets/world/textures_android/014_texture_sharedassets1_assets_f0_p141_cec50bae1924__.png (OK)
+290533984 assets/world/textures_android/015_texture_sharedassets1_assets_f0_p138_fa140404835f__.png (OK)
+291067784 assets/world/textures_android/016_texture_sharedassets1_assets_f0_p171_2a715f8da5cd__.png (OK)
+291319212 assets/world/textures_android/017_texture_sharedassets1_assets_f0_p147_0206d3c3cd30__1.png (OK)
+293694508 assets/world/textures_android/018_texture_sharedassets1_assets_f0_p232_4a4231aef670__.png (OK)
+295743800 assets/world/textures_android/019_texture_sharedassets1_assets_f0_p148_d928eb91f864__.png (OK)
+295811340 assets/world/textures_android/020_texture_sharedassets1_assets_f0_p226_d96dac5fc34e__.png (OK)
+295912072 assets/world/textures_android/021_texture_sharedassets1_assets_f0_p76_c6bdbb8fb134__.png (OK)
+296322472 assets/world/textures_android/022_texture_sharedassets1_assets_f0_p153_f822e51d3886__.png (OK)
+296981124 assets/world/textures_android/023_texture_sharedassets1_assets_f0_p212_0a8c9401c650__.png (OK)
+297543384 assets/world/textures_android/024_texture_sharedassets1_assets_f0_p134_5c6f9c0498e0__.png (OK)
+298921476 assets/world/textures_android/025_texture_sharedassets1_assets_f0_p143_e90e9118bbf7__.png (OK)
+301496228 assets/world/textures_android/026_texture_sharedassets1_assets_f0_p95_51e1280414b9__.png (OK)
+302160304 assets/world/textures_android/027_texture_sharedassets1_assets_f0_p74_21548f91dc08__.png (OK)
+304126864 assets/world/textures_android/028_texture_sharedassets1_assets_f0_p120_00132f9e722b__.png (OK)
+305134644 assets/world/textures_android/029_texture_sharedassets1_assets_f0_p106_04b3578037de__2.png (OK)
+305640544 assets/world/textures_android/030_texture_sharedassets1_assets_f0_p207_8cd9a283c7b6__.png (OK)
+306085888 assets/world/textures_android/031_texture_sharedassets1_assets_f0_p204_3e914ca5a0d6__.png (OK)
+308092588 assets/world/textures_android/032_texture_sharedassets1_assets_f0_p125_c585436fb628__.png (OK)
+310021996 assets/world/textures_android/033_texture_sharedassets1_assets_f0_p156_cebec0be344b__.png (OK)
+310253860 assets/world/textures_android/034_texture_sharedassets1_assets_f0_p121_ba271349ff24__3.png (OK)
+310850100 assets/world/textures_android/035_texture_sharedassets1_assets_f0_p203_e4e06f835c4f__.png (OK)
+311595264 assets/world/textures_android/036_texture_sharedassets1_assets_f3_p28_788784916028__.png (OK)
+311956544 assets/world/textures_android/037_texture_sharedassets1_assets_f0_p108_23bb05fbfd53__.png (OK)
+314255672 assets/world/textures_android/038_texture_sharedassets1_assets_f0_p177_2a390224c557__1.png (OK)
+314314640 assets/world/textures_android/039_texture_sharedassets1_assets_f0_p236_83cead61a634__4.png (OK)
+315042256 assets/world/textures_android/040_texture_sharedassets1_assets_f0_p124_065a478cb00e__.png (OK)
+315510528 assets/world/textures_android/041_texture_sharedassets1_assets_f0_p164_37106c41261a__1.png (OK)
+316017746 assets/world/world_manifest.json (OK - compressed)
+316211603 com/badlogic/gdx/graphics/g3d/particles/particles.fragment.glsl (OK - compressed)
+316212038 com/badlogic/gdx/graphics/g3d/particles/particles.vertex.glsl (OK - compressed)
+316213016 com/badlogic/gdx/graphics/g3d/shaders/default.fragment.glsl (OK - compressed)
+316214254 com/badlogic/gdx/graphics/g3d/shaders/default.vertex.glsl (OK - compressed)
+316216222 com/badlogic/gdx/graphics/g3d/shaders/depth.fragment.glsl (OK - compressed)
+316216698 com/badlogic/gdx/graphics/g3d/shaders/depth.vertex.glsl (OK - compressed)
+316217356 com/badlogic/gdx/utils/JsonReader.rl (OK - compressed)
+316220879 com/badlogic/gdx/utils/JsonSkimmer.rl (OK - compressed)
+316224397 com/badlogic/gdx/utils/PatternParser.rl (OK - compressed)
+316226175 com/badlogic/gdx/utils/XmlReader.rl (OK - compressed)
+316230347 com/badlogic/gdx/utils/lsans-15.fnt (OK - compressed)
+316232457 com/badlogic/gdx/utils/lsans-15.png (OK - compressed)
+316242569 classes.dex (OK - compressed)
+319242240 lib/arm64-v8a/libninah_current.so (OK)
+329056256 lib/x86_64/libninah_current.so (OK)
+338608128 lib/arm64-v8a/libgdx.so (OK)
+338788352 lib/x86_64/libgdx.so (OK)
+338981410 META-INF/PORT-PRE.SF (OK - compressed)
+339047082 META-INF/PORT-PRE.RSA (OK - compressed)
+339048237 META-INF/MANIFEST.MF (OK - compressed)
+Verification succesful
++ /workspace/scratch/ad0b61c5ef81/ninah-port/tools/android/sdk/build-tools/35.0.0/aapt dump badging /workspace/scratch/ad0b61c5ef81/ninah-port/deliverables/NINAH-Port-Gato-Save.apk
++ /workspace/scratch/ad0b61c5ef81/ninah-port/tools/android/sdk/build-tools/35.0.0/aapt dump xmltree /workspace/scratch/ad0b61c5ef81/ninah-port/deliverables/NINAH-Port-Gato-Save.apk AndroidManifest.xml
++ /workspace/scratch/ad0b61c5ef81/ninah-port/tools/android/sdk/build-tools/35.0.0/apksigner verify --verbose /workspace/scratch/ad0b61c5ef81/ninah-port/deliverables/NINAH-Port-Gato-Save.apk
+Verifies
+Verified using v1 scheme (JAR signing): true
+Verified using v2 scheme (APK Signature Scheme v2): true
+Verified using v3 scheme (APK Signature Scheme v3): true
+Verified using v3.1 scheme (APK Signature Scheme v3.1): false
+Verified using v4 scheme (APK Signature Scheme v4): false
+Verified for SourceStamp: false
+Number of signers: 1
+{
+  "status": "built_and_verified",
+  "artifact": "deliverables/NINAH-Port-Gato-Save.apk",
+  "sha256": "dc5dbbaee7a481511c583a14885450d94acce8fc8b18de369c27066fc8a82265",
+  "bytes": 339266904,
+  "zip_crc_check": "passed",
+  "package_name": "org.reconstruction.port.preview",
+  "launch_activity": "org.reconstruction.current.MainActivity",
+  "version_code": 11,
+  "version_name": "0.11-cat-save",
+  "native_source_tree_sha256": "03def928e98eeec2799084a151364558412353188e5d7d9f3a6e099477420294",
+  "native_source_fingerprint_inputs": 53,
+  "min_sdk": 23,
+  "target_sdk": 35,
+  "android_ui_hardware_acceleration_requested": true,
+  "abis": [
+    "arm64-v8a",
+    "x86_64"
+  ],
+  "native_libraries": [
+    "lib/arm64-v8a/libgdx.so",
+    "lib/arm64-v8a/libninah_current.so",
+    "lib/x86_64/libgdx.so",
+    "lib/x86_64/libninah_current.so"
+  ],
+  "source_interior_door_animation_count": 6,
+  "authored_room_layer_count": 19,
+  "elf_machines": {
+    "arm64-v8a/libninah_current": 183,
+    "arm64-v8a/libgdx": 183,
+    "x86_64/libninah_current": 62,
+    "x86_64/libgdx": 62
+  },
+  "elf_load_segment_max_alignment_bytes": {
+    "arm64-v8a/libninah_current": 16384,
+    "arm64-v8a/libgdx": 16384,
+    "x86_64/libninah_current": 16384,
+    "x86_64/libgdx": 16384
+  },
+  "native_zip_data_offset_mod_16384": {
+    "lib/arm64-v8a/libninah_current.so": 0,
+    "lib/arm64-v8a/libgdx.so": 0,
+    "lib/x86_64/libninah_current.so": 0,
+    "lib/x86_64/libgdx.so": 0
+  },
+  "unresolved_direct_android_dependencies": [],
+  "intro_video": {
+    "asset": "assets/intro/Intro_Final_2_NO_SUBTITLES.mp4",
+    "bytes": 44542868,
+    "sha256": "67d32bc7e28e5bbb528c7553650d8c594138031f358e249ec011db559b54b9d2",
+    "zip_stored": true
+  },
+  "jni_exports": [
+    "Java_org_reconstruction_current_MainActivity_nativeCreate",
+    "Java_org_reconstruction_current_MainActivity_nativeAction"
+  ],
+  "native_game_cpp_modules": [
+    "arrivals.cpp",
+    "characters.cpp",
+    "command_input.cpp",
+    "core.cpp",
+    "courier.cpp",
+    "dialogue_commands.cpp",
+    "dialogue_services.cpp",
+    "dialogue_session.cpp",
+    "emotions.cpp",
+    "endings.cpp",
+    "inventory.cpp",
+    "occupants.cpp",
+    "options.cpp",
+    "phone.cpp",
+    "presentation.cpp",
+    "progression.cpp",
+    "rooms.cpp",
+    "scene_commands.cpp",
+    "story_state.cpp",
+    "current_game.cpp"
+  ],
+  "gdx_java_classpath_resources": [
+    {
+      "path": "com/badlogic/gdx/graphics/g3d/particles/particles.fragment.glsl",
+      "bytes": 820,
+      "sha256": "d2cee985fb2e6996f013fa1612f3e619aa5b5828078d3975e19ba1ce5c808ee5"
+    },
+    {
+      "path": "com/badlogic/gdx/graphics/g3d/particles/particles.vertex.glsl",
+      "bytes": 2886,
+      "sha256": "151a1a28ab44b73b4541699c00d0850877ff8c23ee51e1a9e86b6481989ef980"
+    },
+    {
+      "path": "com/badlogic/gdx/graphics/g3d/shaders/default.fragment.glsl",
+      "bytes": 5874,
+      "sha256": "8c0f0a026c17ea7b47000863c1a76be1fd8c765a9d56d952e47e7cf562082025"
+    },
+    {
+      "path": "com/badlogic/gdx/graphics/g3d/shaders/default.vertex.glsl",
+      "bytes": 9096,
+      "sha256": "56a055469602324040e3e5080892226fd82fe486037b3fcc4108f14e372c1713"
+    },
+    {
+      "path": "com/badlogic/gdx/graphics/g3d/shaders/depth.fragment.glsl",
+      "bytes": 869,
+      "sha256": "92a88f6073bc1cb0d0ad2018bb6debc06e5f8ca0e1347ac92490305b9aa67d62"
+    },
+    {
+      "path": "com/badlogic/gdx/graphics/g3d/shaders/depth.vertex.glsl",
+      "bytes": 2931,
+      "sha256": "7e178df48debf85e31ce83f83225708912c6bf551381123f8f08aa5a2104a238"
+    },
+    {
+      "path": "com/badlogic/gdx/utils/JsonReader.rl",
+      "bytes": 13045,
+      "sha256": "2fc6495db66fc765c18238472f63c35bb63f4606a3cd2f041e7411155935c49d"
+    },
+    {
+      "path": "com/badlogic/gdx/utils/JsonSkimmer.rl",
+      "bytes": 12418,
+      "sha256": "bb966125d9e80a3a40dc4f6c1bbc4e9e83dece42332753e4772b45667209dab8"
+    },
+    {
+      "path": "com/badlogic/gdx/utils/PatternParser.rl",
+      "bytes": 4468,
+      "sha256": "cbf7d12818bbc3e641bbe8e4b7151cbb428786d785477d9674b4fdb7aa546a56"
+    },
+    {
+      "path": "com/badlogic/gdx/utils/XmlReader.rl",
+      "bytes": 18761,
+      "sha256": "7f62831aadc414d9d36a8ddb21ed75e5d17afc916dbe64766d31640dd4bb16eb"
+    },
+    {
+      "path": "com/badlogic/gdx/utils/lsans-15.fnt",
+      "bytes": 17711,
+      "sha256": "c605dfc1115786ef4a7ff779f719d2a3bac08c30a2153addc00fd3821207c535"
+    },
+    {
+      "path": "com/badlogic/gdx/utils/lsans-15.png",
+      "bytes": 10270,
+      "sha256": "de786e458bffb8e519f432d87c3f8e2e2c94ff2ac75773afff8fbc374653e729"
+    }
+  ],
+  "assets": {
+    "png_count": 1210,
+    "menu_png_count_including_native_alias": 15,
+    "character_sprite_texture_exports": 1200,
+    "supplemental_scene_sprites": 10,
+    "image_reference_mappings": 1210,
+    "exported_image_objects_mapped": 1210,
+    "bundled_license_files": 32,
+    "room_backgrounds": 7,
+    "room_character_layouts": 61,
+    "pt_br_localization_texts_by_line_key": 16358,
+    "pt_br_localization_texts_by_numeric_id": 32464,
+    "line_metadata_keys_validated": 15693,
+    "standalone_audio_assets_included": true,
+    "fully_decoded_png_count": 1449,
+    "music_tracks": [
+      {
+        "key": "main_menu",
+        "asset": "assets/music/main_menu.ogg",
+        "bytes": 967285,
+        "sha256": "a9d7e14c401db24fd666bfa6649fc2bef51ccfec244c91de49beaa86b8f0acc2",
+        "duration_seconds": 65.454558
+      },
+      {
+        "key": "ambience_house",
+        "asset": "assets/music/ambience_house.ogg",
+        "bytes": 537687,
+        "sha256": "76d034cc9bdd068a3fe5e7c6649f66cfb9df0698f26b21903adf8c73a92b57ab",
+        "duration_seconds": 38.0
+      },
+      {
+        "key": "day",
+        "asset": "assets/music/day.ogg",
+        "bytes": 2186554,
+        "sha256": "604c0375eaedac8bffb922bd5aba96cbba437eca5082d08986c18f0bf36abca1",
+        "duration_seconds": 182.857143
+      },
+      {
+        "key": "night1",
+        "asset": "assets/music/night1.ogg",
+        "bytes": 2935747,
+        "sha256": "170f29fc7e25f34dd3e5652c79dbbed52c8ca62b0aaad7684b2d212e9c70e3f7",
+        "duration_seconds": 244.142857
+      },
+      {
+        "key": "day_02",
+        "asset": "assets/music/day_02.ogg",
+        "bytes": 2570814,
+        "sha256": "ea92e655cabb0e965aa42353be72178fecff4b5cf5188f7335a1d0102defe872",
+        "duration_seconds": 183.829796
+      },
+      {
+        "key": "night_02_01",
+        "asset": "assets/music/night_02_01.ogg",
+        "bytes": 3314485,
+        "sha256": "ed65ea95718ff537d4211a96d9a52c175dd81c9ba2f75e5833535bc8668fd021",
+        "duration_seconds": 219.851247
+      },
+      {
+        "key": "night_02_02",
+        "asset": "assets/music/night_02_02.ogg",
+        "bytes": 3199270,
+        "sha256": "86025b21b39dfb4836c7c194d29df8118d716cdad4af3a2993e390fd21311e2e",
+        "duration_seconds": 247.101066
+      },
+      {
+        "key": "night3",
+        "asset": "assets/music/night3.ogg",
+        "bytes": 2805532,
+        "sha256": "de8cccd608f0a2ba9ecc5815b49a94daf5baf4c428799c5d7a465c9d4dbdfc17",
+        "duration_seconds": 274.0
+      },
+      {
+        "key": "burning_light",
+        "asset": "assets/music/burning_light.ogg",
+        "bytes": 1226775,
+        "sha256": "a995d5df26e8f186d4f45c9521f0eaab30d1565d62e9766f8f8fbe70af851ca8",
+        "duration_seconds": 88.275873
+      },
+      {
+        "key": "noise_1_loop",
+        "asset": "assets/music/noise_1_loop.ogg",
+        "bytes": 640768,
+        "sha256": "f13df2a6d86bf715c47714a28c881602c0286dc0e4f7f73c56af5e4ba1d95d7f",
+        "duration_seconds": 58.0
+      },
+      {
+        "key": "noise_2_loop",
+        "asset": "assets/music/noise_2_loop.ogg",
+        "bytes": 647858,
+        "sha256": "bc86c96fd46b9c76da2a522db8c2d28f176acf3eb83a2f9db618866b2ed9ee2b",
+        "duration_seconds": 58.0
+      },
+      {
+        "key": "noise_3_loop",
+        "asset": "assets/music/noise_3_loop.ogg",
+        "bytes": 686538,
+        "sha256": "b21cbc9682982e49e6151102be7060489ac4009081e55b0159aa25074d8cea83",
+        "duration_seconds": 58.0
+      },
+      {
+        "key": "noise_4_loop",
+        "asset": "assets/music/noise_4_loop.ogg",
+        "bytes": 711840,
+        "sha256": "fe6d4abbcf23d4921503ca675b376ecb978e83f63b2ad1a9fce385a63f00a839",
+        "duration_seconds": 58.0
+      },
+      {
+        "key": "gun_music",
+        "asset": "assets/music/gun_music.ogg",
+        "bytes": 1166218,
+        "sha256": "3b80f8c094a86b5c42867ed84dc9fbfb3723b7c8035f7d50f4191ea5070d062c",
+        "duration_seconds": 91.428571
+      }
+    ],
+    "intro_video_original_audio_channels": 2,
+    "world_meshes": 100,
+    "world_textures": 42,
+    "world_source_vertices": 372897,
+    "world_android_vertices": 98536,
+    "world_android_mesh_bytes": 4644740,
+    "world_mesh_hashes_validated": 100,
+    "world_texture_bytes": 38002998,
+    "world_texture_max_edge": 1024,
+    "cat_3d_preview": {
+      "vertices": 1112,
+      "triangles": 1519,
+      "mesh_bytes": 53812,
+      "texture_dimensions": [
+        512,
+        512
+      ],
+      "debug_only": true,
+      "default_visible": false
+    },
+    "original_game_ui_sprites": 119,
+    "original_game_ui_fonts": 5
+  },
+  "embedded_windows_executable_extensions": [],
+  "embedded_mz_magic_entries": [],
+  "permissions": [],
+  "original_game_or_native_library_executed": false,
+  "full_campaign_implemented": false,
+  "android_device_execution_tested": false,
+  "reused_native_from_apk": null,
+  "notes": [
+    "This preview opens the recovered intro and current reconstructed campaign renderer; it is not a complete campaign port.",
+    "The intro MP4 retains its soundtrack; original source music is packaged separately when listed in assets.music_tracks.",
+    "APK signing uses the stable local preview debug key for repeatable test installation."
+  ]
+}

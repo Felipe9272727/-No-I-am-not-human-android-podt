@@ -69,3 +69,5 @@ tools/android-current/qa/fixtures/*.png
 # Generated room-composition captures and reference renders
 reconstruction/android-current/qa/rooms-v09/
 reconstruction/android-current/qa/rooms-v10/
+
+reconstruction/android-current/qa/rooms-v11/

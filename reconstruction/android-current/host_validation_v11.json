@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "cpp_sources_sha256": "3cfaba26bcbb7e1c83e4157ed8f079f9f9e54ad3565cc357fc61067022e9b5b5",
+  "host_sanitizers": [
+    "AddressSanitizer",
+    "UndefinedBehaviorSanitizer"
+  ],
+  "source_tv_node": "tv_1_necessary",
+  "source_tv_lines": 7,
+  "day1_energy": 2,
+  "transition_and_dialogue_save_restore": true,
+  "android_device_execution_tested": false,
+  "fresh_context_snapshot_import": true,
+  "invalid_import_preserves_existing_save": true,
+  "save_content_identity_encoding": "hex string (Android JSONObject compatible)",
+  "full_campaign_implemented": false,
+  "original_executables_loaded": false
+}

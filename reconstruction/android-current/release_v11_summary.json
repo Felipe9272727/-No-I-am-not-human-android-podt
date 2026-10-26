@@ -1,0 +1,29 @@
+{
+  "version": "0.11-cat-save",
+  "artifact": "NINAH-Port-Gato-Save.apk",
+  "bytes": 339266904,
+  "sha256": "dc5dbbaee7a481511c583a14885450d94acce8fc8b18de369c27066fc8a82265",
+  "published_source_commit": "fbae2d15964455d9cbe13f9d374b9015f1eb54f6",
+  "native_source_tree_sha256": "03def928e98eeec2799084a151364558412353188e5d7d9f3a6e099477420294",
+  "native_source_fingerprint_inputs": 53,
+  "fresh_native_build": true,
+  "host_rules_sanitizers_passed": true,
+  "persistent_save": "manual, versioned snapshot, private file with previous backup; native and Java host tests pass",
+  "cat": "original source mesh and albedo, static weighted source pose at DayPositions[0], explicit debug preview off by default",
+  "cat_host_gles_changed_pixels": 5922,
+  "cat_source_triangles": 1519,
+  "rendering": "GLES2 world/fallback, seven room compositions, source cat on/off; final APK-only classpath shaders render 120 frames",
+  "signing_certificate_sha256": "f07ec9f06df46a41621203512a410bbbfce871a4300cb85a0bbe59461721176a",
+  "signature_schemes": [
+    "v1",
+    "v2",
+    "v3"
+  ],
+  "android_execution_tested": false,
+  "android_process_restart_tested": false,
+  "device_fps_gain_measured": false,
+  "full_campaign_implemented": false,
+  "campaign_boundary": "first morning and seven source TV dialogue lines; night1 uninitialized",
+  "cat_animation_interactions_unlock_implemented": false,
+  "original_executables_loaded": false
+}
