@@ -1,0 +1,30 @@
+HOST_RENDER_MEAN_MS=11.82935031
+RENDERER_DIAGNOSTIC=Unlit GLES fallback active after shader compile failure.
+Renderer failure at compile/draw GLES world scene; switching to unlit fallback
+GL vendor=Mesa, renderer=llvmpipe (LLVM 20.1.2, 256 bits), version=OpenGL ES 2.0 Mesa 25.2.8-0ubuntu0.24.04.2, maxTextureSize=16384, depthBits=24
+
+com.badlogic.gdx.utils.GdxRuntimeException: shader compilation injected failure
+	at WorldPreviewGLES.lambda$1(WorldPreviewGLES.java:154)
+	at jdk.proxy1/jdk.proxy1.$Proxy3.glCompileShader(Unknown Source)
+	at com.badlogic.gdx.graphics.glutils.ShaderProgram.loadShader(ShaderProgram.java:209)
+	at com.badlogic.gdx.graphics.glutils.ShaderProgram.compileShaders(ShaderProgram.java:184)
+	at com.badlogic.gdx.graphics.glutils.ShaderProgram.<init>(ShaderProgram.java:167)
+	at com.badlogic.gdx.graphics.g3d.shaders.DefaultShader.<init>(DefaultShader.java:527)
+	at com.badlogic.gdx.graphics.g3d.shaders.DefaultShader.<init>(DefaultShader.java:521)
+	at com.badlogic.gdx.graphics.g3d.shaders.DefaultShader.<init>(DefaultShader.java:517)
+	at com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider.createShader(DefaultShaderProvider.java:45)
+	at com.badlogic.gdx.graphics.g3d.utils.BaseShaderProvider.getShader(BaseShaderProvider.java:34)
+	at com.badlogic.gdx.graphics.g3d.ModelBatch.render(ModelBatch.java:265)
+	at org.reconstruction.current.WorldRenderer.drawRenderables(WorldRenderer.java:170)
+	at org.reconstruction.current.WorldRenderer.render(WorldRenderer.java:153)
+	at org.reconstruction.current.RoomEngine.render(RoomEngine.java:122)
+	at WorldPreviewGLES.main(WorldPreviewGLES.java:162)
+
+
+GL vendor=Mesa, renderer=llvmpipe (LLVM 20.1.2, 256 bits), version=OpenGL ES 2.0 Mesa 25.2.8-0ubuntu0.24.04.2, maxTextureSize=16384, depthBits=24
+World meshes=91, render items=111, mesh colliders=24, texture cache=46137344 bytes, visible textures=11
+FPS=60 render-submit=14.66 ms, surface=1280x720, draws=14 triangles=19886, texture loads=11 evictions=0, cached materials=111 interaction snapshots=1
+GL_RENDERER=llvmpipe (LLVM 20.1.2, 256 bits)
+GL_VERSION=OpenGL ES 2.0 Mesa 25.2.8-0ubuntu0.24.04.2
+WORLD_PREVIEW_POSE={"position":[-3.985,1.584,-6.998],"pitch":0,"yaw":0}
+WORLD_PREVIEW_PNG=/workspace/scratch/ad0b61c5ef81/reconstruction/android-current/qa/v07-yaw0-fallback.png

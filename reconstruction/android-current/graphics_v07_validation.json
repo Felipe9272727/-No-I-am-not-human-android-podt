@@ -1,0 +1,41 @@
+{
+  "host_only": true,
+  "android_device_execution_tested": false,
+  "results": [
+    {
+      "yaw": 0,
+      "fallback": false,
+      "frames": 120,
+      "gl_errors": 0,
+      "pixel_identical_to_v06": true
+    },
+    {
+      "yaw": 90,
+      "fallback": false,
+      "frames": 120,
+      "gl_errors": 0,
+      "pixel_identical_to_v06": true
+    },
+    {
+      "yaw": 180,
+      "fallback": false,
+      "frames": 120,
+      "gl_errors": 0,
+      "pixel_identical_to_v06": true
+    },
+    {
+      "yaw": 270,
+      "fallback": false,
+      "frames": 120,
+      "gl_errors": 0,
+      "pixel_identical_to_v06": true
+    },
+    {
+      "yaw": 0,
+      "fallback": true,
+      "frames": 120,
+      "gl_errors": 0,
+      "pixel_identical_to_v06": true
+    }
+  ]
+}

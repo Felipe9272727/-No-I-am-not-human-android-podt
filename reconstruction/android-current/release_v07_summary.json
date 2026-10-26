@@ -1,0 +1,63 @@
+{
+  "version": "0.7-hardware-hud",
+  "artifact": "NINAH-Port-Fluidez.apk",
+  "bytes": 321611717,
+  "sha256": "e0f8b2607bb960da676effe0336bf7093d5f2ba4775ade1a592e5bbb24ca1871",
+  "user_feedback": {
+    "previous_version": "0.6-visibility-performance",
+    "reported_behavior": "very stuttery; no exact new FPS value"
+  },
+  "source_findings": [
+    "GameCanvas forced LAYER_TYPE_SOFTWARE despite using supported common Canvas operations",
+    "Every ACTION_MOVE invalidated the full match-parent HUD even for look-only motion",
+    "Per-frame ray/target snapshots allocated objects despite an unchanged target",
+    "GLES kept clearing/drawing under menu/intro UI"
+  ],
+  "changes": [
+    "Application/window request hardware acceleration; Canvas uses default layer NONE",
+    "Look-only motion updates camera without HUD invalidation; look hint still redraws on down/up",
+    "Changed joystick requests a vsync-coalesced HUD update",
+    "Actual Canvas acceleration, HUD onDraw timing and touch redraw counts appear in private diagnostics",
+    "Ray/OBB query uses primitive math without temporary vectors/arrays",
+    "Immutable target JSON reused until target/navigation revision changes; UI parses only changed snapshots",
+    "Menu/intro/boundary GL loop sleeps and wakes for state updates; scene animation stays continuous"
+  ],
+  "host_measurements": {
+    "scope": "JDK17 microbenchmark, not Android ART or physical FPS",
+    "previous_target_hit_alloc_bytes_per_call_approx": 3700,
+    "new_target_hit_alloc_bytes_per_call": 3.0,
+    "new_target_hit_ns_per_call": 185.3,
+    "new_target_miss_alloc_bytes_per_call": 0.0
+  },
+  "validation": {
+    "compiled_android35_apk": true,
+    "binary_manifest_hardware_flag_verified": true,
+    "bit_exact_source_ray_comparisons": 14000,
+    "cached_target_action_refresh_and_mutation_safety": true,
+    "menu_intro_scene_loop_transition_test": true,
+    "source_geometry_collision_tests": true,
+    "source_visibility_cases": 12,
+    "normal_gles2_angles": 4,
+    "injected_shader_fallback": true,
+    "gles_frames_per_case": 120,
+    "gles_images_identical_to_v06": true,
+    "final_apk_only_shaders_and_render": true,
+    "signature_unchanged_test_certificate": true,
+    "all_apk_pngs_fully_decoded": 1404,
+    "world_mesh_hashes_checked": 100,
+    "original_music_tracks_checked": 14
+  },
+  "limits": [
+    "Hardware Android Canvas and SurfaceFlinger composition were not executed in this host test",
+    "No physical-device FPS gain measured",
+    "Host GL captures cover the 3D scene, not the Android HUD",
+    "Full campaign remains incomplete; no new phone/campaign interaction added during performance work"
+  ],
+  "android_device_execution_tested": false,
+  "original_executables_executed": false,
+  "new_runtime_native_library": false,
+  "research_primary_sources": [
+    "https://developer.android.com/develop/ui/views/graphics/hardware-accel",
+    "https://repo.maven.apache.org/maven2/com/badlogicgames/gdx/gdx-backend-android/1.14.2/gdx-backend-android-1.14.2-sources.jar"
+  ]
+}

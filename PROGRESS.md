@@ -120,3 +120,32 @@ counter and private render-submit/draw/texture counters help that test.
 
 The intro preserves explicit subtitle line breaks. Music and the existing
 campaign boundary remain unchanged. New code does not run original binaries.
+
+
+## v0.7: Android HUD software rasterization
+
+The user reports v0.6 remains very stuttery. A source audit identified an explicit
+LAYER_TYPE_SOFTWARE on the full-screen transparent GameCanvas and unconditional
+HUD invalidation for every look pointer movement. These common Canvas operations
+are supported by the target hardware UI pipeline; there was no required software
+operation. The application/window now request hardware acceleration and the view
+uses the default layer. Look-only input updates GLES without repainting the HUD;
+hint down/up, changed joystick, state/interaction and FPS changes still invalidate
+when their visible content changes. Diagnostics record Canvas acceleration and
+HUD draw rate/CPU recording time on the actual device.
+
+Source geometry math did not explain a 100ms frame in the isolated JDK benchmark.
+The interaction hit path nevertheless allocated about3.7–4.0KiB/call. Primitive
+ray math and immutable cached target JSON reduce that to about3B/call after warmup
+(the miss path measured0B). 14,000 source OBB ray cases match the old float result
+bit for bit. Tests cover unchanged snapshot reuse, defensive copies, changed
+entrance actions and target disappearance. These microbenchmarks are not ART or
+phone FPS measurements.
+
+The GL loop is non-continuous under menu, intro and boundary, with explicit state
+wakeups. Playing/tools scenes remain continuous. Loop transition tests pass.
+All four source views plus the injected shader fallback render120 GLES2 frames
+without GL errors and match v0.6 pixels. The final APK loads shaders solely from
+its own resources and requests hardware UI in its binary manifest. No host test
+validates Android Canvas/SurfaceFlinger composition or physical FPS here. The
+full campaign remains bounded; new interactions were paused for the FPS work.

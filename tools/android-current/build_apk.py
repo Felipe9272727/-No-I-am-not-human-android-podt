@@ -28,7 +28,7 @@ ASSET_DIR = ANDROID_APP / "assets"
 NATIVE_ROOT = ROOT / "reconstruction/native-game"
 BRIDGE_MANIFEST = NATIVE_ROOT / "bridge/Cargo.toml"
 BRIDGE_ROOT = NATIVE_ROOT / "bridge"
-DEFAULT_APK = ROOT / "deliverables/NINAH-Port-Desempenho.apk"
+DEFAULT_APK = ROOT / "deliverables/NINAH-Port-Fluidez.apk"
 REPORT = ANDROID_ROOT / "port3d_validation_report.json"
 PACKAGE_NAME = "org.reconstruction.port.preview"
 JNI_ACTIVITY = "org.reconstruction.current.MainActivity"
@@ -646,6 +646,11 @@ def collect_report(output: Path, build_tools: Path, source_modules: list[str],
     package_name = package_match.group(1) if package_match else None
     launch_activity = activity_match.group(1) if activity_match else None
     manifest_root = ET.parse(ANDROID_APP / "AndroidManifest.xml").getroot()
+    hardware_requested=manifest_root.find("application").get(f"{{{ANDROID_NS}}}hardwareAccelerated")=="true"
+    if version_code>=7:
+        manifest_dump=run([build_tools / "aapt", "dump", "xmltree", output, "AndroidManifest.xml"],capture=True)
+        if not hardware_requested or not re.search(r"hardwareAccelerated.*0xffffffff",manifest_dump):
+            raise RuntimeError("Version 7+ must request hardware accelerated Android UI")
     permissions = [element.attrib.get(f"{{{ANDROID_NS}}}name", "")
                    for element in manifest_root.findall("uses-permission")]
     with zipfile.ZipFile(output) as apk:
@@ -819,6 +824,7 @@ def collect_report(output: Path, build_tools: Path, source_modules: list[str],
         "package_name": package_name, "launch_activity": launch_activity,
         "version_code": int(version_match.group(1)), "version_name": version_name,
         "min_sdk": int(MIN_API), "target_sdk": int(ANDROID_API),
+        "android_ui_hardware_acceleration_requested":hardware_requested,
         "abis": ["arm64-v8a", "x86_64"], "native_libraries": libraries,
         "elf_machines": elf_machines, "elf_load_segment_max_alignment_bytes": load_alignments,
         "native_zip_data_offset_mod_16384": zip_alignments,
@@ -869,8 +875,8 @@ def main() -> None:
     parser.add_argument("--skip-assets", action="store_true", help="reuse an existing staged asset tree")
     parser.add_argument("--reference-apk", type=Path,
                         help="reuse JNI libraries only from the exact hash-locked current APK")
-    parser.add_argument("--version-code", type=int, default=6)
-    parser.add_argument("--version-name", default="0.6-visibility-performance")
+    parser.add_argument("--version-code", type=int, default=7)
+    parser.add_argument("--version-name", default="0.7-hardware-hud")
     parser.add_argument("--rebuild-rust", action="store_true", help="force locked release builds for both Rust targets")
     args = parser.parse_args()
 

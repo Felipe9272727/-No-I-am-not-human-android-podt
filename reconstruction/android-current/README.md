@@ -35,7 +35,7 @@ Build from the source root:
 python3 tools/android-current/build_apk.py
 ```
 
-The intended output is `deliverables/NINAH-Port-Desempenho.apk`. The build report
+The intended output is `deliverables/NINAH-Port-Fluidez.apk`. The build report
 records the actual output, signatures, native libraries, assets and validation
 limits. No original EXE, DLL or installer is executed or included. The preserved
 source reports are static reverse engineering evidence, not a certification
@@ -103,3 +103,19 @@ Assembly is not a substitute for measuring the relevant CPU/GPU workload. The
 Android NDK supports NEON by default on arm64, and no measured native CPU hotspot
 has yet justified hand-written assembly. Research and validation links are in
 release_v06_summary.json.
+
+## v0.7 hardware HUD
+
+GameCanvas no longer forces software rasterization. The binary manifest and
+window request hardware acceleration; default View layer NONE avoids adding an
+extra offscreen layer. Common bitmap/text/shape/clip operations are retained.
+HUD look-hint changes are drawn on down/up; camera-only motion no longer dirties
+the HUD. Changed joystick input coalesces redraws with postInvalidateOnAnimation.
+Canvas.isHardwareAccelerated and onDraw CPU recording times are included in
+private diagnostics. No automatic sharing is added.
+
+Interaction rays avoid temporary objects; a published immutable JSON string
+changes only when its target or navigation revision changes. Menu/intro/boundary
+use a sleeping GL loop with state wakeups; animated scene phases remain live.
+Compiled APK/host tests do not establish hardware UI correctness or FPS gains
+on the phone. These changes require the next Xiaomi test.

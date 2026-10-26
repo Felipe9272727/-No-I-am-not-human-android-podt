@@ -1,11 +1,11 @@
 {
-  "version": "0.6-visibility-performance",
-  "version_code": 6,
+  "version": "0.7-hardware-hud",
+  "version_code": 7,
   "package": "org.reconstruction.port.preview",
-  "artifact": "NINAH-Port-Desempenho.apk",
+  "artifact": "NINAH-Port-Fluidez.apk",
   "bytes": 321611717,
-  "sha256": "515b528cecddcc255eb750d1e4c011010bddb14bf25f2a6ddfcd0a80ced32246",
-  "validation_report": "reconstruction/android-current/performance_build_report_v06.json",
+  "sha256": "e0f8b2607bb960da676effe0336bf7093d5f2ba4775ade1a592e5bbb24ca1871",
+  "validation_report": "reconstruction/android-current/hardware_hud_build_report_v07.json",
   "host_report": "reconstruction/android-current/host_validation.json",
   "world_report": "reconstruction/android-current/world_validation.json",
   "android_device_execution_tested": false,
@@ -18,8 +18,8 @@
   "android_emulator_attempt": "blocked before installation: package/activity services unavailable",
   "physical_device_fix_verified": false,
   "confirmed_crash_cause": "missing libGDX classpath GLSL resources",
-  "shader_report": "reconstruction/android-current/shader_v06_validation.json",
-  "graphics_report": "reconstruction/android-current/optimized_graphics_v06.json",
+  "shader_report": "reconstruction/android-current/shader_v07_validation.json",
+  "graphics_report": "reconstruction/android-current/graphics_v07_validation.json",
   "music_report": "reconstruction/android-current/music_v05_validation.json",
   "previous_v04_house_opened_user_report": true,
   "original_music_tracks": 14,
@@ -37,5 +37,8 @@
   "default_render_quality": "balanced",
   "render_fps_counter": true,
   "mesh_optimization": "meshoptimizer v1.3 exact vertex reindex, offline C++",
-  "device_performance_gain_measured": false
+  "device_performance_gain_measured": false,
+  "reported_v06_performance": "user reports very stuttery",
+  "android_ui_hardware_acceleration_requested": true,
+  "hud_forced_software_layer_removed": true
 }

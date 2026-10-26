@@ -48,12 +48,14 @@ def main():
     source=ROOT/'reconstruction/android-current/app/src/main/java/org/reconstruction/current'
     build=QA/'build-gles'
     java=[source/'RoomEngine.java',source/'WorldRenderer.java',source/'TombstoneSummary.java',source/'RenderResolution.java',
-          QA/'WorldPreviewGLES.java',QA/'WorldMathTest.java',QA/'WorldGeometryTest.java',QA/'WorldVisibilityTest.java',QA/'RenderResolutionTest.java',QA/'TombstoneSummaryTest.java']
+          QA/'WorldPreviewGLES.java',QA/'WorldMathTest.java',QA/'WorldGeometryTest.java',QA/'WorldVisibilityTest.java',QA/'WorldInteractionTest.java',QA/'RenderLoopPolicyTest.java',QA/'RenderResolutionTest.java',QA/'TombstoneSummaryTest.java']
     subprocess.run(['java','-jar',str(ROOT/'tools/android-current/java/ecj-3.38.0.jar'),'-17','-nowarn','-classpath',cp,'-d',str(build),*[str(p) for p in java]],check=True,cwd=ROOT)
     cp=str(build)+os.pathsep+cp
     subprocess.run(['java','-cp',cp,'org.reconstruction.current.WorldMathTest'],check=True,cwd=ROOT)
     subprocess.run(['java','-cp',cp,'org.reconstruction.current.WorldGeometryTest'],check=True,cwd=ROOT)
     subprocess.run(['java','-cp',cp,'org.reconstruction.current.WorldVisibilityTest'],check=True,cwd=ROOT)
+    subprocess.run(['java','-cp',cp,'org.reconstruction.current.WorldInteractionTest'],check=True,cwd=ROOT)
+    subprocess.run(['java','-cp',cp,'org.reconstruction.current.RenderLoopPolicyTest'],check=True,cwd=ROOT)
     subprocess.run(['java','-cp',cp,'org.reconstruction.current.RenderResolutionTest'],check=True,cwd=ROOT)
     subprocess.run(['java','-cp',cp,'org.reconstruction.current.TombstoneSummaryTest'],check=True,cwd=ROOT)
     env=os.environ.copy();env.update(EGL_PLATFORM='surfaceless',MESA_GLES_VERSION_OVERRIDE='2.0',LIBGL_ALWAYS_SOFTWARE='1')

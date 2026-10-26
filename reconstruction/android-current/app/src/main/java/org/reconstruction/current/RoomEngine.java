@@ -76,6 +76,7 @@ public final class RoomEngine extends ApplicationAdapter {
     /** Copies the root state for a thread-safe handoff; never calls native gameplay code. */
     public void setState(JSONObject state) {
         pendingStateJson = state == null ? "{}" : state.toString();
+        if(Gdx.graphics!=null)Gdx.graphics.requestRendering();
     }
 
     @Override public void create() {
@@ -261,6 +262,9 @@ public final class RoomEngine extends ApplicationAdapter {
         } catch (JSONException ignored) {
             // Invalid state clears the room until the next safe update arrives.
         }
+        // Menu/intro/boundary are composed by Android Canvas/MediaPlayer. A
+        // state change requests one clear frame instead of a permanent GL loop.
+        if(Gdx.graphics!=null)Gdx.graphics.setContinuousRendering(scenePhase);
     }
 
     private void drawBackground() {
@@ -397,6 +401,7 @@ public final class RoomEngine extends ApplicationAdapter {
     public void setMoveVector(float x, float forward) { if (worldRenderer != null) worldRenderer.setMoveVector(x, forward); }
     public void addLookDelta(float dx, float dy) { if (worldRenderer != null) worldRenderer.addLookDelta(dx, dy); }
     public void setInputEnabled(boolean enabled) { if (worldRenderer != null) worldRenderer.setInputEnabled(enabled); }
+    public String getInteractionJson() { WorldRenderer world=worldRenderer;return world==null?"":world.getInteractionJson(); }
     public JSONObject getInteraction() { return worldRenderer == null ? null : worldRenderer.getInteraction(); }
     public JSONObject getPose() { return worldRenderer == null ? new JSONObject() : worldRenderer.getPose(); }
     public String getRendererStatus() {

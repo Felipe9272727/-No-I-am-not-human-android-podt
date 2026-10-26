@@ -10,6 +10,8 @@ A versão 0.5 acrescenta músicas originais ao menu e à abertura na casa, com a
 
 A versão 0.6 corrige paredes/teto descartados ao virar a câmera e acrescenta otimização dos modelos em C++ sem alterar triângulos, texturas ou normais. Reutiliza objetos do renderizador, inclui contador de FPS e oferece renderização equilibrada, leve ou nativa. O usuário relatou cerca de 10 FPS na 0.5; o ganho da 0.6 no aparelho ainda precisa ser medido.
 
+A versão 0.7 remove a camada de software que forçava a interface a ser rasterizada pela CPU. Movimentos apenas de câmera deixam de redesenhar o HUD, as interações reaproveitam resultados e o GL descansa sob menu/intro. O diagnóstico mostra a aceleração real do Canvas e o custo de desenho do HUD. O usuário ainda precisa testar o desempenho dessa versão no Xiaomi.
+
 ## Controles no celular
 
 - Durante o vídeo: **DEBUG: pular intro** entra na casa sem esperar 72 segundos.

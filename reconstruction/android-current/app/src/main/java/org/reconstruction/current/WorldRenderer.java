@@ -75,7 +75,9 @@ final class WorldRenderer implements Disposable {
     private long poseRevision=Long.MIN_VALUE;
     private String appliedPoseKey="";
     private int frontRayColliderId=2432;
-    private JSONObject interactionSnapshot;
+    private volatile String interactionJson="";
+    private Interaction publishedInteraction;
+    private long navigationRevision, publishedNavigationRevision=Long.MIN_VALUE, interactionSnapshots;
     private long textureBytes;
     private JSONObject latestState;
     private volatile String status = "loading: waiting for world manifest";
@@ -105,14 +107,15 @@ final class WorldRenderer implements Disposable {
     synchronized void addLookDelta(float dx,float dy){if(!inputEnabled)return;yaw=wrap(yaw+finite(dx)*LOOK_DEG_PER_PIXEL);pitch=Math.max(-PITCH_LIMIT,Math.min(PITCH_LIMIT,pitch+finite(dy)*LOOK_DEG_PER_PIXEL));}
     synchronized void setInputEnabled(boolean v){inputEnabled=v;if(!v){moveX=0;moveForward=0;}}
     synchronized JSONObject getPose(){JSONObject o=new JSONObject();try{JSONArray p=new JSONArray();p.put(player.x);p.put(player.y);p.put(-player.z);o.put("position",p);o.put("yaw",yaw);o.put("pitch",pitch);}catch(JSONException ignored){}return o;}
-    synchronized JSONObject getInteraction(){if(interactionSnapshot==null)return null;try{return new JSONObject(interactionSnapshot.toString());}catch(JSONException e){return null;}}
+    String getInteractionJson(){return interactionJson;}
+    JSONObject getInteraction(){String snapshot=interactionJson;if(snapshot.isEmpty())return null;try{return new JSONObject(snapshot);}catch(JSONException invalid){return null;}}
 
     void applyState(JSONObject state){if(state==null)return;try{latestState=new JSONObject(state.toString());}catch(JSONException ignored){latestState=null;}
         worldEnabled="world".equals(state.optString("view_mode","world"));updateNavigation(state.optJSONObject("world_navigation"));
         JSONObject p=state.optJSONObject("world_pose");if(p==null)return;long revision=p.optLong("revision",0);String key=revision+":"+p.optString("position","")+":"+p.optDouble("yaw",0)+":"+p.optDouble("pitch",0);
         synchronized(this){if(key.equals(appliedPoseKey)||(poseRevision!=Long.MIN_VALUE&&revision==poseRevision))return;JSONArray a=p.optJSONArray("position");if(a!=null&&a.length()>=3)player.set((float)a.optDouble(0,0),(float)a.optDouble(1,0),(float)-a.optDouble(2,0));yaw=finite((float)p.optDouble("yaw",yaw));pitch=Math.max(-PITCH_LIMIT,Math.min(PITCH_LIMIT,finite((float)p.optDouble("pitch",pitch))));poseRevision=revision;appliedPoseKey=key;}}
 
-    private void updateNavigation(JSONObject nav){if(nav==null)return;JSONArray doors=nav.optJSONArray("room_doors");if(doors!=null)for(int i=0;i<doors.length();i++){JSONObject d=doors.optJSONObject(i);if(d!=null)roomByCollider.put(d.optInt("collider_path_id",-1),d.optInt("room",-1));}
+    private void updateNavigation(JSONObject nav){navigationRevision++;if(nav==null)return;JSONArray doors=nav.optJSONArray("room_doors");if(doors!=null)for(int i=0;i<doors.length();i++){JSONObject d=doors.optJSONObject(i);if(d!=null)roomByCollider.put(d.optInt("collider_path_id",-1),d.optInt("room",-1));}
         JSONObject entrance=nav.optJSONObject("entrance_interaction");if(entrance!=null){frontRayColliderId=entrance.optInt("source_collider_path_id",entrance.optInt("raycast_target_collider_path_id",entrance.optInt("collider_path_id",2432)));if(frontRayColliderId==2412)frontRayColliderId=2432;JSONObject c=latestState==null?null:latestState.optJSONObject("campaign");doorWaiting=c!=null&&c.optBoolean("door_waiting",false);ensureFrontDoor(entrance);}
         for(Interaction t:interactions){Integer room=roomByCollider.get(t.colliderId);try{if(room!=null){t.descriptor.put("action","enter_room");t.descriptor.put("room",room);}else if(t.colliderId==frontRayColliderId){t.descriptor.put("action",doorWaiting?"open_door":"enter_room");t.descriptor.put("room",5);}}catch(JSONException ignored){}}
     }
@@ -157,7 +160,7 @@ final class WorldRenderer implements Disposable {
         if(profileStarted==0)profileStarted=now;
         if(now-profileStarted>=500000000L) {
             frameRate=Gdx.graphics.getFramesPerSecond();
-            performanceStatus=String.format(java.util.Locale.ROOT,"FPS=%d render-submit=%.2f ms, surface=%dx%d, draws=%d triangles=%d, texture loads=%d evictions=%d, cached materials=%d",frameRate,profileNanos/1e6/Math.max(1,profileFrames),Gdx.graphics.getWidth(),Gdx.graphics.getHeight(),visibleDraws,visibleTriangles,textureLoads,textureEvictions,renderItems.size());
+            performanceStatus=String.format(java.util.Locale.ROOT,"FPS=%d render-submit=%.2f ms, surface=%dx%d, draws=%d triangles=%d, texture loads=%d evictions=%d, cached materials=%d interaction snapshots=%d",frameRate,profileNanos/1e6/Math.max(1,profileFrames),Gdx.graphics.getWidth(),Gdx.graphics.getHeight(),visibleDraws,visibleTriangles,textureLoads,textureEvictions,renderItems.size(),interactionSnapshots);
             profileNanos=0;profileFrames=0;profileStarted=now;
         }
     }
@@ -190,8 +193,30 @@ final class WorldRenderer implements Disposable {
         for(TriangleCollider c:meshColliders){Bounds b=c.bounds;if(x+BODY_RADIUS<b.minX||x-BODY_RADIUS>b.maxX||z+BODY_RADIUS<b.minZ||z-BODY_RADIUS>b.maxZ||eye<b.minY-.1f||feet>b.maxY+.1f)continue;for(int i=0;i<c.xyz.length;i+=9){float minX=Math.min(c.xyz[i],Math.min(c.xyz[i+3],c.xyz[i+6]))-BODY_RADIUS,maxX=Math.max(c.xyz[i],Math.max(c.xyz[i+3],c.xyz[i+6]))+BODY_RADIUS,minY=Math.min(c.xyz[i+1],Math.min(c.xyz[i+4],c.xyz[i+7]))-BODY_RADIUS,maxY=Math.max(c.xyz[i+1],Math.max(c.xyz[i+4],c.xyz[i+7]))+BODY_RADIUS,minZ=Math.min(c.xyz[i+2],Math.min(c.xyz[i+5],c.xyz[i+8]))-BODY_RADIUS,maxZ=Math.max(c.xyz[i+2],Math.max(c.xyz[i+5],c.xyz[i+8]))+BODY_RADIUS;if(x<minX||x>maxX||z<minZ||z>maxZ||cy[0]>maxY||cy[2]<minY)continue;for(float y:cy)if(pointTriangle(x,y,z,c.xyz,i)<(BODY_RADIUS-.025f)*(BODY_RADIUS-.025f))return true;}}
         return false;}
     private float floorY(float x,float z,float foot){float best=Float.NEGATIVE_INFINITY;for(TriangleCollider c:meshColliders){Bounds b=c.bounds;if(x<b.minX-.05f||x>b.maxX+.05f||z<b.minZ-.05f||z>b.maxZ+.05f||b.minY>foot+.32f||b.maxY<foot-1.25f)continue;float[] t=c.xyz;for(int i=0;i<t.length;i+=9){float ax=t[i],az=t[i+2],bx=t[i+3],bz=t[i+5],cx=t[i+6],cz=t[i+8],area=(bz-cz)*(ax-cx)+(cx-bx)*(az-cz);if(Math.abs(area)<1e-7f)continue;float wa=((bz-cz)*(x-cx)+(cx-bx)*(z-cz))/area,wb=((cz-az)*(x-cx)+(ax-cx)*(z-cz))/area,wc=1-wa-wb;if(wa<-.001f||wb<-.001f||wc<-.001f)continue;float ay=t[i+1],by=t[i+4],cy=t[i+7],ny=(bz-az)*(cx-ax)-(bx-ax)*(cz-az),len=(float)Math.sqrt(ny*ny);if(len<1e-6f)continue;float y=wa*ay+wb*by+wc*cy;if(Math.abs(ny/len)>.55f&&y<=foot+.32f&&y>=foot-1.25f&&y>best)best=y;}}return best==Float.NEGATIVE_INFINITY?Float.NaN:best;}
-    private void updateInteraction(){Interaction best=null;float nearest=Float.MAX_VALUE;for(Interaction i:interactions){float d=rayBox(i.box,camera.position,camera.direction,1f);if(d>=0&&d<nearest){nearest=d;best=i;}}synchronized(this){if(best==null){interactionSnapshot=null;return;}try{interactionSnapshot=new JSONObject(best.descriptor.toString());}catch(JSONException ignored){interactionSnapshot=null;}}}
-    private float rayBox(BoxCollider b,Vector3 origin,Vector3 direction,float max){Vector3 o=new Vector3(origin).mul(b.inverse),d=new Vector3(direction).rot(b.inverse);float[] a={o.x-b.cx,o.y-b.cy,o.z-b.cz},v={d.x,d.y,d.z},h={b.hx,b.hy,b.hz};float lo=0,hi=max;for(int n=0;n<3;n++){if(Math.abs(v[n])<1e-6f){if(a[n]<-h[n]||a[n]>h[n])return -1;continue;}float q=(-h[n]-a[n])/v[n],r=(h[n]-a[n])/v[n];if(q>r){float t=q;q=r;r=t;}lo=Math.max(lo,q);hi=Math.min(hi,r);if(lo>hi)return -1;}return lo<=max?lo:-1;}
+    private void updateInteraction() {
+        Interaction best=null;float nearest=Float.MAX_VALUE;
+        for(Interaction target:interactions){float distance=rayBox(target.box,camera.position,camera.direction,1f);if(distance>=0&&distance<nearest){nearest=distance;best=target;}}
+        if(best==publishedInteraction&&navigationRevision==publishedNavigationRevision)return;
+        publishedInteraction=best;publishedNavigationRevision=navigationRevision;
+        interactionJson=best==null?"":best.descriptor.toString();interactionSnapshots++;
+    }
+    private float rayBox(BoxCollider box,Vector3 origin,Vector3 direction,float max) {
+        float[] m=box.inverse.val;
+        float ox=m[0]*origin.x+m[4]*origin.y+m[8]*origin.z+m[12]-box.cx;
+        float oy=m[1]*origin.x+m[5]*origin.y+m[9]*origin.z+m[13]-box.cy;
+        float oz=m[2]*origin.x+m[6]*origin.y+m[10]*origin.z+m[14]-box.cz;
+        float dx=m[0]*direction.x+m[4]*direction.y+m[8]*direction.z;
+        float dy=m[1]*direction.x+m[5]*direction.y+m[9]*direction.z;
+        float dz=m[2]*direction.x+m[6]*direction.y+m[10]*direction.z;
+        float lo=0,hi=max,q,r;
+        if(Math.abs(dx)<1e-6f){if(ox < -box.hx||ox>box.hx)return -1;}
+        else{q=(-box.hx-ox)/dx;r=(box.hx-ox)/dx;if(q>r){float t=q;q=r;r=t;}lo=Math.max(lo,q);hi=Math.min(hi,r);if(lo>hi)return -1;}
+        if(Math.abs(dy)<1e-6f){if(oy < -box.hy||oy>box.hy)return -1;}
+        else{q=(-box.hy-oy)/dy;r=(box.hy-oy)/dy;if(q>r){float t=q;q=r;r=t;}lo=Math.max(lo,q);hi=Math.min(hi,r);if(lo>hi)return -1;}
+        if(Math.abs(dz)<1e-6f){if(oz < -box.hz||oz>box.hz)return -1;}
+        else{q=(-box.hz-oz)/dz;r=(box.hz-oz)/dz;if(q>r){float t=q;q=r;r=t;}lo=Math.max(lo,q);hi=Math.min(hi,r);if(lo>hi)return -1;}
+        return lo<=max?lo:-1;
+    }
 
     private void loadManifest(){if(manifestPath.isEmpty()||Gdx.files==null)return;String json;status="loading: read world manifest";renderStage=status;try{json=Gdx.files.internal(manifestPath).readString("UTF-8");}catch(Exception e){status=errorStatus("read world manifest",e);diagnostic=errorDiagnostic("read world manifest",e);return;}if(json.equals(appliedManifest)){if(camera!=null)try{applyCameraClip(findCamera(new JSONObject(json).optJSONArray("cameras")));}catch(JSONException ignored){}return;}appliedManifest=json;clearScene();warningStatus=null;diagnostic="";try{status="loading: parse world scene";renderStage=status;JSONObject root=new JSONObject(json);parseTextures(root.optJSONArray("textures"));parseMaterials(root.optJSONArray("materials"));parseLighting(root.optJSONArray("lights"),root.optJSONArray("render_settings"));JSONArray meshArray=root.optJSONArray("meshes");status="loading: allocate source meshes";renderStage=status;parseRenderers(root.optJSONArray("renderers"),meshArray);status="loading: build collision geometry";renderStage=status;parseColliders(root.optJSONArray("colliders"),meshArray);parseTargets(root.optJSONArray("interaction_targets"),root.optJSONArray("named_door_targets"));JSONObject cam=findCamera(root.optJSONArray("cameras"));applyCameraClip(cam);if(poseRevision==Long.MIN_VALUE&&cam!=null)setCameraPose(cam);moveSpeed=(float)root.optDouble("player_movement_speed_mps",2.5);if(latestState!=null)updateNavigation(latestState.optJSONObject("world_navigation"));loaded=true;status=warningStatus==null?"ready":warningStatus;}catch(Exception e){clearScene();loaded=false;status=errorStatus("load world manifest",e);diagnostic=errorDiagnostic("load world manifest",e);}}
     private void applyCameraClip(JSONObject source){if(camera==null||source==null)return;camera.near=(float)source.optDouble("near_clip",.1);camera.far=(float)source.optDouble("far_clip",1000);if(camera.near<=0||camera.far<=camera.near){camera.near=.1f;camera.far=1000f;}}
@@ -222,7 +247,7 @@ final class WorldRenderer implements Disposable {
     private Texture texture(String path){TextureEntry e=textureCache.get(path);if(e!=null)return e.texture;try{FileHandle f=Gdx.files.internal(path);byte[] head=new byte[24];int read=0;try(java.io.InputStream input=f.read()){while(read<24){int n=input.read(head,read,24-read);if(n<0)break;read+=n;}}if(read<24||head[0]!=(byte)137||head[1]!='P'||head[2]!='N'||head[3]!='G')return null;int w=be(head,16),h=be(head,20);if(w>2048||h>2048)return null;Sampler s=samplers.get(path);boolean mipmaps=s!=null&&s.filter==2;Texture t=new Texture(f,mipmaps);Texture.TextureFilter min=s!=null&&s.filter==0?Texture.TextureFilter.Nearest:mipmaps?Texture.TextureFilter.MipMapLinearLinear:Texture.TextureFilter.Linear;Texture.TextureFilter mag=s!=null&&s.filter==0?Texture.TextureFilter.Nearest:Texture.TextureFilter.Linear;t.setFilter(min,mag);t.setWrap(wrap(s==null?0:s.u),wrap(s==null?0:s.v));if(s!=null&&s.aniso>1)t.setAnisotropicFilter(s.aniso);long bytes=textureBytes(t.getWidth(),t.getHeight(),mipmaps);textureCache.put(path,new TextureEntry(t,bytes));textureBytes+=bytes;textureLoads++;return t;}catch(Exception error){recordWarning("load texture "+path,error);return null;}}
     private static long textureBytes(int width,int height,boolean mipmaps){long total=0;int w=width,h=height;do{total+=(long)w*h*4;if(!mipmaps||(w==1&&h==1))break;w=Math.max(1,w/2);h=Math.max(1,h/2);}while(true);return total;}
     private void trimTextures(){if(textureBytes<=TEXTURE_BUDGET)return;Iterator<Map.Entry<String,TextureEntry>> it=textureCache.entrySet().iterator();while(textureBytes>TEXTURE_BUDGET&&it.hasNext()){Map.Entry<String,TextureEntry> e=it.next();if(visibleTextures.contains(e.getKey()))continue;textureBytes-=e.getValue().bytes;e.getValue().texture.dispose();textureEvictions++;it.remove();}}
-    private void clearScene(){for(Mesh m:meshes)try{m.dispose();}catch(Exception ignored){}for(TextureEntry t:textureCache.values())try{t.texture.dispose();}catch(Exception ignored){}meshes.clear();textureCache.clear();textureBytes=0;renderItems.clear();boxColliders.clear();boxById.clear();meshColliders.clear();interactions.clear();roomByCollider.clear();materials.clear();texturesByIndex.clear();texturesByPathId.clear();samplers.clear();depthWritingVisible.clear();transparentVisible.clear();profileStarted=profileNanos=textureLoads=textureEvictions=0;profileFrames=0;loaded=false;}
+    private void clearScene(){for(Mesh m:meshes)try{m.dispose();}catch(Exception ignored){}for(TextureEntry t:textureCache.values())try{t.texture.dispose();}catch(Exception ignored){}meshes.clear();textureCache.clear();textureBytes=0;renderItems.clear();boxColliders.clear();boxById.clear();meshColliders.clear();interactions.clear();interactionJson="";publishedInteraction=null;publishedNavigationRevision=Long.MIN_VALUE;interactionSnapshots=0;roomByCollider.clear();materials.clear();texturesByIndex.clear();texturesByPathId.clear();samplers.clear();depthWritingVisible.clear();transparentVisible.clear();profileStarted=profileNanos=textureLoads=textureEvictions=0;profileFrames=0;loaded=false;}
     private String resolve(String p){if(p==null||p.isEmpty()||p.startsWith("/")||p.contains(".."))return "";return p.startsWith(manifestDirectory)||manifestDirectory.isEmpty()?p:manifestDirectory+p;}
     private static float[] matrix(JSONArray rows){float[] m=new Matrix4().val;if(rows==null||rows.length()!=4)return m;for(int r=0;r<4;r++){JSONArray row=rows.optJSONArray(r);if(row==null)return m;for(int c=0;c<4;c++){float v=(float)row.optDouble(c,0);if((r==2)^(c==2))v=-v;m[c*4+r]=v;}}return m;}
     private static Bounds transformBounds(float[] m,float[] b){float ax=Float.MAX_VALUE,ay=ax,az=ax,bx=-ax,by=-ax,bz=-ax;for(int mask=0;mask<8;mask++){float x=b[0]+((mask&1)==0?-b[3]:b[3]),y=b[1]+((mask&2)==0?-b[4]:b[4]),z=-(b[2]+((mask&4)==0?-b[5]:b[5]));float wx=m[0]*x+m[4]*y+m[8]*z+m[12],wy=m[1]*x+m[5]*y+m[9]*z+m[13],wz=m[2]*x+m[6]*y+m[10]*z+m[14];ax=Math.min(ax,wx);ay=Math.min(ay,wy);az=Math.min(az,wz);bx=Math.max(bx,wx);by=Math.max(by,wy);bz=Math.max(bz,wz);}return new Bounds(ax,ay,az,bx,by,bz);}

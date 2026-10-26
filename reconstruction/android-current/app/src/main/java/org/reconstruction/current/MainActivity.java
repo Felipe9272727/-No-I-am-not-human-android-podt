@@ -49,6 +49,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -129,7 +130,7 @@ public final class MainActivity extends AndroidApplication {
         window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
             View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
             View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
 
         host = new FrameLayout(this);
         AndroidApplicationConfiguration cfg = new AndroidApplicationConfiguration();
@@ -340,11 +341,12 @@ public final class MainActivity extends AndroidApplication {
         @Override public void run() {
             if (!"playing".equals(state.optString("phase", "")) || !"world".equals(viewMode()) ||
                 state.optJSONObject("dialogue") != null || toolsMode || nativeBusy) return;
-            JSONObject target = roomEngine == null ? null : roomEngine.getInteraction();
-            String signature = target == null ? "" : target.toString();
+            String signature=roomEngine==null?"":roomEngine.getInteractionJson();
             if (!signature.equals(nearbyInteractionSignature)) {
-                nearbyInteractionSignature = signature; nearbyInteraction = target;
-                if (canvas != null) canvas.invalidate();
+                nearbyInteractionSignature=signature;
+                try {nearbyInteraction=signature.isEmpty()?null:new JSONObject(signature);}
+                catch(JSONException invalid){nearbyInteraction=null;}
+                if (canvas != null) canvas.postInvalidateOnAnimation();
             }
             ui.postDelayed(this, 100L);
         }
@@ -378,7 +380,7 @@ public final class MainActivity extends AndroidApplication {
         String detail=roomEngine==null?rendererStatus:roomEngine.getRendererDiagnostic();
         showDiagnosticReport("Diagnóstico da cena 3D",CrashDiagnostics.header(this)+
             "\n\nEXECUÇÃO ATUAL\n"+renderQualityLabel()+" alvo="+lastRenderWidth+"x"+lastRenderHeight+"\nFase: "+state.optString("phase","")+" vista: "+viewMode()+"\n"+detail+
-            "\nMúsica: "+audioStatus(musicPlayer)+"\nAmbiência: "+audioStatus(ambiencePlayer)+
+            "\n"+(canvas==null?"HUD unavailable":canvas.getDrawingDiagnostic())+"\nMúsica: "+audioStatus(musicPlayer)+"\nAmbiência: "+audioStatus(ambiencePlayer)+
             (previousCrashReport.isEmpty()?"":"\n\nHISTÓRICO (não indica uma falha atual):\n"+previousCrashReport));
     }
 
@@ -636,15 +638,25 @@ public final class MainActivity extends AndroidApplication {
         private float scale;
         private boolean pauseOpen, settingsOpen;
         private Typeface textFontOverride;
+        private boolean hardwareCanvas;
+        private long hudWindowStart,hudDrawNanos;
+        private int hudDrawCount;
+        private double hudDrawRate,hudMeanMs;
+        private long lookMoves,joystickMoves,touchRedrawRequests;
         private static final int ROLE_NONE=0, ROLE_UI=1, ROLE_MOVE=2, ROLE_LOOK=3;
 
-        GameCanvas() { super(MainActivity.this); setLayerType(View.LAYER_TYPE_SOFTWARE, null); setWillNotDraw(false); }
+        GameCanvas() { super(MainActivity.this); setLayerType(View.LAYER_TYPE_NONE, null); setWillNotDraw(false); }
         boolean isToolsMode() { return toolsMode; }
         boolean isPauseOpen() { return pauseOpen; }
         boolean isSettingsOpen() { return settingsOpen; }
         void clearPointersFromHost() { pointerRoles.clear(); pointerHits.clear(); }
 
+        String getDrawingDiagnostic() {
+            return String.format(Locale.ROOT,"HUD canvas=%s layer=%d view=%dx%d draws=%.1f/s onDraw=%.2f ms, look moves=%d joystick moves=%d touch redraw requests=%d",hardwareCanvas?"hardware":"software",getLayerType(),getWidth(),getHeight(),hudDrawRate,hudMeanMs,lookMoves,joystickMoves,touchRedrawRequests);
+        }
+
         @Override protected void onDraw(Canvas screen) {
+            long started=System.nanoTime();hardwareCanvas=screen.isHardwareAccelerated();
             super.onDraw(screen);
             scale = Math.min(getWidth() / W, getHeight() / H);
             float ox = (getWidth() - W * scale) / 2f, oy = (getHeight() - H * scale) / 2f;
@@ -658,6 +670,10 @@ public final class MainActivity extends AndroidApplication {
             else drawPlayingHud(screen);
             drawError(screen);
             screen.restore();
+            long now=System.nanoTime();
+            if(hudWindowStart==0)hudWindowStart=started;
+            hudDrawNanos+=now-started;hudDrawCount++;
+            if(now-hudWindowStart>=1000000000L){hudDrawRate=hudDrawCount*1e9/(now-hudWindowStart);hudMeanMs=hudDrawNanos/1e6/hudDrawCount;hudDrawNanos=0;hudDrawCount=0;hudWindowStart=now;}
         }
 
         private void drawLoading(Canvas c) { c.drawColor(Color.rgb(13,17,22)); center(c,"Carregando dados recuperados…",960,550,32,Color.WHITE,true); }
@@ -1356,25 +1372,31 @@ public final class MainActivity extends AndroidApplication {
             int id=e.getPointerId(index);float[] q=logicalPoint(e.getX(index),e.getY(index));
             for(int i=hits.size()-1;i>=0;i--)if(hits.get(i).rect.contains(q[0],q[1])){pointerRoles.put(id,ROLE_UI);pointerHits.put(id,hits.get(i));return;}
             if(!initialized||nativeBusy||!"playing".equals(state.optString("phase",""))||!"world".equals(viewMode())||toolsMode||pauseOpen||settingsOpen){pointerRoles.put(id,ROLE_NONE);return;}
-            if(q[0]<560&&q[1]>520&&joystickPointer<0){pointerRoles.put(id,ROLE_MOVE);joystickPointer=id;moveJoystick(q[0],q[1]);}
-            else if(q[0]>900&&lookPointer<0){pointerRoles.put(id,ROLE_LOOK);lookPointer=id;lookLastX=e.getX(index);lookLastY=e.getY(index);}
+            if(q[0]<560&&q[1]>520&&joystickPointer<0){pointerRoles.put(id,ROLE_MOVE);joystickPointer=id;moveJoystick(q[0],q[1]);postInvalidateOnAnimation();}
+            else if(q[0]>900&&lookPointer<0){pointerRoles.put(id,ROLE_LOOK);lookPointer=id;lookLastX=e.getX(index);lookLastY=e.getY(index);postInvalidateOnAnimation();}
             else pointerRoles.put(id,ROLE_NONE);
         }
 
         private void pointerMove(MotionEvent e) {
             if(roomEngine==null)return;
+            boolean redraw=false;
             for(int i=0;i<e.getPointerCount();i++) {
                 int id=e.getPointerId(i),role=pointerRoles.getOrDefault(id,ROLE_NONE);
-                if(role==ROLE_MOVE){float[] q=logicalPoint(e.getX(i),e.getY(i));moveJoystick(q[0],q[1]);}
-                else if(role==ROLE_LOOK){float s=Math.max(.001f,Math.min(getWidth()/W,getHeight()/H));roomEngine.addLookDelta((e.getX(i)-lookLastX)/s,(e.getY(i)-lookLastY)/s);lookLastX=e.getX(i);lookLastY=e.getY(i);}
+                if(role==ROLE_MOVE){joystickMoves++;float[] q=logicalPoint(e.getX(i),e.getY(i));redraw|=moveJoystick(q[0],q[1]);}
+                else if(role==ROLE_LOOK){lookMoves++;float s=Math.max(.001f,Math.min(getWidth()/W,getHeight()/H));roomEngine.addLookDelta((e.getX(i)-lookLastX)/s,(e.getY(i)-lookLastY)/s);lookLastX=e.getX(i);lookLastY=e.getY(i);}
             }
-            invalidate();
+            // Look updates the GLES camera, not the HUD. The hint changes only
+            // on pointer down/up, and interaction changes have their own poll.
+            if(redraw){touchRedrawRequests++;postInvalidateOnAnimation();}
         }
 
-        private void moveJoystick(float x,float y) {
+        private boolean moveJoystick(float x,float y) {
             float dx=(x-250f)/135f,dy=(835f-y)/135f,mag=(float)Math.sqrt(dx*dx+dy*dy);
-            if(mag>1f){dx/=mag;dy/=mag;}joystickX=dx;joystickY=dy;
+            if(mag>1f){dx/=mag;dy/=mag;}
+            boolean changed=dx!=joystickX||dy!=joystickY;
+            joystickX=dx;joystickY=dy;
             if(roomEngine!=null)roomEngine.setMoveVector(dx,dy);
+            return changed;
         }
 
         private void pointerUp(MotionEvent e,int index) {
@@ -1382,7 +1404,7 @@ public final class MainActivity extends AndroidApplication {
             if(role==ROLE_UI&&!nativeBusy&&initialized){Hit hit=pointerHits.get(id);float[] q=logicalPoint(e.getX(index),e.getY(index));if(hit!=null&&hit.rect.contains(q[0],q[1]))hit.action.run();}
             if(id==joystickPointer){joystickPointer=-1;joystickX=joystickY=0f;if(roomEngine!=null)roomEngine.setMoveVector(0f,0f);}
             if(id==lookPointer)lookPointer=-1;
-            pointerRoles.remove(id);pointerHits.remove(id);invalidate();
+            pointerRoles.remove(id);pointerHits.remove(id);postInvalidateOnAnimation();
         }
 
         private void clearPointers() {

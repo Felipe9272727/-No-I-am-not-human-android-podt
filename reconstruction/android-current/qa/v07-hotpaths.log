@@ -1,0 +1,12 @@
+COLLISION_CANDIDATES boxes=0 meshColliders=24 meshTrianglesTotal=22364 floorY_meshes=3 floorY_triangles_scanned=2643 collides_meshes=3 collides_triangles_scanned=2643
+INTERACTION_TARGETS=7 (ray query per target; allocation measured below)
+floorY_spawn loops=100000 ns/op=7067.4 alloc_B/op=0.0 total_ms=706.74 allocated_MB=0.00
+collides_spawn loops=100000 ns/op=17255.9 alloc_B/op=0.0 total_ms=1725.59 allocated_MB=0.00
+movePlayer_idle loops=100000 ns/op=102.3 alloc_B/op=0.4 total_ms=10.23 allocated_MB=0.04
+PLAYER_AT_CONTACT=(-3.985,1.4472716,4.5980024)
+COLLISION_CANDIDATES boxes=0 meshColliders=24 meshTrianglesTotal=22364 floorY_meshes=3 floorY_triangles_scanned=2643 collides_meshes=3 collides_triangles_scanned=2643
+INTERACTION_TARGETS=7 (ray query per target; allocation measured below)
+movePlayer_at_contact loops=100000 ns/op=7147.4 alloc_B/op=36.4 total_ms=714.74 allocated_MB=3.47
+updateInteraction_spawn_miss loops=100000 ns/op=133.4 alloc_B/op=0.0 total_ms=13.34 allocated_MB=0.00
+updateInteraction_inside_box loops=100000 ns/op=185.3 alloc_B/op=3.0 total_ms=18.53 allocated_MB=0.29
+SINK=0

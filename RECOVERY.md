@@ -36,7 +36,7 @@ unchanged native libraries and staged assets. Restore its assets/ members under
 `reconstruction/android-current/app/src/main/assets`, then run:
 
 ```sh
-python3 tools/android-current/build_apk.py --skip-assets --reference-apk <current-apk> --version-code 6 --version-name 0.6-visibility-performance --output deliverables/NINAH-Port-Desempenho.apk
+python3 tools/android-current/build_apk.py --skip-assets --reference-apk <current-apk> --version-code 7 --version-name 0.7-hardware-hud --output deliverables/NINAH-Port-Fluidez.apk
 ```
 
 The reference APK must match LATEST_BUILD.json and its 52-file C++/Rust source
@@ -46,7 +46,7 @@ including the narrowly scoped shader-compiler fallback. This does not replace
 Android execution or the user phone crash report.
 
 Before delivering, run `python3 tools/android-current/qa/check_apk_shaders.py
-deliverables/NINAH-Port-Desempenho.apk --render`. The 12 namespaced GDX resources
+deliverables/NINAH-Port-Fluidez.apk --render`. The 12 namespaced GDX resources
 (including six GLSL files) must be packaged in the APK, not supplied by a
 development jar. See `shader_v04_validation.json` for the isolated check.
 
@@ -93,3 +93,12 @@ runs offline and does not add a new Android JNI library.
 Validate with the Java geometry/visibility/resolution tests and isolated final
 APK shader/render test. These host results do not measure Xiaomi FPS or validate
 Android SurfaceHolder resizing. See release_v06_summary.json for exact scope.
+
+
+The v0.7 rebuild changes only Java/manifest presentation paths, retaining the
+same52-file native fingerprint. Restore the assets from the latest saved APK
+and use that exact APK with --reference-apk after checking LATEST_BUILD.json.
+Run WorldInteractionTest and RenderLoopPolicyTest in addition to existing Java
+and GLES checks. Host captures do not exercise Android Canvas acceleration;
+private Options/Diagnostic reports actual hardware/software Canvas, HUD timing
+and input redraw counts for a physical-device test.

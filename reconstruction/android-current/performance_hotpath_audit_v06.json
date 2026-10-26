@@ -1,0 +1,66 @@
+{
+  "status": "host_hotpath_microbench_complete",
+  "scope": "Read-only audit of current WorldRenderer/RoomEngine source. The isolated harness compiles source into a unique /tmp output directory and measures private methods without GL; it is not an Android or Xiaomi FPS test.",
+  "runtime": "OpenJDK 17.0.20, pinned GDX 1.14.2, Linux host",
+  "harness": "tools/android-current/qa/WorldPerfAudit.java",
+  "iterations": 100000,
+  "warmup_iterations": 30000,
+  "collision_work": {
+    "mesh_colliders_total": 24,
+    "mesh_collision_triangles_total": 22364,
+    "spawn_box_candidates": 0,
+    "spawn_floor_y_mesh_candidates": 3,
+    "spawn_floor_y_triangles_scanned_per_call": 2643,
+    "spawn_collides_mesh_candidates": 3,
+    "spawn_collides_triangles_scanned_per_call": 2643,
+    "spawn_floorY_host_ns_per_call": [
+      7242.5,
+      7493.2
+    ],
+    "spawn_collides_host_ns_per_call": [
+      17289.6,
+      18417.0
+    ],
+    "movePlayer_idle_host_ns_per_call": 66.3,
+    "movePlayer_at_contact_with_look_host_ns_per_call": [
+      7262.1,
+      7709.8
+    ],
+    "movePlayer_at_contact_allocated_bytes_per_call": [
+      34.7,
+      34.2
+    ]
+  },
+  "interaction_work": {
+    "targets_tested_per_frame": 7,
+    "updateInteraction_spawn_miss_host_ns_per_call": [
+      171.1,
+      238.1
+    ],
+    "updateInteraction_spawn_miss_allocated_bytes_per_call": [
+      24.7,
+      12.8
+    ],
+    "updateInteraction_target_hit_host_ns_per_call": [
+      7975.6,
+      7052.7
+    ],
+    "updateInteraction_target_hit_allocated_bytes_per_call": [
+      3674.5,
+      3955.8
+    ],
+    "source_behavior": "updateInteraction runs after render every frame. When best target is non-null, it serializes the unchanged descriptor and constructs a new JSONObject each frame. The UI interaction poll/getInteraction deep-copies at about 10 Hz.",
+    "host_alloc_rate_at_60_fps_for_hit_case_kib_per_sec": 232.2
+  },
+  "state_update_behavior": {
+    "updateNavigation_per_frame": false,
+    "evidence": "RoomEngine.applyPendingState returns when pendingStateJson equals appliedStateJson; otherwise WorldRenderer.applyState is called. updateNavigation is called from applyState, so navigation map/descriptor updates occur only for changed state."
+  },
+  "assessment": [
+    "Movement collision is skipped entirely when both input axes are zero. Movement plus look at the sampled doorway contact measured about 7.3–7.7 microseconds per call on the host; direct floorY/collides queries at spawn measured about 7.2–18.4 microseconds.",
+    "A stable interaction hit causes repeat JSON allocation (about 3.6–4.0 KiB per rendered frame on this host); retaining an immutable snapshot until best target or descriptor revision changes is a semantics-preserving candidate.",
+    "The measured host hot paths are orders of magnitude below a 100ms frame and do not explain 10 FPS by themselves. Android ART, rendering, EGL/Surface composition, thermal limits, and device-specific GPU costs were not measured.",
+    "Exact-safe collision optimization candidates are primitive slab math in rayBox, precomputed triangle AABBs/floor-plane data, or a conservative per-triangle spatial index that returns the same candidate set. Preserve all triangles and current collision predicates."
+  ],
+  "device_profiled": false
+}
