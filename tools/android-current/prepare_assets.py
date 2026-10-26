@@ -470,7 +470,13 @@ def stage_ui_assets(destination: Path) -> dict:
             atlas["path"] = atlas_target_rel.as_posix()
             atlas["android_asset"] = atlas_target_rel.as_posix()
     minified_json(source_manifest, destination / "presentation/ui/ui_manifest.json", manifest)
+    signs_source=UI_SOURCE/"sign_layout.json"
+    signs=read_json(signs_source)
+    if signs.get("schema_version")!=1 or len(signs.get("signs",[]))!=6:
+        raise RuntimeError("Expected six source-authored examination layouts")
+    minified_json(signs_source,destination/"presentation/ui/sign_layout.json",signs)
     return {"manifest": "presentation/ui/ui_manifest.json", "sprites": len(image_rows), "fonts": len(font_rows),
+            "sign_manifest":"presentation/ui/sign_layout.json",
             "source_sha256": sha256_file(source_manifest)}
 
 

@@ -23,3 +23,5 @@ The current architecture uses C++ rules/JNI, Rust Yarn VM, Android Java HUD and
 libGDX rendering. Application ID is org.reconstruction.port.preview and the JNI
 activity remains org.reconstruction.current.MainActivity. Reuse the existing
 private test signing key for updates.
+
+Prioritize fidelity to the PC original. Use authored transforms, serialized sibling order, UI layers and recovered state transitions. Avoid substitute layouts and invented campaign behavior. Label debug previews and mobile adaptations explicitly. Validate converters against raw source data, not only their own generated manifests. Keep signing configuration private and out of source/logs.

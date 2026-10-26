@@ -1,0 +1,94 @@
+{
+  "method": "PIL CPU source layout reference, settled content/end frame; no Android Canvas execution",
+  "fixture": "Firefighter human original sprites",
+  "staged_sign_layout_sha256": "d3184d70bf5f34a89e5aecc2883b79a152e5a3578905bf0e46bce0da3e997ce9",
+  "views": [
+    {
+      "sign": "eye",
+      "image_ids": [
+        4518,
+        4760,
+        4428
+      ],
+      "capture": "reconstruction/android-current/qa/fidelity-v12/sign-eye-source-reference.png",
+      "visible_bounds": [
+        959,
+        105,
+        1669,
+        747
+      ]
+    },
+    {
+      "sign": "hands",
+      "image_ids": [
+        4527,
+        5178,
+        4393
+      ],
+      "capture": "reconstruction/android-current/qa/fidelity-v12/sign-hands-source-reference.png",
+      "visible_bounds": [
+        961,
+        224,
+        1668,
+        629
+      ]
+    },
+    {
+      "sign": "teeth",
+      "image_ids": [
+        4444,
+        5094
+      ],
+      "capture": "reconstruction/android-current/qa/fidelity-v12/sign-teeth-source-reference.png",
+      "visible_bounds": [
+        959,
+        305,
+        1669,
+        548
+      ]
+    },
+    {
+      "sign": "photo",
+      "image_ids": [
+        4600
+      ],
+      "capture": "reconstruction/android-current/qa/fidelity-v12/sign-photo-source-reference.png",
+      "visible_bounds": [
+        1038,
+        102,
+        1650,
+        752
+      ]
+    },
+    {
+      "sign": "armpit",
+      "image_ids": [
+        4536,
+        4618
+      ],
+      "capture": "reconstruction/android-current/qa/fidelity-v12/sign-armpit-source-reference.png",
+      "visible_bounds": [
+        1118,
+        105,
+        1569,
+        749
+      ]
+    },
+    {
+      "sign": "ear",
+      "image_ids": [
+        4977,
+        4469
+      ],
+      "capture": "reconstruction/android-current/qa/fidelity-v12/sign-ear-source-reference.png",
+      "visible_bounds": [
+        1134,
+        103,
+        1553,
+        750
+      ]
+    }
+  ],
+  "android_canvas_tested": false,
+  "eye_random_motion_implemented": false
+}

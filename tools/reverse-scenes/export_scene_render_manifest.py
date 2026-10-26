@@ -105,9 +105,11 @@ def main():
                 off+=4+4*count
             signs.append({**base,'serialized_fields':fs,'sound_arrays':sound_arrays,'serialized_end_offset':off})
         elif n.endswith('.DialogSignElementViewMovingContent'):
-            moves.append({**base,'content_image':pp(r,32),'start_position':vec(r,40,3),'end_position':vec(r,52,3),'ease_value':struct.unpack_from('<i',r,64)[0],'duration_seconds':clean(struct.unpack_from('<f',r,68)[0]),'before_delay_seconds':clean(struct.unpack_from('<f',r,72)[0])})
+            if len(r)!=80:raise ValueError('Unexpected MovingContent serialized size')
+            moves.append({**base,'content_image':pp(r,32),'start_position':vec(r,44,3),'end_position':vec(r,56,3),'ease_value':struct.unpack_from('<i',r,68)[0],'duration_seconds':clean(struct.unpack_from('<f',r,72)[0]),'before_delay_seconds':clean(struct.unpack_from('<f',r,76)[0]),'serialized_end_offset':80})
         elif n.endswith('.DialogSignElementViewEye'):
-            eyes.append({**base,'content_image':pp(r,32),'animated_cover':pp(r,40),'white_image':pp(r,48),'iris_image':pp(r,56)})
+            if len(r)!=80:raise ValueError('Unexpected Eye serialized size')
+            eyes.append({**base,'content_image':pp(r,32),'animated_cover':pp(r,44),'white_image':pp(r,56),'iris_image':pp(r,68),'serialized_end_offset':80})
         elif n.endswith('.AnimatedImage'):
             anims.append({**base,'image':pp(r,32),'play_from_awake':bool(r[44]),'animation_data_offset':45,'animation_data_decode':'variable-length struct; source CharacterSO animation data is in the character entries above'})
         elif n.endswith('.CanvasScaler'):

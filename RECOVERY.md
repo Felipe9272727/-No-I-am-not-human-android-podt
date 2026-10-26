@@ -36,7 +36,7 @@ unchanged native libraries and staged assets. Restore its assets/ members under
 `reconstruction/android-current/app/src/main/assets`, then run:
 
 ```sh
-python3 tools/android-current/build_apk.py --skip-assets --reference-apk <current-apk> --version-code 11 --version-name 0.11-cat-save --output deliverables/NINAH-Port-Gato-Save.apk
+python3 tools/android-current/build_apk.py --skip-assets --reference-apk <current-apk> --version-code 12 --version-name 0.12-scene-fidelity --output deliverables/NINAH-Port-Cena-Original.apk
 ```
 
 The reference APK must match LATEST_BUILD.json and its 53-file C++/Rust source
@@ -46,7 +46,7 @@ including the narrowly scoped shader-compiler fallback. This does not replace
 Android execution or the user phone crash report.
 
 Before delivering, run `python3 tools/android-current/qa/check_apk_shaders.py
-deliverables/NINAH-Port-Gato-Save.apk --render`. The 12 namespaced GDX resources
+deliverables/NINAH-Port-Cena-Original.apk --render`. The 12 namespaced GDX resources
 (including six GLSL files) must be packaged in the APK, not supplied by a
 development jar. See `shader_v04_validation.json` for the isolated check.
 
@@ -111,3 +111,12 @@ The delivered `NINAH-Port-Gato-Save.apk` contains all staged assets, including t
 The native-source fingerprint now covers 53 inputs; v0.8/v0.9/v0.10 JNI libraries do not match the current native save implementation. A reference build may use only the exact v0.11 APK hash recorded in LATEST_BUILD.json and an identical current native fingerprint. Otherwise rebuild Rust and C++ for both ABIs. NDK extraction must preserve Unix symlinks (35 in r27c), and Build-Tools executables including d8 must be executable. Run the host campaign test in its isolated build directory; do not reuse objects from diagnostic runs.
 
 Private Android disk saves are installed-app data, not bundled in the APK. Manual **Salvar jogo**, close/reopen, then **Continuar** still needs a phone test. The debug cat option defaults off and is separate from campaign save data.
+
+
+## v0.12 fidelity data
+
+`NINAH-Port-Cena-Original.apk` contains the corrected staged room sibling order and `assets/presentation/ui/sign_layout.json`. Restore all assets from this APK when using `--skip-assets`. The sign metadata source is tracked at `reconstruction/reverse-ui/sign_layout.json`; full staging copies it automatically. `export_sign_layout.py` reads only level1/globalgamemanagers.assets and the recovered UI manifest, validates 12-byte PPtrs and the 80-byte MovingContent/Eye objects, then emits source image order, masks and movement fields. The corrected room exporter follows serialized Transform.m_Children. Do not restore an older room_manifest/room_layers file over these sources.
+
+Native rules are identical to v0.11; this release reused JNI only while the exact v0.11 APK and all 53 native input hashes matched the previous lock. Future rebuilds must use the current APK hash in LATEST_BUILD.json or compile native code again. Source world parity can be independently checked with `PYTHONPATH=tools/python-deps python tools/reverse-world/audit_world_parity.py --data /path/to/unity-data`. Without raw data the tool explicitly reports that raw-source verification is skipped.
+
+The current signer requires both `port-debug.keystore` and `signing.json` from the existing private key archive in `tools/android-current/signing/`. It never generates a replacement key or supplies embedded fallback passwords. Signing uses environment references for the tool invocation and checks the public certificate fingerprint. The private configuration stays ignored by Git.

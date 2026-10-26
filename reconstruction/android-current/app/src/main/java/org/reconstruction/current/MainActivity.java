@@ -15,6 +15,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.graphics.Typeface;
@@ -74,6 +75,8 @@ public final class MainActivity extends AndroidApplication {
     private final Map<String, String> translatedLines = new HashMap<>();
     private final Map<String, Typeface> uiFonts = new HashMap<>();
     private JSONObject uiManifest = new JSONObject();
+    private SignLayout signLayout;
+    private final Map<Integer,JSONObject> uiImagesById=new HashMap<>();
     private final Map<Integer,UiAnimation> uiAnimations = new HashMap<>();
     private final LruCache<String, Bitmap> bitmaps = new LruCache<String, Bitmap>(32 * 1024 * 1024) {
         @Override protected int sizeOf(String key, Bitmap value) { return Math.max(1, value.getAllocationByteCount()); }
@@ -185,6 +188,13 @@ public final class MainActivity extends AndroidApplication {
                 JSONObject gameUi = assets.optJSONObject("game_ui");
                 String uiPath = gameUi == null ? "presentation/ui/ui_manifest.json" : gameUi.optString("manifest", "presentation/ui/ui_manifest.json");
                 try { uiManifest = new JSONObject(readAssetText(uiPath)); } catch (Exception ignored) { }
+                JSONArray uiComponents=uiManifest.optJSONArray("components");
+                if(uiComponents!=null)for(int i=0;i<uiComponents.length();i++) {
+                    JSONObject item=uiComponents.optJSONObject(i);
+                    if(item!=null&&"UnityEngine.UI.Image".equals(item.optString("class")))
+                        uiImagesById.put(item.optInt("path_id",-1),item);
+                }
+                signLayout=SignLayout.parse(new JSONObject(readAssetText("presentation/ui/sign_layout.json")),uiManifest);
                 loadUiAnimations(assets.optString("animations_manifest",""));
                 roomEngine.setAssets(assets);
                 loadTranslations();
@@ -842,6 +852,9 @@ public final class MainActivity extends AndroidApplication {
     private final class GameCanvas extends View {
         private static final float W = 1920f, H = 1080f;
         private final Paint p = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
+        private final Paint signMaskPaint=new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
+        private String signAnimationIdentity="";
+        private long signAnimationStart;
         private final List<Hit> hits = new ArrayList<>();
         private final String[] roomNames = {"Cozinha", "Escritório", "Sala", "Banheiro", "Despensa", "Entrada", "Quarto"};
         private final String[] roomLabels = {"Novo jogo", "Continuar", "Opções", "Coleção", "Sair"};
@@ -860,12 +873,12 @@ public final class MainActivity extends AndroidApplication {
         private long lookMoves,joystickMoves,touchRedrawRequests;
         private static final int ROLE_NONE=0, ROLE_UI=1, ROLE_MOVE=2, ROLE_LOOK=3;
 
-        GameCanvas() { super(MainActivity.this); setLayerType(View.LAYER_TYPE_NONE, null); setWillNotDraw(false); }
+        GameCanvas() { super(MainActivity.this); setLayerType(View.LAYER_TYPE_NONE, null); setWillNotDraw(false);signMaskPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN)); }
         boolean isToolsMode() { return toolsMode; }
         boolean isPauseOpen() { return pauseOpen; }
         boolean isSettingsOpen() { return settingsOpen; }
         void pauseAnimations() { long now=SystemClock.uptimeMillis();animationClock.setPaused(true,now);hostAnimationClock.setPaused(true,now); }
-        void resetAnimations() { animationSignature.clear(); animationStart.clear(); }
+        void resetAnimations() { animationSignature.clear(); animationStart.clear();signAnimationIdentity=""; }
         void clearPointersFromHost() { pointerRoles.clear(); pointerHits.clear(); }
 
         String getDrawingDiagnostic() {
@@ -887,6 +900,7 @@ public final class MainActivity extends AndroidApplication {
             float ox = (getWidth() - W * scale) / 2f, oy = (getHeight() - H * scale) / 2f;
             screen.save(); screen.translate(ox, oy); screen.scale(scale, scale); hits.clear();
             String phase = state.optString("phase", "menu");
+            if(state.optJSONObject("sign")==null)signAnimationIdentity="";
             if (!initialized) drawLoading(screen);
             else if (toolsMode || "tools".equals(phase)) drawTools(screen);
             else if ("menu".equals(phase)) drawMenu(screen);
@@ -1010,7 +1024,7 @@ public final class MainActivity extends AndroidApplication {
 
         private void drawPlayingHud(Canvas c) {
             if ("world".equals(viewMode())) drawWorldHud(c); else drawRoomHud(c);
-            JSONObject sign=state.optJSONObject("sign"); if(sign!=null)drawSign(c,sign);
+            JSONObject sign=state.optJSONObject("sign"); if(sign!=null&&!pauseOpen&&!settingsOpen)drawSign(c,sign);
             if(toolsMode) drawToolsBar(c);
         }
 
@@ -1332,7 +1346,9 @@ public final class MainActivity extends AndroidApplication {
             name="Neighbour".equals(name)?"Vizinho":"Phone".equals(name)?"Telefone":name;
             displayedLine=stripDialogueSpeaker(displayedLine);
             boolean options="options".equals(kind);String plateName=options?"DialogContent2":"DialogContent";
-            drawHudComponents(c,"dialogue",false,plateName);
+            JSONObject activeSign=state.optJSONObject("sign");
+            SignLayout.View signView=activeSign==null||signLayout==null?null:signLayout.view(activeSign.optInt("kind",-1));
+            if(options||signView==null||!signView.hideDialogPlate)drawHudComponents(c,"dialogue",false,plateName);
             JSONObject textComponent=findDialogueText(options);float[] textRect=uiBounds(textComponent);
             JSONObject speakerComponent=findDialogueSpeaker(options);float[] speakerRect=uiBounds(speakerComponent);
             if(textRect==null)textRect=new float[]{1010,249,1678,569};
@@ -1349,7 +1365,8 @@ public final class MainActivity extends AndroidApplication {
                 wrap(c,d.optString("message",d.optString("error","")),left,top+48,right-left,34,7,Color.WHITE,27);return;
             }
             float bodyTop=top+42;
-            wrap(c,displayedLine,left,bodyTop,right-left,34,7,Color.WHITE,28);
+            if(signView==null||!signView.hideDialogueText)
+                wrap(c,displayedLine,left,bodyTop,right-left,34,7,Color.WHITE,28);
             hits.add(new Hit(new RectF(textRect[0],textRect[1],textRect[2],textRect[3]),()->act("advance",null,null)));
         }
 
@@ -1432,15 +1449,65 @@ public final class MainActivity extends AndroidApplication {
         }
 
         private void drawSign(Canvas c,JSONObject sign) {
-            fill(c,1350,150,1870,790,0xF0080C10,18);
-            String[] names={"Olhos","Mãos","Dentes","Foto","Axila","Orelha"}; int kind=Math.max(0,Math.min(5,sign.optInt("kind",0)));
-            text(c,sign.optString("character","")+" • "+names[kind],1380,205,22,Color.WHITE,true);
-            button(c,"Fechar",1690,165,1840,225,0xFF71483D,12,()->act("stop_sign",null,null));
-            JSONArray frames=sign.optJSONArray("frames"); Bitmap img=frames!=null&&frames.length()>0?bitmap(animated("sign",sign.optString("character","")+":"+sign.optInt("kind",-1),frames,sign.optInt("fps",1),sign.optInt("cycling",2))):bitmap(sign.optString("sprite",""));
-            if(img!=null)contain(c,img,1390,245,1830,640);
-            Bitmap white=bitmap(sign.optString("white","")),iris=bitmap(sign.optString("iris",""));if(white!=null)contain(c,white,1400,250,1820,640);if(iris!=null)contain(c,iris,1510,330,1710,560);
-            String[] raw={"Eye","Hands","Teeth","AuraPhoto","Armpit","Ear"};
-            for(int i=0;i<6;i++){final int n=i;button(c,names[i],1370+(i%3)*155,660+(i/3)*54,1510+(i%3)*155,708+(i/3)*54,i==kind?0xFF965F42:0xFF3C484F,8,()->act("inspect","sign",raw[n]));}
+            SignLayout.View view=signLayout==null?null:signLayout.view(sign.optInt("kind",-1));
+            if(view==null){text(c,"Inspeção sem composição original disponível",1020,720,24,Color.WHITE,true);return;}
+            String identity=sign.toString();long now=animationClock.now(SystemClock.uptimeMillis());
+            if(!identity.equals(signAnimationIdentity)){signAnimationIdentity=identity;signAnimationStart=now;}
+            long elapsed=Math.max(0L,now-signAnimationStart);
+            for(SignLayout.Layer layer:view.layers) {
+                JSONObject component=uiImagesById.get(layer.imageId);if(component==null)continue;
+                Bitmap image=signLayerBitmap(sign,layer,identity);if(image==null)continue;
+                float[] rect=layer.rectAt(elapsed);
+                JSONObject mask=layer.maskImageId<0?null:uiImagesById.get(layer.maskImageId);
+                float[] maskRect=mask==null?null:uiBounds(mask);
+                if(layer.maskImageId>=0 && maskRect==null)continue;
+                if(maskRect!=null) {
+                    Bitmap maskImage=bitmap(uiAsset(mask));if(maskImage==null)continue;
+                    int save=c.saveLayer(maskRect[0],maskRect[1],maskRect[2],maskRect[3],null);
+                    c.clipRect(maskRect[0],maskRect[1],maskRect[2],maskRect[3]);
+                    drawSignBitmap(c,image,component,rect,layer.preserveAspect);
+                    JSONObject maskData=mask.optJSONObject("image");
+                    boolean preserve=maskData!=null&&maskData.optBoolean("preserve_aspect",false);
+                    RectF target=signBitmapBounds(maskImage,maskRect,preserve);
+                    c.drawBitmap(maskImage,null,target,signMaskPaint);
+                    c.restoreToCount(save);
+                } else drawSignBitmap(c,image,component,rect,layer.preserveAspect);
+            }
+            long delay=view.nextRedrawDelayMs(elapsed);
+            if(delay>0&&!animationClock.isPaused())postInvalidateDelayed(delay);
+            // Touch adaptation outside the original frame. Selection remains in the debug tools.
+            float right=view.bounds[2],top=Math.min(960f,view.bounds[3]+30f);
+            drawMobileSourceButton(c,"Fechar inspeção",right-300f,top,right,top+70f,Color.WHITE,()->act("stop_sign",null,null));
+        }
+
+        private Bitmap signLayerBitmap(JSONObject sign,SignLayout.Layer layer,String identity) {
+            if("white".equals(layer.role)||"iris".equals(layer.role))
+                return bitmap(stringField(sign,layer.role,""));
+            if("content".equals(layer.role)) {
+                JSONArray frames=sign.optJSONArray("frames");
+                if(frames!=null&&frames.length()>0)
+                    return bitmap(animated("sign-content",identity,frames,sign.optInt("fps",1),sign.optInt("cycling",2)));
+                return bitmap(stringField(sign,"sprite",""));
+            }
+            UiAnimation animation=uiAnimations.get(layer.imageId);
+            if(animation!=null)
+                return bitmap(animated("sign-ui:"+layer.imageId,identity,animation.frames,animation.fps,animation.cycling,animation.unscaled));
+            return bitmap(layer.asset);
+        }
+
+        private RectF signBitmapBounds(Bitmap image,float[] rect,boolean preserveAspect) {
+            float width=rect[2]-rect[0],height=rect[3]-rect[1];
+            if(!preserveAspect)return new RectF(rect[0],rect[1],rect[2],rect[3]);
+            float fit=Math.min(width/image.getWidth(),height/image.getHeight());
+            float w=image.getWidth()*fit,h=image.getHeight()*fit;
+            return new RectF(rect[0]+(width-w)*.5f,rect[1]+(height-h)*.5f,rect[0]+(width+w)*.5f,rect[1]+(height+h)*.5f);
+        }
+
+        private void drawSignBitmap(Canvas c,Bitmap image,JSONObject component,float[] rect,boolean preserveAspect) {
+            int tint=uiColor(component,component.optJSONObject("image"));int opaque=0xFF000000|(tint&0xFFFFFF);
+            p.setColorFilter(opaque==Color.WHITE?null:new PorterDuffColorFilter(opaque,PorterDuff.Mode.MULTIPLY));p.setAlpha(Color.alpha(tint));
+            c.drawBitmap(image,null,signBitmapBounds(image,rect,preserveAspect),p);
+            p.setAlpha(255);p.setColorFilter(null);
         }
 
         private void drawBoundary(Canvas c) {

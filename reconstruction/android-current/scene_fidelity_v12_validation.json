@@ -1,0 +1,85 @@
+{
+  "original_version": "1.3.18",
+  "source_scene_sha256": "400e6cfb07bf47df1d0b2ad3446a101870acf3905d5bfa5b68058d2364845dfd",
+  "raw_world_audit": {
+    "transforms_checked": 1348,
+    "renderers_checked": 153,
+    "scalar_transform_checks": 35048,
+    "renderer_matrix_scalars": 2448,
+    "max_absolute_error": 0,
+    "world_geometry_edited": false,
+    "script": "tools/reverse-world/audit_world_parity.py",
+    "script_sha256": "20bcaf99ba8c9c3266cbd1a31f0fa7ab1a92c97fc714ca9b3b66976a7d3ace75"
+  },
+  "room_hierarchy": {
+    "uses_serialized_m_Children": true,
+    "changed_rooms": [
+      "Kitchen",
+      "Office",
+      "BigRoom",
+      "Bathroom",
+      "Pantry",
+      "Bedroom"
+    ],
+    "entrance_unchanged": true,
+    "visible_static_pixels_changed_bedroom_reference": 10822,
+    "known_fix": "Nightstand no longer drawn in front of bed; neither model nor placement was guessed"
+  },
+  "inspection": {
+    "source_signs": 6,
+    "source_image_layers": 13,
+    "source_container_and_image_ids_preserved": true,
+    "hands_mask_image": 4527,
+    "hands_move": {
+      "start": [
+        0,
+        -400,
+        0
+      ],
+      "end": [
+        0,
+        0,
+        0
+      ],
+      "ease": "InSine",
+      "duration_seconds": 0.666667,
+      "delay_seconds": 0
+    },
+    "photo_move": {
+      "start": [
+        0,
+        -1100,
+        0
+      ],
+      "end": [
+        0,
+        0,
+        0
+      ],
+      "ease": "OutCubic",
+      "duration_seconds": 1,
+      "delay_seconds": 2
+    },
+    "dialog_plate_hidden_during_sign": true,
+    "normal_body_text_hidden_only_for_photo": true,
+    "iris_random_movement_reconstructed": false,
+    "android_mask_implementation": "alpha mask using original Mask Image; Unity uses stencil"
+  },
+  "validation": {
+    "java_source_layout_parse": true,
+    "java_authored_motion_timing": true,
+    "gles_world_and_fallback": true,
+    "seven_room_compositions": true,
+    "final_apk_only_gdx_resources": true,
+    "android_canvas_execution": false,
+    "android_device_execution": false,
+    "original_executables_loaded": false
+  },
+  "limitations": [
+    "Runtime is reimplemented C++/Rust/Java and does not execute the PC Unity player.",
+    "Static raw transforms match the supplied scene; that does not prove complete runtime activation, lighting, shaders or campaign parity.",
+    "Examination CPU references are data previews; Android Canvas masks and presentation require phone validation.",
+    "Eye random iris movement, original TV media, full daytime lighting and campaign beyond first morning remain unimplemented.",
+    "Touch controls and a close-inspection button outside the authored frame are mobile adaptations."
+  ]
+}

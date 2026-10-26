@@ -18,6 +18,8 @@ A versão 0.10 acrescenta a primeira manhã: após concluir a visita inicial, en
 
 A versão 0.11 acrescenta save manual no aparelho, com validação do estado completo e uma cópia anterior. Ao reabrir, use **Continuar**. Em **Opções → DEBUG: gato 3D**, pode-se conferir o modelo e a textura originais na cadeira da entrada. É uma prévia estática: animações, carinho, alimentação e a liberação pela Ballerina ainda não estão integrados. O teste fica desligado por padrão e não altera a campanha, que continua limitada à primeira manhã.
 
+A versão 0.12 prioriza a fidelidade da cena: a ordem de sobreposição agora segue os filhos serializados de cada Transform do Unity. Isso corrige, por exemplo, a mesinha aparecendo por cima da cama. As seis inspeções usam as 13 camadas de imagem, molduras, máscara e coordenadas originais; mãos e foto seguem seus movimentos e tempos recuperados. O painel genérico de inspeção foi removido. Uma auditoria direta dos dados originais conferiu os 1.348 transforms e os 153 MeshRenderers da casa sem encontrar diferenças nas matrizes exportadas. Isso valida a geometria estática, mas não demonstra equivalência completa de iluminação, efeitos, estados de objetos ou comportamento. A execução continua reimplementada em C++/Rust/Java, e o movimento aleatório da íris permanece pendente.
+
 ## Controles no celular
 
 - Durante o vídeo: **DEBUG: pular intro** entra na casa sem esperar 72 segundos.

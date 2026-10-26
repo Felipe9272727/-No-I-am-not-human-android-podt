@@ -30,13 +30,13 @@ ASSET_DIR = ANDROID_APP / "assets"
 NATIVE_ROOT = ROOT / "reconstruction/native-game"
 BRIDGE_MANIFEST = NATIVE_ROOT / "bridge/Cargo.toml"
 BRIDGE_ROOT = NATIVE_ROOT / "bridge"
-DEFAULT_APK = ROOT / "deliverables/NINAH-Port-Gato-Save.apk"
+DEFAULT_APK = ROOT / "deliverables/NINAH-Port-Cena-Original.apk"
 REPORT = ANDROID_ROOT / "port3d_validation_report.json"
 PACKAGE_NAME = "org.reconstruction.port.preview"
 JNI_ACTIVITY = "org.reconstruction.current.MainActivity"
 KEYSTORE = ROOT / "tools/android-current/signing/port-debug.keystore"
-KEY_ALIAS = "port-preview"
-KEY_PASSWORD = "android"
+SIGNING_CONFIG = KEYSTORE.with_name("signing.json")
+EXPECTED_SIGNER_CERT_SHA256 = "f07ec9f06df46a41621203512a410bbbfce871a4300cb85a0bbe59461721176a"
 GDX_ROOT = ROOT / "tools/android-current/libgdx/1.14.2"
 ANDROIDX_ROOT = ROOT / "tools/android-current/libgdx/androidx"
 ANDROIDX_CLASS_ROOT = ANDROIDX_ROOT / "extracted"
@@ -57,8 +57,8 @@ REQUIRED_GDX_SHADERS = tuple(GDX_SHADER_ROOT + name for name in (
 ))
 
 
-def run(command: list[str], *, cwd: Path | None = None, env=None, capture=False) -> str:
-    print("+", " ".join(str(part) for part in command), flush=True)
+def run(command: list[str], *, cwd: Path | None = None, env=None, capture=False, label=None) -> str:
+    print("+", label if label else " ".join(str(part) for part in command), flush=True)
     result = subprocess.run(
         [str(part) for part in command], cwd=cwd, env=env,
         check=True, text=True, stdout=subprocess.PIPE if capture else None,
@@ -562,6 +562,34 @@ def validate_gdx_java_resources(apk: zipfile.ZipFile) -> list[dict]:
     return result
 
 
+def load_signing_configuration() -> dict:
+    """Read the existing private key configuration; no credentials are in source or logs."""
+    if not KEYSTORE.is_file() or not SIGNING_CONFIG.is_file():
+        raise FileNotFoundError("Restore the stable private keystore and its signing.json before building")
+    config=json.loads(SIGNING_CONFIG.read_text())
+    for field in ("alias","store_password","key_password"):
+        if not isinstance(config.get(field),str) or not config[field]:
+            raise ValueError("Private signing configuration is incomplete")
+    return config
+
+
+def sign_apk(build_tools: Path, aligned: Path, output: Path) -> None:
+    config=load_signing_configuration()
+    signing_env=os.environ.copy()
+    signing_env["NINAH_SIGN_STORE_PASSWORD"]=config["store_password"]
+    signing_env["NINAH_SIGN_KEY_PASSWORD"]=config["key_password"]
+    output.parent.mkdir(parents=True, exist_ok=True)
+    run([
+        build_tools / "apksigner", "sign", "--ks", KEYSTORE,
+        "--ks-key-alias", config["alias"], "--ks-pass", "env:NINAH_SIGN_STORE_PASSWORD",
+        "--key-pass", "env:NINAH_SIGN_KEY_PASSWORD", "--out", output, aligned,
+    ], cwd=ROOT, env=signing_env, label="Sign APK with restored private configuration")
+    verification=run([build_tools / "apksigner", "verify", "--verbose", "--print-certs", output], cwd=ROOT, capture=True)
+    if "certificate SHA-256 digest: "+EXPECTED_SIGNER_CERT_SHA256 not in verification:
+        raise RuntimeError("APK signer differs from the stable preview certificate")
+    print("Stable APK signing certificate verified",flush=True)
+
+
 def package_apk(build_tools: Path, base_apk: Path,
                 native_libs: dict[str, Path], gdx_native_libs: dict[str, Path],
                 dex: Path, work: Path, output: Path, engine_jars: list[Path]) -> None:
@@ -577,24 +605,7 @@ def package_apk(build_tools: Path, base_apk: Path,
             apk.write(library, f"lib/{abi}/libgdx.so", compress_type=zipfile.ZIP_STORED)
     aligned = work / "aligned.apk"
     run([build_tools / "zipalign", "-f", "-P", "16", "4", base_apk, aligned], cwd=ROOT)
-    keytool = os.environ.get("KEYTOOL") or shutil.which("keytool")
-    if not keytool:
-        raise FileNotFoundError("keytool is required to use the stable Port Inicio debug signing key")
-    if not KEYSTORE.is_file():
-        KEYSTORE.parent.mkdir(parents=True, exist_ok=True)
-        run([
-            keytool, "-genkeypair", "-storetype", "JKS", "-keystore", KEYSTORE,
-            "-storepass", KEY_PASSWORD, "-keypass", KEY_PASSWORD, "-alias", KEY_ALIAS,
-            "-dname", "CN=No I'm Not a Human Port Inicio Preview,O=Reconstruction,C=XX",
-            "-keyalg", "RSA", "-keysize", "2048", "-validity", "10000", "-noprompt",
-        ], cwd=ROOT)
-    output.parent.mkdir(parents=True, exist_ok=True)
-    run([
-        build_tools / "apksigner", "sign", "--ks", KEYSTORE,
-        "--ks-key-alias", KEY_ALIAS, "--ks-pass", f"pass:{KEY_PASSWORD}",
-        "--key-pass", f"pass:{KEY_PASSWORD}", "--out", output, aligned,
-    ], cwd=ROOT)
-    run([build_tools / "apksigner", "verify", "--verbose", output], cwd=ROOT)
+    sign_apk(build_tools,aligned,output)
     run([build_tools / "zipalign", "-c", "-P", "16", "-v", "4", output], cwd=ROOT)
 
 
@@ -807,6 +818,46 @@ def collect_report(output: Path, build_tools: Path, source_modules: list[str],
                          "mesh_bytes":len(mesh_data),"texture_dimensions":cat_texture_dimensions,
                          "debug_only":True,"default_visible":False}
         ui_manifest = json.loads(apk.read("assets/presentation/ui/ui_manifest.json"))
+        sign_summary=None
+        if version_code>=12:
+            sign_path="assets/presentation/ui/sign_layout.json"
+            if sign_path not in names:raise RuntimeError("Source examination layout is missing")
+            signs=json.loads(apk.read(sign_path))
+            if signs.get("schema_version")!=1:raise RuntimeError("Unsupported source sign schema")
+            expected={0:[4518,4760,4428],1:[4527,5178,4393],2:[4444,5094],3:[4600],4:[4536,4618],5:[4977,4469]}
+            views={view["enum_value"]:view for view in signs.get("signs",[])}
+            if set(views)!=set(expected):raise RuntimeError("Six original sign views are required")
+            ui_by_id={item["path_id"]:item for item in ui_manifest["components"]}
+            if not signs["view"]["text_container"].get("hide_during_sign"):
+                raise RuntimeError("Original inspection must hide DialogContent")
+            for kind,ids in expected.items():
+                view=views[kind];layers=view["layers_back_to_front"]
+                if [layer["image_id"] for layer in layers]!=ids:
+                    raise RuntimeError("Original sign sibling order changed")
+                if bool(view.get("hide_dialogue_text"))!=(kind==3):
+                    raise RuntimeError("Photo-only dialogue text visibility changed")
+                for layer in layers:
+                    image=ui_by_id.get(layer["image_id"])
+                    if not image or image.get("class")!="UnityEngine.UI.Image":
+                        raise RuntimeError("Inspection layer has no original Image")
+                    rect=image["rect_transform"]["screen_rect_1920x1080"]
+                    if rect!=layer["screen_rect_1920x1080"]:
+                        raise RuntimeError("Inspection image rectangle differs from source")
+                    if not all(isinstance(x,(int,float)) and math.isfinite(x) for x in rect) or min(rect[2:])<=0:
+                        raise RuntimeError("Invalid original inspection rectangle")
+                    if image["image"]["sprite_source"]!=layer["source_image"]:
+                        raise RuntimeError("Inspection sprite PPtr differs from source")
+                    if layer["role"]=="static" and f"assets/{image['asset']}" not in names:
+                        raise RuntimeError("Original inspection frame is not packaged")
+            if views[1]["layers_back_to_front"][1]["mask_image_id"]!=4527:
+                raise RuntimeError("Original hands mask is missing")
+            hand,photo=views[1]["movement"],views[3]["movement"]
+            if hand["start_position"]!=[0,-400,0] or hand["ease_value"]!=2 or abs(hand["duration_seconds"]-2/3)>1e-5:
+                raise RuntimeError("Recovered hands move data changed")
+            if photo["start_position"]!=[0,-1100,0] or photo["ease_value"]!=9 or photo["duration_seconds"]!=1 or photo["before_delay_seconds"]!=2:
+                raise RuntimeError("Recovered photo move data changed")
+            sign_summary={"views":6,"source_image_layers":sum(map(len,expected.values())),"source_sibling_order":True,
+                          "hands_mask_image":4527,"authored_content_moves":2,"eye_random_motion_implemented":False}
         ui_sprite_table = ui_manifest.get("sprites", ui_manifest.get("images", []))
         ui_sprites = list(ui_sprite_table.values()) if isinstance(ui_sprite_table, dict) else ui_sprite_table
         ui_fonts = ui_manifest.get("fonts", [])
@@ -917,6 +968,7 @@ def collect_report(output: Path, build_tools: Path, source_modules: list[str],
         "native_game_cpp_modules": source_modules,
         "gdx_java_classpath_resources": java_resources,
         "assets": {
+            "source_sign_layouts":sign_summary,
             "png_count": len(staged_pngs), "menu_png_count_including_native_alias": len(menu_pngs),
             "character_sprite_texture_exports": 1200, "supplemental_scene_sprites": 10,
             "image_reference_mappings": len(assets_json["images"]),
@@ -957,13 +1009,14 @@ def main() -> None:
     parser.add_argument("--skip-assets", action="store_true", help="reuse an existing staged asset tree")
     parser.add_argument("--reference-apk", type=Path,
                         help="reuse JNI libraries only from the exact hash-locked current APK")
-    parser.add_argument("--version-code", type=int, default=11)
-    parser.add_argument("--version-name", default="0.11-cat-save")
+    parser.add_argument("--version-code", type=int, default=12)
+    parser.add_argument("--version-name", default="0.12-scene-fidelity")
     parser.add_argument("--rebuild-rust", action="store_true", help="force locked release builds for both Rust targets")
     args = parser.parse_args()
 
     if args.version_code < 1:
         parser.error("--version-code must be positive")
+    load_signing_configuration()
 
     sdk = choose_sdk().resolve()
     build_tools = find_build_tools(sdk)

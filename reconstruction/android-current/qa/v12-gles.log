@@ -1,0 +1,73 @@
+Verified gdx-1.14.2.jar
+Verified gdx-backend-lwjgl3-1.14.2.jar
+Verified gdx-lwjgl3-angle-1.14.2.jar
+Verified gdx-platform-1.14.2-natives-desktop.jar
+Verified gdx-jnigen-loader-2.5.2.jar
+Verified json-20250517.jar
+Verified lwjgl-3.3.3.jar
+Verified lwjgl-3.3.3-natives-linux.jar
+Verified lwjgl-egl-3.3.3.jar
+Verified lwjgl-opengles-3.3.3.jar
+Verified lwjgl-opengles-3.3.3-natives-linux.jar
+Verified lwjgl-opengl-3.3.3.jar
+Verified lwjgl-opengl-3.3.3-natives-linux.jar
+Verified lwjgl-glfw-3.3.3.jar
+Verified lwjgl-glfw-3.3.3-natives-linux.jar
+SaveFileStoreTest: fresh process, UTF-8, synced replacement, checksum, backup, interrupted-write and size-limit checks passed
+SignLayoutMotionTest: PASS
+SignLayoutSourceTest: six source views, 13 ordered layers, mask, typed sprite references and authored tween timing passed
+PASS FrameSequenceTest: source cycling modes, boundaries, pause/resume
+SleepTransitionTest: PASS
+PASS DoorMotionTest: six authored hinges, Y reflection, OutCubic/InSine and 1s/0.5s timing
+RoomCompositionTest passed: seven authored room views; source ordering, assets and path validation
+WorldMathTest: PASS
+WORLD_RENDERER_PARITY active=109 reflected=33 determinant=PASS
+WORLD_MATERIAL_SOURCE zwriteOff=4 alphaClip=0 transparentSurface=4 fixture=PASS
+WORLD_OBB_COLLISION activeOrthogonal=50 thinFaceContact=PASS falseBlock=PASS tiltedSupportBothWays=PASS stepWindow=PASS headroom=PASS
+WORLD_GEOMETRY_MOVEMENT start=(-3.985,1.584,6.998) stop=(-3.985,1.4472716,4.623) travelled=2.3789325
+WorldGeometryTest: PASS (7 source ray targets, room actions, mesh/OBB collision)
+WorldVisibilityTest: PASS (12 source wall/ceiling/floor camera turns)
+WorldInteractionTest: PASS (14000 bit-exact rays; stable snapshot, safe copies, action refresh and miss)
+RenderLoopPolicyTest: PASS (scene animation and idle wake/sleep transitions)
+RenderResolutionTest: PASS (5 display sizes, 3 modes; balanced 1600x720, light 1200x540)
+Tombstone summary: signal, crashing-thread selection, backtrace, unknown fields and malformed input passed
+HOST_RENDER_MEAN_MS=2.6267065300000003
+RENDERER_DIAGNOSTIC=ready
+
+GL vendor=Mesa, renderer=llvmpipe (LLVM 20.1.2, 256 bits), version=OpenGL ES 2.0 Mesa 25.2.8-0ubuntu0.24.04.2, maxTextureSize=16384, depthBits=24
+World meshes=92, render items=111, mesh colliders=24, texture cache=46137344 bytes, visible textures=11
+Measuring renderer…
+GL_RENDERER=llvmpipe (LLVM 20.1.2, 256 bits)
+GL_VERSION=OpenGL ES 2.0 Mesa 25.2.8-0ubuntu0.24.04.2
+WORLD_PREVIEW_POSE={"position":[-3.985,1.584,-6.998],"pitch":0,"yaw":0}
+WORLD_PREVIEW_PNG=/workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/qa/gles2.png
+
+HOST_RENDER_MEAN_MS=2.2521907
+RENDERER_DIAGNOSTIC=Unlit GLES fallback active after shader compile failure.
+Renderer failure at compile/draw GLES world scene; switching to unlit fallback
+GL vendor=Mesa, renderer=llvmpipe (LLVM 20.1.2, 256 bits), version=OpenGL ES 2.0 Mesa 25.2.8-0ubuntu0.24.04.2, maxTextureSize=16384, depthBits=24
+
+com.badlogic.gdx.utils.GdxRuntimeException: shader compilation injected failure
+	at WorldPreviewGLES.lambda$1(WorldPreviewGLES.java:181)
+	at jdk.proxy1/jdk.proxy1.$Proxy3.glCompileShader(Unknown Source)
+	at com.badlogic.gdx.graphics.glutils.ShaderProgram.loadShader(ShaderProgram.java:209)
+	at com.badlogic.gdx.graphics.glutils.ShaderProgram.compileShaders(ShaderProgram.java:184)
+	at com.badlogic.gdx.graphics.glutils.ShaderProgram.<init>(ShaderProgram.java:167)
+	at com.badlogic.gdx.graphics.g3d.shaders.DefaultShader.<init>(DefaultShader.java:527)
+	at org.reconstruction.current.WorldRenderer$SourceDefaultShader.<init>(WorldRenderer.java:463)
+	at org.reconstruction.current.WorldRenderer$SourceShaderProvider.createShader(WorldRenderer.java:383)
+	at com.badlogic.gdx.graphics.g3d.utils.BaseShaderProvider.getShader(BaseShaderProvider.java:34)
+	at com.badlogic.gdx.graphics.g3d.ModelBatch.render(ModelBatch.java:265)
+	at org.reconstruction.current.WorldRenderer.drawRenderables(WorldRenderer.java:223)
+	at org.reconstruction.current.WorldRenderer.render(WorldRenderer.java:206)
+	at org.reconstruction.current.RoomEngine.render(RoomEngine.java:126)
+	at WorldPreviewGLES.main(WorldPreviewGLES.java:189)
+
+
+GL vendor=Mesa, renderer=llvmpipe (LLVM 20.1.2, 256 bits), version=OpenGL ES 2.0 Mesa 25.2.8-0ubuntu0.24.04.2, maxTextureSize=16384, depthBits=24
+World meshes=92, render items=111, mesh colliders=24, texture cache=46137344 bytes, visible textures=11
+Measuring renderer…
+GL_RENDERER=llvmpipe (LLVM 20.1.2, 256 bits)
+GL_VERSION=OpenGL ES 2.0 Mesa 25.2.8-0ubuntu0.24.04.2
+WORLD_PREVIEW_POSE={"position":[-3.985,1.584,-6.998],"pitch":0,"yaw":0}
+WORLD_PREVIEW_PNG=/workspace/scratch/ad0b61c5ef81/ninah-port/reconstruction/android-current/qa/gles2-fallback.png

@@ -1,0 +1,923 @@
+{
+  "schema_version": 1,
+  "provenance": {
+    "method": "UnityPy static parsing of level1; image transforms/assets joined to ui_manifest; DialogSignsView and sign view refs decoded from MonoBehaviour raw bytes; no game PE executed",
+    "scene": "level1",
+    "dialogue_canvas_reference_resolution": [
+      1920,
+      1080
+    ],
+    "source_files": [
+      "level1",
+      "globalgamemanagers.assets"
+    ],
+    "ui_manifest": "reconstruction/android-current/app/src/main/assets/presentation/ui/ui_manifest.json",
+    "managed_offset_note": "IL2CPP managed field annotations include an 8-byte object header; serialized MonoBehaviour offsets for inherited fields are independently checked against raw sizes and PPtrs."
+  },
+  "view": {
+    "component_path_id": 4426,
+    "raw_size": 228,
+    "serialized_field_offsets": {
+      "normal_text": 32,
+      "text_container": 44,
+      "eye": 56,
+      "hands": 68,
+      "teeth": 80,
+      "ear": 92,
+      "armpit": 104,
+      "photo": 116
+    },
+    "normal_text": {
+      "file_id": 0,
+      "path_id": 4784,
+      "component_path_id": 4784,
+      "game_object_name": "Text",
+      "screen_rect_1920x1080": [
+        1009.0479,
+        249.0,
+        668.4043,
+        320.3916
+      ],
+      "hidden_during_signs": [
+        "photo"
+      ],
+      "evidence": "ShowSign only clears _normalText color in the AuraPhoto branch before activating PhotoContainer."
+    },
+    "text_container": {
+      "file_id": 0,
+      "path_id": 4637,
+      "component_path_id": 4637,
+      "game_object_name": "DialogContent",
+      "transform_path_id": 3567,
+      "screen_rect_1920x1080": [
+        989.0,
+        229.0,
+        708.0,
+        360.0
+      ],
+      "hide_during_sign": true,
+      "evidence": "DialogSignsView.ShowSign passes a zero 16-byte Color to the Graphic setter on _textContainer once at method entry, before branch selection."
+    }
+  },
+  "signs": [
+    {
+      "name": "eye",
+      "enum_value": 0,
+      "view_component_path_id": 4969,
+      "view_class": "_Code.DialogSystem.DialogSignElementViewEye",
+      "container_game_object_path_id": 1187,
+      "container_name": "EyeContainer",
+      "bounds": [
+        959.4091,
+        103.0,
+        709.6816,
+        646.1556
+      ],
+      "activation": "ShowSign disables every sign container, then activates the selected container and assigns its character-specific image or animation data.",
+      "hide_dialogue_text": false,
+      "hide_dialogue_text_evidence": "Only the AuraPhoto branch clears DialogSignsView._normalText color; the other five branches do not reference _normalText.",
+      "movement": null,
+      "eye": {
+        "component_path_id": 4969,
+        "schema_offsets": {
+          "content_image": 32,
+          "animated_cover": 44,
+          "white_image": 56,
+          "iris_image": 68
+        },
+        "content_image": {
+          "file_id": 0,
+          "path_id": 4760
+        },
+        "animated_cover": {
+          "file_id": 0,
+          "path_id": 4753
+        },
+        "white_image": {
+          "file_id": 0,
+          "path_id": 4518
+        },
+        "iris_image": {
+          "file_id": 0,
+          "path_id": 4760
+        }
+      },
+      "layers_back_to_front": [
+        {
+          "role": "white",
+          "image_id": 4518,
+          "component_path_id": 4518,
+          "game_object_path_id": 943,
+          "game_object_name": "White",
+          "transform_path_id": 3218,
+          "parent_transform_path_id": 3391,
+          "hierarchy_order": 1,
+          "source_image": {
+            "file_id": 3,
+            "path_id": 2021,
+            "file": "sharedassets0.assets"
+          },
+          "asset": "ui/exported_images/sharedassets0_2021_human_white_5_29.png",
+          "mask_component_path_id": null,
+          "mask_image_id": -1,
+          "preserve_aspect": true,
+          "screen_rect_1920x1080": [
+            1132.111,
+            220.5878,
+            364.2764,
+            331.6688
+          ],
+          "anchored_position": {
+            "x": 354.8399963378906,
+            "y": -283.0
+          },
+          "size_delta": {
+            "x": 364.2763977050781,
+            "y": 331.6687927246094
+          },
+          "anchor_min": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "anchor_max": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "visible_at_startup": false
+        },
+        {
+          "role": "iris",
+          "image_id": 4760,
+          "component_path_id": 4760,
+          "game_object_path_id": 1043,
+          "game_object_name": "Iris",
+          "transform_path_id": 3260,
+          "parent_transform_path_id": 3218,
+          "hierarchy_order": 2,
+          "source_image": {
+            "file_id": 3,
+            "path_id": 1659,
+            "file": "sharedassets0.assets"
+          },
+          "asset": "ui/exported_images/sharedassets0_1659_human_pupil_7.png",
+          "mask_component_path_id": null,
+          "mask_image_id": -1,
+          "preserve_aspect": true,
+          "screen_rect_1920x1080": [
+            1239.2492,
+            311.4222,
+            150.0,
+            150.0
+          ],
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 150.0,
+            "y": 150.0
+          },
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "visible_at_startup": false
+        },
+        {
+          "role": "static",
+          "image_id": 4428,
+          "component_path_id": 4428,
+          "game_object_path_id": 341,
+          "game_object_name": "EyeFront",
+          "transform_path_id": 3693,
+          "parent_transform_path_id": 3391,
+          "hierarchy_order": 3,
+          "source_image": {
+            "file_id": 2,
+            "path_id": 515,
+            "file": "sharedassets1.assets"
+          },
+          "asset": "ui/exported_images/sharedassets1_515_fake_eyes_frame_animation_0.png",
+          "mask_component_path_id": null,
+          "mask_image_id": -1,
+          "preserve_aspect": true,
+          "screen_rect_1920x1080": [
+            959.4091,
+            103.0,
+            709.6816,
+            646.1556
+          ],
+          "anchored_position": {
+            "x": 354.84075927734375,
+            "y": 0.92218017578125
+          },
+          "size_delta": {
+            "x": 709.6815795898438,
+            "y": 646.1555786132812
+          },
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.5
+          },
+          "anchor_max": {
+            "x": 0.0,
+            "y": 0.5
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "visible_at_startup": false
+        }
+      ]
+    },
+    {
+      "name": "hands",
+      "enum_value": 1,
+      "view_component_path_id": 4886,
+      "view_class": "_Code.DialogSystem.DialogSignElementViewMovingContent",
+      "container_game_object_path_id": 1098,
+      "container_name": "HandsContainer",
+      "bounds": [
+        959.4084,
+        103.4239,
+        709.6816000000001,
+        646.1567
+      ],
+      "activation": "ShowSign disables every sign container, then activates the selected container and assigns its character-specific image or animation data.",
+      "hide_dialogue_text": false,
+      "hide_dialogue_text_evidence": "Only the AuraPhoto branch clears DialogSignsView._normalText color; the other five branches do not reference _normalText.",
+      "movement": {
+        "component_path_id": 4886,
+        "schema_offsets": {
+          "content_image": 32,
+          "start_position": 44,
+          "end_position": 56,
+          "ease": 68,
+          "duration_seconds": 72,
+          "before_delay_seconds": 76
+        },
+        "content_image": {
+          "file_id": 0,
+          "path_id": 5178
+        },
+        "content_transform_path_id": 3742,
+        "parent_transform_path_id": 3244,
+        "parent_local_scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "content_local_position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "canvas_path_id": 3101,
+        "coordinate_space": "Transform.localPosition",
+        "start_position": [
+          0.0,
+          -400.0,
+          0.0
+        ],
+        "end_position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "ease_value": 2,
+        "duration_seconds": 0.666667,
+        "before_delay_seconds": 0.0
+      },
+      "eye": null,
+      "layers_back_to_front": [
+        {
+          "role": "static",
+          "image_id": 4527,
+          "component_path_id": 4527,
+          "game_object_path_id": 400,
+          "game_object_name": "HandsBack",
+          "transform_path_id": 3244,
+          "parent_transform_path_id": 3442,
+          "hierarchy_order": 1,
+          "source_image": {
+            "file_id": 2,
+            "path_id": 587,
+            "file": "sharedassets1.assets"
+          },
+          "asset": "ui/exported_images/sharedassets1_587_fake_hands_back.png",
+          "mask_component_path_id": 4664,
+          "mask_image_id": 4527,
+          "preserve_aspect": true,
+          "screen_rect_1920x1080": [
+            959.4092,
+            103.4239,
+            709.6799,
+            646.1567
+          ],
+          "anchored_position": {
+            "x": 354.8399963378906,
+            "y": -323.0799865722656
+          },
+          "size_delta": {
+            "x": 709.679931640625,
+            "y": 646.1566772460938
+          },
+          "anchor_min": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "anchor_max": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "visible_at_startup": false
+        },
+        {
+          "role": "content",
+          "image_id": 5178,
+          "component_path_id": 5178,
+          "game_object_path_id": 1262,
+          "game_object_name": "HandsContent",
+          "transform_path_id": 3742,
+          "parent_transform_path_id": 3244,
+          "hierarchy_order": 2,
+          "source_image": {
+            "file_id": 3,
+            "path_id": 1919,
+            "file": "sharedassets0.assets"
+          },
+          "asset": "ui/exported_images/sharedassets0_1919_human_hands_10.png",
+          "mask_component_path_id": 4664,
+          "mask_image_id": 4527,
+          "preserve_aspect": true,
+          "screen_rect_1920x1080": [
+            959.4084,
+            230.5715,
+            709.6816,
+            391.8614
+          ],
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 709.681640625,
+            "y": 391.86138916015625
+          },
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "visible_at_startup": false
+        },
+        {
+          "role": "static",
+          "image_id": 4393,
+          "component_path_id": 4393,
+          "game_object_path_id": 1294,
+          "game_object_name": "HandsFront",
+          "transform_path_id": 3352,
+          "parent_transform_path_id": 3244,
+          "hierarchy_order": 3,
+          "source_image": {
+            "file_id": 3,
+            "path_id": 2037,
+            "file": "sharedassets0.assets"
+          },
+          "asset": "ui/exported_images/sharedassets0_2037_fake_hands_frame.png",
+          "mask_component_path_id": 4664,
+          "mask_image_id": 4527,
+          "preserve_aspect": true,
+          "screen_rect_1920x1080": [
+            959.4092,
+            103.4239,
+            709.68,
+            646.1567
+          ],
+          "anchored_position": {
+            "x": 354.8399963378906,
+            "y": -323.0783386230469
+          },
+          "size_delta": {
+            "x": 709.6799926757812,
+            "y": 646.1566772460938
+          },
+          "anchor_min": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "anchor_max": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "visible_at_startup": false
+        }
+      ]
+    },
+    {
+      "name": "teeth",
+      "enum_value": 2,
+      "view_component_path_id": 4332,
+      "view_class": "_Code.DialogSystem.DialogSignElementViewFrameAnimatedCover",
+      "container_game_object_path_id": 1206,
+      "container_name": "TeethContainer",
+      "bounds": [
+        959.4091,
+        103.4222,
+        709.6816,
+        646.1556
+      ],
+      "activation": "ShowSign disables every sign container, then activates the selected container and assigns its character-specific image or animation data.",
+      "hide_dialogue_text": false,
+      "hide_dialogue_text_evidence": "Only the AuraPhoto branch clears DialogSignsView._normalText color; the other five branches do not reference _normalText.",
+      "movement": null,
+      "eye": null,
+      "layers_back_to_front": [
+        {
+          "role": "content",
+          "image_id": 4444,
+          "component_path_id": 4444,
+          "game_object_path_id": 359,
+          "game_object_name": "TeethContent",
+          "transform_path_id": 3719,
+          "parent_transform_path_id": 3736,
+          "hierarchy_order": 1,
+          "source_image": {
+            "file_id": 3,
+            "path_id": 2029,
+            "file": "sharedassets0.assets"
+          },
+          "asset": "ui/exported_images/sharedassets0_2029_fake_tooth_1.png",
+          "mask_component_path_id": null,
+          "mask_image_id": -1,
+          "preserve_aspect": true,
+          "screen_rect_1920x1080": [
+            1079.989,
+            354.3391,
+            468.5203,
+            145.0203
+          ],
+          "anchored_position": {
+            "x": 354.8399963378906,
+            "y": -323.42706298828125
+          },
+          "size_delta": {
+            "x": 468.5202941894531,
+            "y": 145.02029418945312
+          },
+          "anchor_min": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "anchor_max": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "visible_at_startup": false
+        },
+        {
+          "role": "static",
+          "image_id": 5094,
+          "component_path_id": 5094,
+          "game_object_path_id": 991,
+          "game_object_name": "TeethFront",
+          "transform_path_id": 3666,
+          "parent_transform_path_id": 3736,
+          "hierarchy_order": 2,
+          "source_image": {
+            "file_id": 3,
+            "path_id": 1209,
+            "file": "sharedassets0.assets"
+          },
+          "asset": "ui/exported_images/sharedassets0_1209_fake_tooth_frame_animation_0.png",
+          "mask_component_path_id": null,
+          "mask_image_id": -1,
+          "preserve_aspect": true,
+          "screen_rect_1920x1080": [
+            959.4091,
+            103.4222,
+            709.6816,
+            646.1556
+          ],
+          "anchored_position": {
+            "x": 354.84075927734375,
+            "y": -323.07781982421875
+          },
+          "size_delta": {
+            "x": 709.6815795898438,
+            "y": 646.1555786132812
+          },
+          "anchor_min": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "anchor_max": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "visible_at_startup": false
+        }
+      ]
+    },
+    {
+      "name": "photo",
+      "enum_value": 3,
+      "view_component_path_id": 4455,
+      "view_class": "_Code.DialogSystem.DialogSignElementViewMovingContent",
+      "container_game_object_path_id": 355,
+      "container_name": "PhotoContainer",
+      "bounds": [
+        1018.84,
+        102.0,
+        650.0000000000001,
+        650.0
+      ],
+      "activation": "ShowSign disables every sign container, then activates the selected container and assigns its character-specific image or animation data.",
+      "hide_dialogue_text": true,
+      "hide_dialogue_text_evidence": "Only the AuraPhoto branch clears DialogSignsView._normalText color; the other five branches do not reference _normalText.",
+      "movement": {
+        "component_path_id": 4455,
+        "schema_offsets": {
+          "content_image": 32,
+          "start_position": 44,
+          "end_position": 56,
+          "ease": 68,
+          "duration_seconds": 72,
+          "before_delay_seconds": 76
+        },
+        "content_image": {
+          "file_id": 0,
+          "path_id": 4600
+        },
+        "content_transform_path_id": 3235,
+        "parent_transform_path_id": 3240,
+        "parent_local_scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "content_local_position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "canvas_path_id": 3101,
+        "coordinate_space": "Transform.localPosition",
+        "start_position": [
+          0.0,
+          -1100.0,
+          0.0
+        ],
+        "end_position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "ease_value": 9,
+        "duration_seconds": 1.0,
+        "before_delay_seconds": 2.0
+      },
+      "eye": null,
+      "layers_back_to_front": [
+        {
+          "role": "content",
+          "image_id": 4600,
+          "component_path_id": 4600,
+          "game_object_path_id": 1297,
+          "game_object_name": "Content",
+          "transform_path_id": 3235,
+          "parent_transform_path_id": 3240,
+          "hierarchy_order": 1,
+          "source_image": {
+            "file_id": 3,
+            "path_id": 1661,
+            "file": "sharedassets0.assets"
+          },
+          "asset": "ui/exported_images/sharedassets0_1661_fake_photo_1.png",
+          "mask_component_path_id": null,
+          "mask_image_id": -1,
+          "preserve_aspect": true,
+          "screen_rect_1920x1080": [
+            1018.84,
+            102.0,
+            650.0,
+            650.0
+          ],
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 650.0,
+            "y": 650.0
+          },
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "visible_at_startup": false
+        }
+      ]
+    },
+    {
+      "name": "armpit",
+      "enum_value": 4,
+      "view_component_path_id": 4511,
+      "view_class": "_Code.DialogSystem.DialogSignViewAnimatedContent",
+      "container_game_object_path_id": 683,
+      "container_name": "ArmpitContainer",
+      "bounds": [
+        988.9991,
+        103.4222,
+        709.6815999999999,
+        646.1556
+      ],
+      "activation": "ShowSign disables every sign container, then activates the selected container and assigns its character-specific image or animation data.",
+      "hide_dialogue_text": false,
+      "hide_dialogue_text_evidence": "Only the AuraPhoto branch clears DialogSignsView._normalText color; the other five branches do not reference _normalText.",
+      "movement": null,
+      "eye": null,
+      "layers_back_to_front": [
+        {
+          "role": "content",
+          "image_id": 4536,
+          "component_path_id": 4536,
+          "game_object_path_id": 319,
+          "game_object_name": "Content",
+          "transform_path_id": 3444,
+          "parent_transform_path_id": 3553,
+          "hierarchy_order": 1,
+          "source_image": {
+            "file_id": 3,
+            "path_id": 2365,
+            "file": "sharedassets0.assets"
+          },
+          "asset": "ui/exported_images/sharedassets0_2365_armpit_6_5.png",
+          "mask_component_path_id": null,
+          "mask_image_id": -1,
+          "preserve_aspect": true,
+          "screen_rect_1920x1080": [
+            1121.8894,
+            110.3889,
+            443.8994,
+            632.9207
+          ],
+          "anchored_position": {
+            "x": 354.8399963378906,
+            "y": -323.42706298828125
+          },
+          "size_delta": {
+            "x": 443.8994140625,
+            "y": 632.9207153320312
+          },
+          "anchor_min": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "anchor_max": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "visible_at_startup": false
+        },
+        {
+          "role": "static",
+          "image_id": 4618,
+          "component_path_id": 4618,
+          "game_object_path_id": 500,
+          "game_object_name": "Front",
+          "transform_path_id": 3495,
+          "parent_transform_path_id": 3553,
+          "hierarchy_order": 2,
+          "source_image": {
+            "file_id": 2,
+            "path_id": 625,
+            "file": "sharedassets1.assets"
+          },
+          "asset": "ui/exported_images/sharedassets1_625_armpit_frame.png",
+          "mask_component_path_id": null,
+          "mask_image_id": -1,
+          "preserve_aspect": true,
+          "screen_rect_1920x1080": [
+            988.9991,
+            103.4222,
+            709.6816,
+            646.1556
+          ],
+          "anchored_position": {
+            "x": 354.84075927734375,
+            "y": -323.07781982421875
+          },
+          "size_delta": {
+            "x": 709.6815795898438,
+            "y": 646.1555786132812
+          },
+          "anchor_min": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "anchor_max": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "visible_at_startup": false
+        }
+      ]
+    },
+    {
+      "name": "ear",
+      "enum_value": 5,
+      "view_component_path_id": 4417,
+      "view_class": "_Code.DialogSystem.DialogSignViewAnimatedContent",
+      "container_game_object_path_id": 995,
+      "container_name": "EarContainer",
+      "bounds": [
+        988.9991,
+        103.4222,
+        709.6815999999999,
+        646.1556
+      ],
+      "activation": "ShowSign disables every sign container, then activates the selected container and assigns its character-specific image or animation data.",
+      "hide_dialogue_text": false,
+      "hide_dialogue_text_evidence": "Only the AuraPhoto branch clears DialogSignsView._normalText color; the other five branches do not reference _normalText.",
+      "movement": null,
+      "eye": null,
+      "layers_back_to_front": [
+        {
+          "role": "content",
+          "image_id": 4977,
+          "component_path_id": 4977,
+          "game_object_path_id": 585,
+          "game_object_name": "Content",
+          "transform_path_id": 3489,
+          "parent_transform_path_id": 3283,
+          "hierarchy_order": 1,
+          "source_image": {
+            "file_id": 3,
+            "path_id": 1626,
+            "file": "sharedassets0.assets"
+          },
+          "asset": "ui/exported_images/sharedassets0_1626_fake_ear_1.png",
+          "mask_component_path_id": null,
+          "mask_image_id": -1,
+          "preserve_aspect": true,
+          "screen_rect_1920x1080": [
+            1140.9377,
+            110.4902,
+            405.8029,
+            632.7181
+          ],
+          "anchored_position": {
+            "x": 354.8399963378906,
+            "y": -323.42706298828125
+          },
+          "size_delta": {
+            "x": 405.8028869628906,
+            "y": 632.7180786132812
+          },
+          "anchor_min": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "anchor_max": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "visible_at_startup": false
+        },
+        {
+          "role": "static",
+          "image_id": 4469,
+          "component_path_id": 4469,
+          "game_object_path_id": 519,
+          "game_object_name": "Front",
+          "transform_path_id": 3392,
+          "parent_transform_path_id": 3283,
+          "hierarchy_order": 2,
+          "source_image": {
+            "file_id": 2,
+            "path_id": 594,
+            "file": "sharedassets1.assets"
+          },
+          "asset": "ui/exported_images/sharedassets1_594_fake_ear_frame.png",
+          "mask_component_path_id": null,
+          "mask_image_id": -1,
+          "preserve_aspect": true,
+          "screen_rect_1920x1080": [
+            988.9991,
+            103.4222,
+            709.6816,
+            646.1556
+          ],
+          "anchored_position": {
+            "x": 354.84075927734375,
+            "y": -323.07781982421875
+          },
+          "size_delta": {
+            "x": 709.6815795898438,
+            "y": 646.1555786132812
+          },
+          "anchor_min": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "anchor_max": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "visible_at_startup": false
+        }
+      ]
+    }
+  ],
+  "source_runtime_rules": {
+    "enum": {
+      "Eye": 0,
+      "Hands": 1,
+      "Teeth": 2,
+      "AuraPhoto": 3,
+      "Armpit": 4,
+      "Ear": 5
+    },
+    "show_sign": "Disable all sign containers; choose the requested container; assign human/imposter assets from CharacterSOData; activate the selected container.",
+    "image_roles": "Layer order is depth-first Transform.m_Children order; source positions, scale, anchors and pivots are included alongside viewport rectangles.",
+    "character_asset_selection": "Runtime IsImposter selects Human or Imposter CharacterSOData assets.",
+    "eye": "Assign white and iris sprites, enable EyeFront AnimatedCover, and start MoveIris.",
+    "hands": "Assign character hand sprite to HandsContent and run its authored StartPosition-to-EndPosition move.",
+    "photo": "Assign character photo sprite and run its authored movement.",
+    "movement_order": "MoveNext assigns Content.rectTransform.localPosition=StartPosition before awaiting BeforeDelay, then awaits the EndPosition tween for Duration seconds.",
+    "movement_easing": {
+      "2": {
+        "name": "InSine",
+        "formula": "1 - cos(t*pi/2)"
+      },
+      "9": {
+        "name": "OutCubic",
+        "formula": "1 + (t-1)^3"
+      },
+      "source": "DG.Tweening.Ease and EaseManager implementations; source hashes recorded in work audit."
+    },
+    "animated_signs": "Armpit and Ear assign CharacterSOData AnimationData; source frames/FPS/cycling are supplied by runtime state."
+  }
+}

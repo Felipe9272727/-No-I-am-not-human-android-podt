@@ -1,0 +1,37 @@
+{
+  "version": "0.12-scene-fidelity",
+  "version_code": 12,
+  "artifact": "NINAH-Port-Cena-Original.apk",
+  "bytes": 339266989,
+  "sha256": "0907b2326139a9c6e5cfc0f04bc1074d349f6a349527b632c6413642c11dc969",
+  "native_source_tree_sha256": "03def928e98eeec2799084a151364558412353188e5d7d9f3a6e099477420294",
+  "native_fingerprint_inputs": 53,
+  "native_libraries": "v0.11 exact APK and identical native source fingerprint verified before reuse",
+  "raw_source_world_audit_passed": true,
+  "authored_room_sibling_order_restored": true,
+  "source_inspection_layouts": 6,
+  "source_inspection_images": 13,
+  "source_hands_and_photo_tweens": true,
+  "host_gles_room_and_world_tests_passed": true,
+  "final_apk_classpath_shader_test_passed": true,
+  "signature_schemes": [
+    "v1",
+    "v2",
+    "v3"
+  ],
+  "signature_certificate_sha256": "f07ec9f06df46a41621203512a410bbbfce871a4300cb85a0bbe59461721176a",
+  "android_execution_tested": false,
+  "android_canvas_tested": false,
+  "pc_runtime_executed": false,
+  "full_campaign_implemented": false,
+  "full_original_visual_parity": false,
+  "remaining_visual_gaps": [
+    "random iris movement",
+    "runtime activation of later-state objects",
+    "complete original lighting/shadows/material effects",
+    "original TV video/audio"
+  ],
+  "campaign_boundary": "first morning and source tv_1_necessary dialogue only",
+  "private_signing_configuration_smoke_passed": true,
+  "signing_credentials_in_source_or_public_logs": false
+}

@@ -34,7 +34,7 @@
             272.0,
             308.0
           ],
-          "draw_order": 9,
+          "draw_order": 5,
           "color": [
             1.0,
             1.0,
@@ -46,34 +46,29 @@
       ],
       "character_orders": [
         {
-          "character_order": 8,
-          "draw_order": 2,
-          "game_object_path_id": 1237
-        },
-        {
-          "character_order": 4,
-          "draw_order": 4,
-          "game_object_path_id": 848
-        },
-        {
-          "character_order": 6,
-          "draw_order": 5,
-          "game_object_path_id": 620
-        },
-        {
           "character_order": 9,
-          "draw_order": 7,
+          "draw_order": 6,
           "game_object_path_id": 1215
         },
         {
-          "character_order": 0,
+          "character_order": 5,
+          "draw_order": 7,
+          "game_object_path_id": 1077
+        },
+        {
+          "character_order": 1,
           "draw_order": 8,
-          "game_object_path_id": 457
+          "game_object_path_id": 701
         },
         {
           "character_order": 3,
-          "draw_order": 10,
+          "draw_order": 9,
           "game_object_path_id": 1011
+        },
+        {
+          "character_order": 2,
+          "draw_order": 10,
+          "game_object_path_id": 789
         },
         {
           "character_order": 11,
@@ -81,38 +76,43 @@
           "game_object_path_id": 949
         },
         {
-          "character_order": 1,
+          "character_order": 7,
+          "draw_order": 12,
+          "game_object_path_id": 1020
+        },
+        {
+          "character_order": 8,
           "draw_order": 13,
-          "game_object_path_id": 701
-        },
-        {
-          "character_order": 5,
-          "draw_order": 14,
-          "game_object_path_id": 1077
-        },
-        {
-          "character_order": 2,
-          "draw_order": 15,
-          "game_object_path_id": 789
+          "game_object_path_id": 1237
         },
         {
           "character_order": 10,
-          "draw_order": 16,
+          "draw_order": 14,
           "game_object_path_id": 778
         },
         {
-          "character_order": 7,
+          "character_order": 6,
+          "draw_order": 15,
+          "game_object_path_id": 620
+        },
+        {
+          "character_order": 0,
+          "draw_order": 16,
+          "game_object_path_id": 457
+        },
+        {
+          "character_order": 4,
           "draw_order": 17,
-          "game_object_path_id": 1020
+          "game_object_path_id": 848
         }
       ],
       "excluded_layers": [
         {
-          "image_component_path_id": 4982,
-          "game_object_path_id": 1237,
-          "name": "FortuneTeller",
-          "reason": "character_view_or_descendant",
-          "asset": null,
+          "image_component_path_id": 5006,
+          "game_object_path_id": 539,
+          "name": "Beer1",
+          "reason": "conditional_room_object_state:_Code.Rooms.ObjectRoomObjectView",
+          "asset": "ui/exported_images/sharedassets1_574_Kitchen_beer_8.png",
           "draw_order": 2
         },
         {
@@ -124,28 +124,12 @@
           "draw_order": 3
         },
         {
-          "image_component_path_id": 4899,
-          "game_object_path_id": 848,
-          "name": "Provocateur",
-          "reason": "character_view_or_descendant",
-          "asset": null,
-          "draw_order": 4
-        },
-        {
-          "image_component_path_id": 4376,
-          "game_object_path_id": 620,
-          "name": "Theorist",
-          "reason": "character_view_or_descendant",
-          "asset": null,
-          "draw_order": 5
-        },
-        {
           "image_component_path_id": 5146,
           "game_object_path_id": 999,
           "name": "Fridge",
           "reason": "conditional_room_object_state:_Code.Rooms.ObjectRoomObjectView",
           "asset": "ui/exported_images/sharedassets1_612_Kitchen_obj1.png",
-          "draw_order": 6
+          "draw_order": 4
         },
         {
           "image_component_path_id": 4356,
@@ -153,12 +137,20 @@
           "name": "Couple",
           "reason": "character_view_or_descendant",
           "asset": null,
+          "draw_order": 6
+        },
+        {
+          "image_component_path_id": 4952,
+          "game_object_path_id": 1077,
+          "name": "BigLebowski",
+          "reason": "character_view_or_descendant",
+          "asset": null,
           "draw_order": 7
         },
         {
-          "image_component_path_id": 4661,
-          "game_object_path_id": 457,
-          "name": "Scammer",
+          "image_component_path_id": 4534,
+          "game_object_path_id": 701,
+          "name": "Hunter",
           "reason": "character_view_or_descendant",
           "asset": null,
           "draw_order": 8
@@ -167,6 +159,14 @@
           "image_component_path_id": 4841,
           "game_object_path_id": 1011,
           "name": "Neighbour",
+          "reason": "character_view_or_descendant",
+          "asset": null,
+          "draw_order": 9
+        },
+        {
+          "image_component_path_id": 5258,
+          "game_object_path_id": 789,
+          "name": "Daughter",
           "reason": "character_view_or_descendant",
           "asset": null,
           "draw_order": 10
@@ -180,36 +180,20 @@
           "draw_order": 11
         },
         {
-          "image_component_path_id": 5006,
-          "game_object_path_id": 539,
-          "name": "Beer1",
-          "reason": "conditional_room_object_state:_Code.Rooms.ObjectRoomObjectView",
-          "asset": "ui/exported_images/sharedassets1_574_Kitchen_beer_8.png",
+          "image_component_path_id": 4598,
+          "game_object_path_id": 1020,
+          "name": "Blind",
+          "reason": "character_view_or_descendant",
+          "asset": null,
           "draw_order": 12
         },
         {
-          "image_component_path_id": 4534,
-          "game_object_path_id": 701,
-          "name": "Hunter",
+          "image_component_path_id": 4982,
+          "game_object_path_id": 1237,
+          "name": "FortuneTeller",
           "reason": "character_view_or_descendant",
           "asset": null,
           "draw_order": 13
-        },
-        {
-          "image_component_path_id": 4952,
-          "game_object_path_id": 1077,
-          "name": "BigLebowski",
-          "reason": "character_view_or_descendant",
-          "asset": null,
-          "draw_order": 14
-        },
-        {
-          "image_component_path_id": 5258,
-          "game_object_path_id": 789,
-          "name": "Daughter",
-          "reason": "character_view_or_descendant",
-          "asset": null,
-          "draw_order": 15
         },
         {
           "image_component_path_id": 4959,
@@ -217,12 +201,28 @@
           "name": "Leper",
           "reason": "character_view_or_descendant",
           "asset": null,
+          "draw_order": 14
+        },
+        {
+          "image_component_path_id": 4376,
+          "game_object_path_id": 620,
+          "name": "Theorist",
+          "reason": "character_view_or_descendant",
+          "asset": null,
+          "draw_order": 15
+        },
+        {
+          "image_component_path_id": 4661,
+          "game_object_path_id": 457,
+          "name": "Scammer",
+          "reason": "character_view_or_descendant",
+          "asset": null,
           "draw_order": 16
         },
         {
-          "image_component_path_id": 4598,
-          "game_object_path_id": 1020,
-          "name": "Blind",
+          "image_component_path_id": 4899,
+          "game_object_path_id": 848,
+          "name": "Provocateur",
           "reason": "character_view_or_descendant",
           "asset": null,
           "draw_order": 17
@@ -253,6 +253,25 @@
           "preserve_aspect": true
         },
         {
+          "image_component_path_id": 5066,
+          "name": "Pictures",
+          "asset": "ui/exported_images/sharedassets1_639_Livingroom2_photo.png",
+          "rect": [
+            203.1,
+            193.9,
+            128.0,
+            144.0
+          ],
+          "draw_order": 2,
+          "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "preserve_aspect": false
+        },
+        {
           "image_component_path_id": 5134,
           "name": "Magazine",
           "asset": "ui/exported_images/sharedassets1_593_Livingroom2_newspaper.png",
@@ -270,148 +289,113 @@
             1.0
           ],
           "preserve_aspect": false
-        },
-        {
-          "image_component_path_id": 5066,
-          "name": "Pictures",
-          "asset": "ui/exported_images/sharedassets1_639_Livingroom2_photo.png",
-          "rect": [
-            203.1,
-            193.9,
-            128.0,
-            144.0
-          ],
-          "draw_order": 6,
-          "color": [
-            1.0,
-            1.0,
-            1.0,
-            1.0
-          ],
-          "preserve_aspect": false
         }
       ],
       "character_orders": [
         {
-          "character_order": 15,
-          "draw_order": 2,
-          "game_object_path_id": 624
-        },
-        {
-          "character_order": 10,
+          "character_order": 11,
           "draw_order": 4,
-          "game_object_path_id": 561
-        },
-        {
-          "character_order": 3,
-          "draw_order": 5,
-          "game_object_path_id": 822
+          "game_object_path_id": 525
         },
         {
           "character_order": 14,
-          "draw_order": 7,
+          "draw_order": 5,
           "game_object_path_id": 1196
         },
         {
-          "character_order": 9,
+          "character_order": 5,
+          "draw_order": 6,
+          "game_object_path_id": 1264
+        },
+        {
+          "character_order": 15,
+          "draw_order": 7,
+          "game_object_path_id": 624
+        },
+        {
+          "character_order": 8,
           "draw_order": 8,
+          "game_object_path_id": 809
+        },
+        {
+          "character_order": 9,
+          "draw_order": 9,
           "game_object_path_id": 1130
         },
         {
-          "character_order": 1,
-          "draw_order": 9,
-          "game_object_path_id": 803
-        },
-        {
-          "character_order": 4,
+          "character_order": 2,
           "draw_order": 10,
-          "game_object_path_id": 838
+          "game_object_path_id": 503
         },
         {
-          "character_order": 7,
+          "character_order": 0,
+          "draw_order": 11,
+          "game_object_path_id": 1197
+        },
+        {
+          "character_order": 16,
           "draw_order": 12,
-          "game_object_path_id": 1136
+          "game_object_path_id": 563
+        },
+        {
+          "character_order": 3,
+          "draw_order": 13,
+          "game_object_path_id": 822
+        },
+        {
+          "character_order": 10,
+          "draw_order": 14,
+          "game_object_path_id": 561
+        },
+        {
+          "character_order": 13,
+          "draw_order": 15,
+          "game_object_path_id": 1290
         },
         {
           "character_order": 6,
-          "draw_order": 14,
+          "draw_order": 16,
           "game_object_path_id": 1291
         },
         {
+          "character_order": 7,
+          "draw_order": 17,
+          "game_object_path_id": 1136
+        },
+        {
           "character_order": 12,
-          "draw_order": 15,
+          "draw_order": 18,
           "game_object_path_id": 420
         },
         {
           "character_order": 17,
-          "draw_order": 16,
+          "draw_order": 19,
           "game_object_path_id": 699
         },
         {
-          "character_order": 13,
-          "draw_order": 17,
-          "game_object_path_id": 1290
-        },
-        {
-          "character_order": 16,
-          "draw_order": 18,
-          "game_object_path_id": 563
-        },
-        {
-          "character_order": 2,
-          "draw_order": 19,
-          "game_object_path_id": 503
-        },
-        {
-          "character_order": 5,
+          "character_order": 1,
           "draw_order": 20,
-          "game_object_path_id": 1264
+          "game_object_path_id": 803
         },
         {
-          "character_order": 0,
+          "character_order": 4,
           "draw_order": 21,
-          "game_object_path_id": 1197
-        },
-        {
-          "character_order": 8,
-          "draw_order": 22,
-          "game_object_path_id": 809
+          "game_object_path_id": 838
         },
         {
           "character_order": 18,
-          "draw_order": 23,
+          "draw_order": 22,
           "game_object_path_id": 479
-        },
-        {
-          "character_order": 11,
-          "draw_order": 24,
-          "game_object_path_id": 525
         }
       ],
       "excluded_layers": [
         {
-          "image_component_path_id": 5103,
-          "game_object_path_id": 624,
-          "name": "FunnyGuy",
-          "reason": "character_view_or_descendant",
-          "asset": null,
-          "draw_order": 2
-        },
-        {
-          "image_component_path_id": 4371,
-          "game_object_path_id": 561,
-          "name": "CultistThree",
+          "image_component_path_id": 4917,
+          "game_object_path_id": 525,
+          "name": "Edgar",
           "reason": "character_view_or_descendant",
           "asset": null,
           "draw_order": 4
-        },
-        {
-          "image_component_path_id": 4504,
-          "game_object_path_id": 822,
-          "name": "Fugitive",
-          "reason": "character_view_or_descendant",
-          "asset": null,
-          "draw_order": 5
         },
         {
           "image_component_path_id": 4713,
@@ -419,103 +403,7 @@
           "name": "Jacob",
           "reason": "character_view_or_descendant",
           "asset": null,
-          "draw_order": 7
-        },
-        {
-          "image_component_path_id": 5230,
-          "game_object_path_id": 1130,
-          "name": "CultistTwo",
-          "reason": "character_view_or_descendant",
-          "asset": null,
-          "draw_order": 8
-        },
-        {
-          "image_component_path_id": 4390,
-          "game_object_path_id": 803,
-          "name": "Wifefema",
-          "reason": "character_view_or_descendant",
-          "asset": null,
-          "draw_order": 9
-        },
-        {
-          "image_component_path_id": 4506,
-          "game_object_path_id": 838,
-          "name": "Buddy",
-          "reason": "character_view_or_descendant",
-          "asset": null,
-          "draw_order": 10
-        },
-        {
-          "image_component_path_id": 5117,
-          "game_object_path_id": 885,
-          "name": "Baby",
-          "reason": "conditional_room_object_state:_Code.Rooms.ObjectRoomObjectView",
-          "asset": "ui/exported_images/sharedassets1_595_Livingroom2_baby.png",
-          "draw_order": 11
-        },
-        {
-          "image_component_path_id": 4815,
-          "game_object_path_id": 1136,
-          "name": "Intruder",
-          "reason": "character_view_or_descendant",
-          "asset": null,
-          "draw_order": 12
-        },
-        {
-          "image_component_path_id": 4326,
-          "game_object_path_id": 875,
-          "name": "CultistsSheets",
-          "reason": "conditional_room_object_state:_Code.Rooms.ObjectRoomObjectView",
-          "asset": "ui/exported_images/sharedassets1_617_Livingroom2_sheets.png",
-          "draw_order": 13
-        },
-        {
-          "image_component_path_id": 4308,
-          "game_object_path_id": 1291,
-          "name": "Luka",
-          "reason": "character_view_or_descendant",
-          "asset": null,
-          "draw_order": 14
-        },
-        {
-          "image_component_path_id": 5147,
-          "game_object_path_id": 420,
-          "name": "Wheelchair",
-          "reason": "character_view_or_descendant",
-          "asset": null,
-          "draw_order": 15
-        },
-        {
-          "image_component_path_id": 4671,
-          "game_object_path_id": 699,
-          "name": "Unstable",
-          "reason": "character_view_or_descendant",
-          "asset": null,
-          "draw_order": 16
-        },
-        {
-          "image_component_path_id": 4654,
-          "game_object_path_id": 1290,
-          "name": "GraveDigger",
-          "reason": "character_view_or_descendant",
-          "asset": null,
-          "draw_order": 17
-        },
-        {
-          "image_component_path_id": 5032,
-          "game_object_path_id": 563,
-          "name": "Jacket",
-          "reason": "character_view_or_descendant",
-          "asset": null,
-          "draw_order": 18
-        },
-        {
-          "image_component_path_id": 4650,
-          "game_object_path_id": 503,
-          "name": "Mother",
-          "reason": "character_view_or_descendant",
-          "asset": null,
-          "draw_order": 19
+          "draw_order": 5
         },
         {
           "image_component_path_id": 5030,
@@ -523,15 +411,15 @@
           "name": "Teacher",
           "reason": "character_view_or_descendant",
           "asset": null,
-          "draw_order": 20
+          "draw_order": 6
         },
         {
-          "image_component_path_id": 4690,
-          "game_object_path_id": 1197,
-          "name": "Greatmother",
+          "image_component_path_id": 5103,
+          "game_object_path_id": 624,
+          "name": "FunnyGuy",
           "reason": "character_view_or_descendant",
           "asset": null,
-          "draw_order": 21
+          "draw_order": 7
         },
         {
           "image_component_path_id": 4333,
@@ -539,7 +427,111 @@
           "name": "CultistOne",
           "reason": "character_view_or_descendant",
           "asset": null,
-          "draw_order": 22
+          "draw_order": 8
+        },
+        {
+          "image_component_path_id": 5230,
+          "game_object_path_id": 1130,
+          "name": "CultistTwo",
+          "reason": "character_view_or_descendant",
+          "asset": null,
+          "draw_order": 9
+        },
+        {
+          "image_component_path_id": 4650,
+          "game_object_path_id": 503,
+          "name": "Mother",
+          "reason": "character_view_or_descendant",
+          "asset": null,
+          "draw_order": 10
+        },
+        {
+          "image_component_path_id": 4690,
+          "game_object_path_id": 1197,
+          "name": "Greatmother",
+          "reason": "character_view_or_descendant",
+          "asset": null,
+          "draw_order": 11
+        },
+        {
+          "image_component_path_id": 5032,
+          "game_object_path_id": 563,
+          "name": "Jacket",
+          "reason": "character_view_or_descendant",
+          "asset": null,
+          "draw_order": 12
+        },
+        {
+          "image_component_path_id": 4504,
+          "game_object_path_id": 822,
+          "name": "Fugitive",
+          "reason": "character_view_or_descendant",
+          "asset": null,
+          "draw_order": 13
+        },
+        {
+          "image_component_path_id": 4371,
+          "game_object_path_id": 561,
+          "name": "CultistThree",
+          "reason": "character_view_or_descendant",
+          "asset": null,
+          "draw_order": 14
+        },
+        {
+          "image_component_path_id": 4654,
+          "game_object_path_id": 1290,
+          "name": "GraveDigger",
+          "reason": "character_view_or_descendant",
+          "asset": null,
+          "draw_order": 15
+        },
+        {
+          "image_component_path_id": 4308,
+          "game_object_path_id": 1291,
+          "name": "Luka",
+          "reason": "character_view_or_descendant",
+          "asset": null,
+          "draw_order": 16
+        },
+        {
+          "image_component_path_id": 4815,
+          "game_object_path_id": 1136,
+          "name": "Intruder",
+          "reason": "character_view_or_descendant",
+          "asset": null,
+          "draw_order": 17
+        },
+        {
+          "image_component_path_id": 5147,
+          "game_object_path_id": 420,
+          "name": "Wheelchair",
+          "reason": "character_view_or_descendant",
+          "asset": null,
+          "draw_order": 18
+        },
+        {
+          "image_component_path_id": 4671,
+          "game_object_path_id": 699,
+          "name": "Unstable",
+          "reason": "character_view_or_descendant",
+          "asset": null,
+          "draw_order": 19
+        },
+        {
+          "image_component_path_id": 4390,
+          "game_object_path_id": 803,
+          "name": "Wifefema",
+          "reason": "character_view_or_descendant",
+          "asset": null,
+          "draw_order": 20
+        },
+        {
+          "image_component_path_id": 4506,
+          "game_object_path_id": 838,
+          "name": "Buddy",
+          "reason": "character_view_or_descendant",
+          "asset": null,
+          "draw_order": 21
         },
         {
           "image_component_path_id": 5257,
@@ -547,14 +539,22 @@
           "name": "Tough",
           "reason": "character_view_or_descendant",
           "asset": null,
+          "draw_order": 22
+        },
+        {
+          "image_component_path_id": 5117,
+          "game_object_path_id": 885,
+          "name": "Baby",
+          "reason": "conditional_room_object_state:_Code.Rooms.ObjectRoomObjectView",
+          "asset": "ui/exported_images/sharedassets1_595_Livingroom2_baby.png",
           "draw_order": 23
         },
         {
-          "image_component_path_id": 4917,
-          "game_object_path_id": 525,
-          "name": "Edgar",
-          "reason": "character_view_or_descendant",
-          "asset": null,
+          "image_component_path_id": 4326,
+          "game_object_path_id": 875,
+          "name": "CultistsSheets",
+          "reason": "conditional_room_object_state:_Code.Rooms.ObjectRoomObjectView",
+          "asset": "ui/exported_images/sharedassets1_617_Livingroom2_sheets.png",
           "draw_order": 24
         }
       ]
@@ -583,25 +583,6 @@
           "preserve_aspect": true
         },
         {
-          "image_component_path_id": 5072,
-          "name": "Toy",
-          "asset": "ui/exported_images/sharedassets1_621_Livingroom1_toy.png",
-          "rect": [
-            634.5,
-            324.9,
-            40.0,
-            56.0
-          ],
-          "draw_order": 4,
-          "color": [
-            1.0,
-            1.0,
-            1.0,
-            1.0
-          ],
-          "preserve_aspect": false
-        },
-        {
           "image_component_path_id": 4639,
           "name": "Cross",
           "asset": "ui/exported_images/sharedassets1_600_Livingroom1_cross.png",
@@ -611,7 +592,26 @@
             36.0,
             64.0
           ],
-          "draw_order": 12,
+          "draw_order": 2,
+          "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "preserve_aspect": false
+        },
+        {
+          "image_component_path_id": 5072,
+          "name": "Toy",
+          "asset": "ui/exported_images/sharedassets1_621_Livingroom1_toy.png",
+          "rect": [
+            634.5,
+            324.9,
+            40.0,
+            56.0
+          ],
+          "draw_order": 3,
           "color": [
             1.0,
             1.0,
@@ -623,121 +623,89 @@
       ],
       "character_orders": [
         {
-          "character_order": 3,
-          "draw_order": 2,
-          "game_object_path_id": 758
-        },
-        {
-          "character_order": 6,
-          "draw_order": 3,
-          "game_object_path_id": 583
-        },
-        {
-          "character_order": 12,
-          "draw_order": 5,
-          "game_object_path_id": 303
-        },
-        {
-          "character_order": 8,
-          "draw_order": 7,
-          "game_object_path_id": 805
-        },
-        {
-          "character_order": 13,
-          "draw_order": 8,
-          "game_object_path_id": 815
-        },
-        {
-          "character_order": 7,
-          "draw_order": 9,
-          "game_object_path_id": 1261
-        },
-        {
-          "character_order": 5,
-          "draw_order": 10,
-          "game_object_path_id": 659
-        },
-        {
-          "character_order": 4,
-          "draw_order": 11,
-          "game_object_path_id": 608
-        },
-        {
           "character_order": 1,
-          "draw_order": 13,
+          "draw_order": 4,
           "game_object_path_id": 1328
         },
         {
+          "character_order": 13,
+          "draw_order": 5,
+          "game_object_path_id": 815
+        },
+        {
           "character_order": 2,
-          "draw_order": 14,
+          "draw_order": 6,
           "game_object_path_id": 1095
         },
         {
           "character_order": 11,
-          "draw_order": 15,
+          "draw_order": 7,
           "game_object_path_id": 1282
         },
         {
-          "character_order": 10,
-          "draw_order": 16,
-          "game_object_path_id": 1267
+          "character_order": 6,
+          "draw_order": 8,
+          "game_object_path_id": 583
         },
         {
-          "character_order": 14,
-          "draw_order": 17,
-          "game_object_path_id": 708
+          "character_order": 8,
+          "draw_order": 9,
+          "game_object_path_id": 805
         },
         {
           "character_order": 9,
-          "draw_order": 18,
+          "draw_order": 10,
           "game_object_path_id": 819
         },
         {
+          "character_order": 10,
+          "draw_order": 11,
+          "game_object_path_id": 1267
+        },
+        {
+          "character_order": 12,
+          "draw_order": 12,
+          "game_object_path_id": 303
+        },
+        {
+          "character_order": 14,
+          "draw_order": 13,
+          "game_object_path_id": 708
+        },
+        {
           "character_order": 0,
-          "draw_order": 19,
+          "draw_order": 14,
           "game_object_path_id": 808
+        },
+        {
+          "character_order": 4,
+          "draw_order": 15,
+          "game_object_path_id": 608
+        },
+        {
+          "character_order": 7,
+          "draw_order": 16,
+          "game_object_path_id": 1261
+        },
+        {
+          "character_order": 5,
+          "draw_order": 17,
+          "game_object_path_id": 659
+        },
+        {
+          "character_order": 3,
+          "draw_order": 18,
+          "game_object_path_id": 758
         }
       ],
       "excluded_layers": [
         {
-          "image_component_path_id": 4761,
-          "game_object_path_id": 758,
-          "name": "NotTrue",
+          "image_component_path_id": 4968,
+          "game_object_path_id": 1328,
+          "name": "Esenin",
           "reason": "character_view_or_descendant",
-          "asset": null,
-          "draw_order": 2
-        },
-        {
-          "image_component_path_id": 4862,
-          "game_object_path_id": 583,
-          "name": "Alkonost",
-          "reason": "character_view_or_descendant",
-          "asset": null,
-          "draw_order": 3
-        },
-        {
-          "image_component_path_id": 4301,
-          "game_object_path_id": 303,
-          "name": "Firefighter",
-          "reason": "character_view_or_descendant",
-          "asset": null,
-          "draw_order": 5
-        },
-        {
-          "image_component_path_id": 4366,
-          "game_object_path_id": 553,
-          "name": "Apple",
-          "reason": "conditional_room_object_state:_Code.Rooms.ObjectRoomObjectView",
-          "asset": "ui/exported_images/sharedassets1_632_Livingroom1_apple.png",
-          "draw_order": 6
-        },
-        {
-          "image_component_path_id": 5002,
-          "game_object_path_id": 805,
-          "name": "TaxiDriver",
-          "reason": "character_view_or_descendant",
-          "asset": null,
-          "draw_order": 7
+          "asset": "sprites/sharedassets0_1962.png",
+          "draw_order": 4
         },
         {
           "image_component_path_id": 4905,
@@ -745,39 +713,7 @@
           "name": "Rocker",
           "reason": "character_view_or_descendant",
           "asset": "sprites/sharedassets0_1962.png",
-          "draw_order": 8
-        },
-        {
-          "image_component_path_id": 4453,
-          "game_object_path_id": 1261,
-          "name": "Sirin",
-          "reason": "character_view_or_descendant",
-          "asset": null,
-          "draw_order": 9
-        },
-        {
-          "image_component_path_id": 4306,
-          "game_object_path_id": 659,
-          "name": "Anger",
-          "reason": "character_view_or_descendant",
-          "asset": null,
-          "draw_order": 10
-        },
-        {
-          "image_component_path_id": 4587,
-          "game_object_path_id": 608,
-          "name": "Nun",
-          "reason": "character_view_or_descendant",
-          "asset": null,
-          "draw_order": 11
-        },
-        {
-          "image_component_path_id": 4968,
-          "game_object_path_id": 1328,
-          "name": "Esenin",
-          "reason": "character_view_or_descendant",
-          "asset": "sprites/sharedassets0_1962.png",
-          "draw_order": 13
+          "draw_order": 5
         },
         {
           "image_component_path_id": 4479,
@@ -785,7 +721,7 @@
           "name": "Cold",
           "reason": "character_view_or_descendant",
           "asset": null,
-          "draw_order": 14
+          "draw_order": 6
         },
         {
           "image_component_path_id": 4700,
@@ -793,23 +729,23 @@
           "name": "Raskolnikov",
           "reason": "character_view_or_descendant",
           "asset": null,
-          "draw_order": 15
+          "draw_order": 7
         },
         {
-          "image_component_path_id": 4833,
-          "game_object_path_id": 1267,
-          "name": "Ballerina",
+          "image_component_path_id": 4862,
+          "game_object_path_id": 583,
+          "name": "Alkonost",
           "reason": "character_view_or_descendant",
           "asset": null,
-          "draw_order": 16
+          "draw_order": 8
         },
         {
-          "image_component_path_id": 5037,
-          "game_object_path_id": 708,
-          "name": "Fairytaller",
+          "image_component_path_id": 5002,
+          "game_object_path_id": 805,
+          "name": "TaxiDriver",
           "reason": "character_view_or_descendant",
           "asset": null,
-          "draw_order": 17
+          "draw_order": 9
         },
         {
           "image_component_path_id": 4380,
@@ -817,7 +753,31 @@
           "name": "Bestson",
           "reason": "character_view_or_descendant",
           "asset": null,
-          "draw_order": 18
+          "draw_order": 10
+        },
+        {
+          "image_component_path_id": 4833,
+          "game_object_path_id": 1267,
+          "name": "Ballerina",
+          "reason": "character_view_or_descendant",
+          "asset": null,
+          "draw_order": 11
+        },
+        {
+          "image_component_path_id": 4301,
+          "game_object_path_id": 303,
+          "name": "Firefighter",
+          "reason": "character_view_or_descendant",
+          "asset": null,
+          "draw_order": 12
+        },
+        {
+          "image_component_path_id": 5037,
+          "game_object_path_id": 708,
+          "name": "Fairytaller",
+          "reason": "character_view_or_descendant",
+          "asset": null,
+          "draw_order": 13
         },
         {
           "image_component_path_id": 4987,
@@ -825,6 +785,46 @@
           "name": "WolfHound",
           "reason": "character_view_or_descendant",
           "asset": null,
+          "draw_order": 14
+        },
+        {
+          "image_component_path_id": 4587,
+          "game_object_path_id": 608,
+          "name": "Nun",
+          "reason": "character_view_or_descendant",
+          "asset": null,
+          "draw_order": 15
+        },
+        {
+          "image_component_path_id": 4453,
+          "game_object_path_id": 1261,
+          "name": "Sirin",
+          "reason": "character_view_or_descendant",
+          "asset": null,
+          "draw_order": 16
+        },
+        {
+          "image_component_path_id": 4306,
+          "game_object_path_id": 659,
+          "name": "Anger",
+          "reason": "character_view_or_descendant",
+          "asset": null,
+          "draw_order": 17
+        },
+        {
+          "image_component_path_id": 4761,
+          "game_object_path_id": 758,
+          "name": "NotTrue",
+          "reason": "character_view_or_descendant",
+          "asset": null,
+          "draw_order": 18
+        },
+        {
+          "image_component_path_id": 4366,
+          "game_object_path_id": 553,
+          "name": "Apple",
+          "reason": "conditional_room_object_state:_Code.Rooms.ObjectRoomObjectView",
+          "asset": "ui/exported_images/sharedassets1_632_Livingroom1_apple.png",
           "draw_order": 19
         }
       ]
@@ -862,7 +862,7 @@
             268.0,
             388.0
           ],
-          "draw_order": 4,
+          "draw_order": 2,
           "color": [
             1.0,
             1.0,
@@ -881,7 +881,7 @@
             328.0,
             144.0
           ],
-          "draw_order": 10,
+          "draw_order": 3,
           "color": [
             1.0,
             1.0,
@@ -893,65 +893,49 @@
       ],
       "character_orders": [
         {
-          "character_order": 4,
-          "draw_order": 2,
-          "game_object_path_id": 780
-        },
-        {
-          "character_order": 3,
-          "draw_order": 3,
-          "game_object_path_id": 582
-        },
-        {
           "character_order": 0,
-          "draw_order": 6,
+          "draw_order": 5,
           "game_object_path_id": 1036
         },
         {
-          "character_order": 6,
-          "draw_order": 7,
-          "game_object_path_id": 541
+          "character_order": 4,
+          "draw_order": 6,
+          "game_object_path_id": 780
         },
         {
           "character_order": 1,
-          "draw_order": 8,
+          "draw_order": 7,
           "game_object_path_id": 565
         },
         {
           "character_order": 5,
-          "draw_order": 9,
+          "draw_order": 8,
           "game_object_path_id": 302
         },
         {
+          "character_order": 6,
+          "draw_order": 9,
+          "game_object_path_id": 541
+        },
+        {
           "character_order": 2,
-          "draw_order": 12,
+          "draw_order": 10,
           "game_object_path_id": 408
+        },
+        {
+          "character_order": 3,
+          "draw_order": 11,
+          "game_object_path_id": 582
         }
       ],
       "excluded_layers": [
-        {
-          "image_component_path_id": 4835,
-          "game_object_path_id": 780,
-          "name": "Fatman",
-          "reason": "character_view_or_descendant",
-          "asset": null,
-          "draw_order": 2
-        },
-        {
-          "image_component_path_id": 5176,
-          "game_object_path_id": 582,
-          "name": "FormerFema",
-          "reason": "character_view_or_descendant",
-          "asset": null,
-          "draw_order": 3
-        },
         {
           "image_component_path_id": 4537,
           "game_object_path_id": 613,
           "name": "Husband",
           "reason": "conditional_room_object_state:_Code.Rooms.ObjectRoomObjectView",
           "asset": "sprites/sharedassets0_1615.png",
-          "draw_order": 5
+          "draw_order": 4
         },
         {
           "image_component_path_id": 4901,
@@ -959,15 +943,15 @@
           "name": "Widow",
           "reason": "character_view_or_descendant",
           "asset": null,
-          "draw_order": 6
+          "draw_order": 5
         },
         {
-          "image_component_path_id": 4666,
-          "game_object_path_id": 541,
-          "name": "Alt",
+          "image_component_path_id": 4835,
+          "game_object_path_id": 780,
+          "name": "Fatman",
           "reason": "character_view_or_descendant",
           "asset": null,
-          "draw_order": 7
+          "draw_order": 6
         },
         {
           "image_component_path_id": 5105,
@@ -975,7 +959,7 @@
           "name": "Fan",
           "reason": "character_view_or_descendant",
           "asset": null,
-          "draw_order": 8
+          "draw_order": 7
         },
         {
           "image_component_path_id": 5149,
@@ -983,15 +967,15 @@
           "name": "Tourist",
           "reason": "character_view_or_descendant",
           "asset": null,
-          "draw_order": 9
+          "draw_order": 8
         },
         {
-          "image_component_path_id": 5246,
-          "game_object_path_id": 679,
-          "name": "Baby",
-          "reason": "conditional_room_object_state:_Code.Rooms.ObjectRoomObjectView",
-          "asset": "ui/exported_images/sharedassets1_618_Bathroom_baby.png",
-          "draw_order": 11
+          "image_component_path_id": 4666,
+          "game_object_path_id": 541,
+          "name": "Alt",
+          "reason": "character_view_or_descendant",
+          "asset": null,
+          "draw_order": 9
         },
         {
           "image_component_path_id": 4868,
@@ -999,6 +983,22 @@
           "name": "Dude",
           "reason": "character_view_or_descendant",
           "asset": null,
+          "draw_order": 10
+        },
+        {
+          "image_component_path_id": 5176,
+          "game_object_path_id": 582,
+          "name": "FormerFema",
+          "reason": "character_view_or_descendant",
+          "asset": null,
+          "draw_order": 11
+        },
+        {
+          "image_component_path_id": 5246,
+          "game_object_path_id": 679,
+          "name": "Baby",
+          "reason": "conditional_room_object_state:_Code.Rooms.ObjectRoomObjectView",
+          "asset": "ui/exported_images/sharedassets1_618_Bathroom_baby.png",
           "draw_order": 12
         }
       ]
@@ -1036,7 +1036,7 @@
             164.0,
             96.0
           ],
-          "draw_order": 6,
+          "draw_order": 2,
           "color": [
             1.0,
             1.0,
@@ -1049,33 +1049,33 @@
       "character_orders": [
         {
           "character_order": 0,
-          "draw_order": 2,
+          "draw_order": 3,
           "game_object_path_id": 977
         },
         {
-          "character_order": 1,
-          "draw_order": 3,
-          "game_object_path_id": 304
-        },
-        {
-          "character_order": 5,
+          "character_order": 4,
           "draw_order": 4,
-          "game_object_path_id": 837
-        },
-        {
-          "character_order": 3,
-          "draw_order": 5,
-          "game_object_path_id": 887
+          "game_object_path_id": 799
         },
         {
           "character_order": 2,
-          "draw_order": 7,
+          "draw_order": 5,
           "game_object_path_id": 1149
         },
         {
-          "character_order": 4,
+          "character_order": 3,
+          "draw_order": 6,
+          "game_object_path_id": 887
+        },
+        {
+          "character_order": 5,
+          "draw_order": 7,
+          "game_object_path_id": 837
+        },
+        {
+          "character_order": 1,
           "draw_order": 8,
-          "game_object_path_id": 799
+          "game_object_path_id": 304
         }
       ],
       "excluded_layers": [
@@ -1085,31 +1085,15 @@
           "name": "Anxiety",
           "reason": "character_view_or_descendant",
           "asset": null,
-          "draw_order": 2
-        },
-        {
-          "image_component_path_id": 4612,
-          "game_object_path_id": 304,
-          "name": "Doc",
-          "reason": "character_view_or_descendant",
-          "asset": null,
           "draw_order": 3
         },
         {
-          "image_component_path_id": 4820,
-          "game_object_path_id": 837,
-          "name": "Nervous",
+          "image_component_path_id": 4311,
+          "game_object_path_id": 799,
+          "name": "Bald",
           "reason": "character_view_or_descendant",
           "asset": null,
           "draw_order": 4
-        },
-        {
-          "image_component_path_id": 4367,
-          "game_object_path_id": 887,
-          "name": "Foreigner",
-          "reason": "character_view_or_descendant",
-          "asset": null,
-          "draw_order": 5
         },
         {
           "image_component_path_id": 4970,
@@ -1117,12 +1101,28 @@
           "name": "Marauder",
           "reason": "character_view_or_descendant",
           "asset": null,
+          "draw_order": 5
+        },
+        {
+          "image_component_path_id": 4367,
+          "game_object_path_id": 887,
+          "name": "Foreigner",
+          "reason": "character_view_or_descendant",
+          "asset": null,
+          "draw_order": 6
+        },
+        {
+          "image_component_path_id": 4820,
+          "game_object_path_id": 837,
+          "name": "Nervous",
+          "reason": "character_view_or_descendant",
+          "asset": null,
           "draw_order": 7
         },
         {
-          "image_component_path_id": 4311,
-          "game_object_path_id": 799,
-          "name": "Bald",
+          "image_component_path_id": 4612,
+          "game_object_path_id": 304,
+          "name": "Doc",
           "reason": "character_view_or_descendant",
           "asset": null,
           "draw_order": 8
@@ -1208,14 +1208,14 @@
           "preserve_aspect": true
         },
         {
-          "image_component_path_id": 4843,
-          "name": "Bed",
-          "asset": "ui/exported_images/sharedassets1_640_Livingroom2_obj1.png",
+          "image_component_path_id": 4368,
+          "name": "Nightstand",
+          "asset": "ui/exported_images/sharedassets1_576_Bedroom_nightstand.png",
           "rect": [
-            461.370029,
-            572.585013,
-            1261.259943,
-            580.229974
+            1014.9,
+            515.7,
+            272.0,
+            264.0
           ],
           "draw_order": 2,
           "color": [
@@ -1224,10 +1224,7 @@
             1.0,
             1.0
           ],
-          "preserve_aspect": false,
-          "condition": "bed_visible",
-          "source_state_component": 4801,
-          "source_state_enum": 0
+          "preserve_aspect": false
         },
         {
           "image_component_path_id": 4646,
@@ -1239,7 +1236,7 @@
             200.0,
             484.0
           ],
-          "draw_order": 10,
+          "draw_order": 3,
           "color": [
             1.0,
             1.0,
@@ -1249,23 +1246,26 @@
           "preserve_aspect": false
         },
         {
-          "image_component_path_id": 4368,
-          "name": "Nightstand",
-          "asset": "ui/exported_images/sharedassets1_576_Bedroom_nightstand.png",
+          "image_component_path_id": 4843,
+          "name": "Bed",
+          "asset": "ui/exported_images/sharedassets1_640_Livingroom2_obj1.png",
           "rect": [
-            1014.9,
-            515.7,
-            272.0,
-            264.0
+            461.370029,
+            572.585013,
+            1261.259943,
+            580.229974
           ],
-          "draw_order": 12,
+          "draw_order": 6,
           "color": [
             1.0,
             1.0,
             1.0,
             1.0
           ],
-          "preserve_aspect": false
+          "preserve_aspect": false,
+          "condition": "bed_visible",
+          "source_state_component": 4801,
+          "source_state_enum": 0
         }
       ],
       "character_orders": [
@@ -1281,14 +1281,6 @@
         }
       ],
       "excluded_layers": [
-        {
-          "image_component_path_id": 4447,
-          "game_object_path_id": 339,
-          "name": "Outline",
-          "reason": "conditional_room_object_state:_Code.Rooms.ObjectRoomObjectView",
-          "asset": null,
-          "draw_order": 3
-        },
         {
           "image_component_path_id": 4593,
           "game_object_path_id": 1337,
@@ -1306,12 +1298,12 @@
           "draw_order": 5
         },
         {
-          "image_component_path_id": 4737,
-          "game_object_path_id": 640,
-          "name": "Mushroomlist",
+          "image_component_path_id": 4447,
+          "game_object_path_id": 339,
+          "name": "Outline",
           "reason": "conditional_room_object_state:_Code.Rooms.ObjectRoomObjectView",
-          "asset": "ui/exported_images/sharedassets1_623_Bedroom_note.png",
-          "draw_order": 6
+          "asset": null,
+          "draw_order": 7
         },
         {
           "image_component_path_id": 5079,
@@ -1319,7 +1311,7 @@
           "name": "TVMask",
           "reason": "inactive_self_or_ancestor",
           "asset": "ui/exported_images/sharedassets1_643_tv_mask.png",
-          "draw_order": 7
+          "draw_order": 8
         },
         {
           "image_component_path_id": 4989,
@@ -1327,7 +1319,7 @@
           "name": "Curtain",
           "reason": "conditional_room_object_state:_Code.Rooms.ObjectRoomObjectView",
           "asset": "ui/exported_images/sharedassets1_537_fake_curtain_0.png",
-          "draw_order": 9
+          "draw_order": 10
         },
         {
           "image_component_path_id": 4489,
@@ -1343,6 +1335,14 @@
           "name": "Clock",
           "reason": "conditional_room_object_state:_Code.Rooms.ObjectRoomObjectView",
           "asset": "ui/exported_images/sharedassets1_622_Bedroom_clock.png",
+          "draw_order": 12
+        },
+        {
+          "image_component_path_id": 4737,
+          "game_object_path_id": 640,
+          "name": "Mushroomlist",
+          "reason": "conditional_room_object_state:_Code.Rooms.ObjectRoomObjectView",
+          "asset": "ui/exported_images/sharedassets1_623_Bedroom_note.png",
           "draw_order": 13
         }
       ]

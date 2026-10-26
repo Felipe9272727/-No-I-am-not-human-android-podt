@@ -65,6 +65,30 @@ def clean_float(x):
     return round(float(x), 6)
 
 
+def build_transform_children(transforms):
+    """Index children in Unity's serialized sibling order.
+
+    Iterating the asset's object table and grouping by m_Father loses the
+    Transform.m_Children order used by Unity for hierarchy and UI draw order.
+    """
+    children = {}
+    for parent_id, transform in transforms.items():
+        ordered = [int(child["m_PathID"]) for child in transform.get("m_Children", [])]
+        for child_id in ordered:
+            child = transforms.get(child_id)
+            if child is None:
+                raise ValueError(f"Transform {parent_id} references missing child {child_id}")
+            actual_parent = int(child.get("m_Father", {}).get("m_PathID", 0))
+            if actual_parent != int(parent_id):
+                raise ValueError(f"Transform {parent_id} lists child {child_id} whose father is {actual_parent}")
+        children[int(parent_id)] = ordered
+    for child_id, transform in transforms.items():
+        parent_id = int(transform.get("m_Father", {}).get("m_PathID", 0))
+        if parent_id and child_id not in children.get(parent_id, []):
+            raise ValueError(f"Transform {parent_id} omits child {child_id} from m_Children")
+    return children
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--data", type=Path, required=True, help="NoImNotAHuman_Data directory")
@@ -232,15 +256,11 @@ def main():
         return view, p
 
     # Export hierarchy under room-view GameObjects, keeping every local transform.
-    children = {}
     transform_to_go = {}
     for tid, t in transforms.items():
         gid = int(t["m_GameObject"]["m_PathID"])
         transform_to_go[tid] = gid
-    for tid, t in transforms.items():
-        parent_tid = int(t["m_Father"]["m_PathID"])
-        if parent_tid:
-            children.setdefault(parent_tid, []).append(tid)
+    children = build_transform_children(transforms)
     def hierarchy(root_gid):
         root_t = next((tid for tid, gid in transform_to_go.items() if gid == root_gid), None)
         if root_t is None:
