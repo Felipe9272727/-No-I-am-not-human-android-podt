@@ -406,7 +406,12 @@ public final class MainActivity extends AndroidApplication {
             boolean advancing=activityResumed && (canvas == null || (!canvas.isPauseOpen() && !canvas.isSettingsOpen()));
             int before=sleepTransition.mode();
             sleepTransition.tick(now,advancing);
-            if (sleepTransition.claimDayTransitionAck(nativeBusy,sleepTransitionPending())) act("complete_day_transition",null,null);
+            if (sleepTransition.claimDayTransitionAck(nativeBusy,sleepTransitionPending())) {
+                JSONObject action=new JSONObject();
+                try { action.put("action","complete_day_transition"); }
+                catch (JSONException ignored) { return; }
+                dispatch(action);
+            }
             if (before==SleepTransition.REVEALING_DAY && !sleepTransition.isActive()) {
                 updateEngine(); updateMusic(); refreshMorningTvButton();
             }

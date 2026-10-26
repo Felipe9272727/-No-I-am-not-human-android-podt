@@ -1,0 +1,56 @@
+{
+  "version": "0.10-first-morning",
+  "version_code": 10,
+  "apk": "deliverables/NINAH-Port-Primeira-Manha.apk",
+  "bytes": 338726013,
+  "sha256": "481c4f6ca37eae321061c9b3c270531a137d486e27f2df7ea15ca349d16489bf",
+  "implementation_checkpoint": "68c68c47c2ad0cc9bb4c8db27e717134316371da",
+  "native_source_tree_sha256": "a5a4630a81d7b7882f11934749e997df450210644ad69f47c2430cb8e1d0f7c0",
+  "native_source_fingerprint_inputs": 53,
+  "native_libraries_built_fresh_for": [
+    "arm64-v8a",
+    "x86_64"
+  ],
+  "native_reference_apk_reused": false,
+  "scope": [
+    "Explicit bedroom sleep after source night goal",
+    "Recovered first-morning manager callbacks and two day-1 actions",
+    "Seven original translated lines of tv_1_necessary through explicit TV interaction",
+    "Original bed state: sprite, absolute local position and scale",
+    "Yarn variables and visited nodes retained across completed dialogue sessions",
+    "Adapted 500ms fade with busy ACK retry, exactly-once claim and pause/background clock freeze",
+    "Original day music selected after morning transition"
+  ],
+  "validation": {
+    "native_host_asan_ubsan": true,
+    "sleep_transition_java_policy": true,
+    "gles2_world_and_fallback": true,
+    "room_views_gles2_vs_cpu": 7,
+    "bed_visibility_condition": true,
+    "apk_only_shader_classpath": true,
+    "fully_decoded_pngs": 1448,
+    "mesh_hashes": 100,
+    "signature_schemes": [
+      "v1",
+      "v2",
+      "v3"
+    ],
+    "stable_signer_sha256": "f07ec9f06df46a41621203512a410bbbfce871a4300cb85a0bbe59461721176a"
+  },
+  "android_device_execution_tested": false,
+  "android_emulator_execution_tested": false,
+  "full_campaign_implemented": false,
+  "limitations": [
+    "Next night and Daughter/Esenin/Anxiety visits remain uninitialized",
+    "Source TV video/audio are not integrated; this release adds its dialogue text",
+    "Final daytime lighting and URP parity remain incomplete",
+    "Original startup roster remains unverified; transition preserves the current explicit reconstruction roster",
+    "Save remains in process memory; closing the app loses state"
+  ],
+  "test_instructions": [
+    "Complete the first Neighbour entrance visit",
+    "Enter Bedroom through its door",
+    "Tap Dormir; wait for the adapted fade",
+    "Tap Assistir à TV; advance the seven original lines"
+  ]
+}

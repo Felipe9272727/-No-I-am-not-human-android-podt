@@ -951,6 +951,10 @@ def main() -> None:
             build_tools, android_jar, work, aar_resource_dirs,
             args.version_code, args.version_name,
         )
+        # Validate Android Java before invoking both native cross-compilers.
+        dex, _, unresolved_dependencies = compile_java(
+            build_tools, android_jar, work, generated_sources, engine_jars,
+        )
         native_reuse = None
         if args.reference_apk:
             native_libs, native_reuse = reuse_reference_native(
@@ -962,9 +966,6 @@ def main() -> None:
             assert bin_dir is not None
             archives = build_rust_archives(bin_dir, cargo, args.rebuild_rust)
             native_libs, source_modules = compile_native(bin_dir, archives, work)
-        dex, _, unresolved_dependencies = compile_java(
-            build_tools, android_jar, work, generated_sources, engine_jars,
-        )
         if native_source_fingerprint() != source_fingerprint_before:
             raise RuntimeError("Native sources changed during compilation; refusing mixed inputs")
         output = args.output.resolve()

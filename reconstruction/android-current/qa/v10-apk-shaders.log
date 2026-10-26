@@ -1,0 +1,15 @@
+Shader resource URL=jar:file:/workspace/scratch/ad0b61c5ef81/deliverables/NINAH-Port-Primeira-Manha.apk!/com/badlogic/gdx/graphics/g3d/shaders/default.vertex.glsl
+ClasspathShaderProbe: default/depth vertex and fragment resources loaded from delivered APK
+
+HOST_RENDER_MEAN_MS=5.53200096
+RENDERER_DIAGNOSTIC=ready
+
+GL vendor=Mesa, renderer=llvmpipe (LLVM 20.1.2, 256 bits), version=OpenGL ES 2.0 Mesa 25.2.8-0ubuntu0.24.04.2, maxTextureSize=16384, depthBits=24
+World meshes=91, render items=111, mesh colliders=24, texture cache=46137344 bytes, visible textures=11
+FPS=60 render-submit=12.79 ms, surface=1280x720, draws=14 triangles=19886, texture loads=11 evictions=0, cached materials=111 interaction snapshots=1
+GL_RENDERER=llvmpipe (LLVM 20.1.2, 256 bits)
+GL_VERSION=OpenGL ES 2.0 Mesa 25.2.8-0ubuntu0.24.04.2
+WORLD_PREVIEW_POSE={"position":[-3.985,1.584,-6.998],"pitch":0,"yaw":0}
+WORLD_PREVIEW_PNG=/workspace/scratch/ad0b61c5ef81/reconstruction/android-current/qa/apk-only-gles2.png
+
+apk_classpath_resources_verified
