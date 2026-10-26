@@ -65,3 +65,6 @@ tools/mesh-opt/world_manifest.optimized.json
 # Generated host GLES captures; keep only the pinned pre-fix regression input.
 tools/android-current/qa/fixtures/*.png
 !tools/android-current/qa/fixtures/upward-ceiling-before.png
+
+# Generated room-composition captures and reference renders
+reconstruction/android-current/qa/rooms-v09/

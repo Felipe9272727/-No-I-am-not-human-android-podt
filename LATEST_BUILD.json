@@ -1,11 +1,11 @@
 {
-  "version": "0.8-graphics-doors",
-  "version_code": 8,
+  "version": "0.9-rooms-collision",
+  "version_code": 9,
   "package": "org.reconstruction.port.preview",
-  "artifact": "NINAH-Port-Animacoes.apk",
-  "bytes": 338611243,
-  "sha256": "4a4440947b6c49f06a6b48222fcd31a48cc466ad2543cd04218aa89fe4b0f8be",
-  "validation_report": "reconstruction/android-current/graphics_doors_build_report_v08.json",
+  "artifact": "NINAH-Port-Comodos-Colisao.apk",
+  "bytes": 338611325,
+  "sha256": "d82a01933761044cd68d8bfd216bbae0a21fc4fd9d789af4563e71d43f49c533",
+  "validation_report": "reconstruction/android-current/rooms_collision_build_report_v09.json",
   "host_report": "reconstruction/android-current/host_validation.json",
   "world_report": "reconstruction/android-current/world_validation.json",
   "android_device_execution_tested": false,
@@ -18,7 +18,7 @@
   "android_emulator_attempt": "blocked before installation: package/activity services unavailable",
   "physical_device_fix_verified": false,
   "confirmed_crash_cause": "missing libGDX classpath GLSL resources",
-  "shader_report": "reconstruction/android-current/shader_v08_validation.json",
+  "shader_report": "reconstruction/android-current/shader_v09_validation.json",
   "graphics_report": "reconstruction/android-current/graphics_v08_validation.json",
   "music_report": "reconstruction/android-current/music_v05_validation.json",
   "previous_v04_house_opened_user_report": true,
@@ -48,5 +48,10 @@
   "front_door_swing_implemented": false,
   "source_sprite_playback_modes": true,
   "night_neutral_tonemapping": true,
-  "source_linear_color_path": true
+  "source_linear_color_path": true,
+  "room_layers_report": "reconstruction/android-current/room_layers_v09_validation.json",
+  "authored_room_views": 7,
+  "authored_static_room_layers": 18,
+  "anisotropic_box_collision_fixed": true,
+  "box_floor_support": true
 }

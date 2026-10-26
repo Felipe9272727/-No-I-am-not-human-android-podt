@@ -149,3 +149,12 @@ without GL errors and match v0.6 pixels. The final APK loads shaders solely from
 its own resources and requests hardware UI in its binary manifest. No host test
 validates Android Canvas/SurfaceFlinger composition or physical FPS here. The
 full campaign remains bounded; new interactions were paused for the FPS work.
+
+
+## 2026-10-26 — v0.9 rooms and collision
+
+Fixed false box contacts caused by using one inverse-scale maximum for every local axis. Active source boxes are orthogonal; closest-point distance now uses world units. Source hatch 2407 participates in floor support, with allocation-free precomputed upward face data and the existing port step/drop window. Geometry QA covers actual bidirectional movement across the hatch, return to the lower floor, true wall contact, clearance outside the box, excessive step height and overhead contact.
+
+Recovered 18 static Image layers in the seven existing authored room views. Source hierarchy order, canvas rectangles, color, preserveAspect and local rotations are retained; actor draw order remains roster controlled. 77 dynamic, inactive, null-sprite or unsupported images are explicitly excluded. EntryRoom transform 3344 was verified directly from level1 as identity before restoring sky and porch. There is no new basement room view or invented area unlock.
+
+The seven GLES2 room captures match an independent CPU composition with maximum mean RGB error below 0.28/255. World/fallback graphics, geometry, shader resources loaded exclusively from the final APK, signature v1/v2/v3, PNG decoding and mesh hashes pass. The Android UI compiles, but no physical device or emulator execution validates v0.9 here. Native rules/JNI are reused only after matching the v0.8 APK hash and all 52 native-source fingerprints. Campaign scope remains the first visit; day 1 is still unimplemented.

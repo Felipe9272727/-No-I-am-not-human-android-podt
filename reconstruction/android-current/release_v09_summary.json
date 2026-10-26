@@ -1,0 +1,41 @@
+{
+  "version": "0.9-rooms-collision",
+  "version_code": 9,
+  "apk": "deliverables/NINAH-Port-Comodos-Colisao.apk",
+  "bytes": 338611325,
+  "sha256": "d82a01933761044cd68d8bfd216bbae0a21fc4fd9d789af4563e71d43f49c533",
+  "source_implementation_commit": "7fd6691646c49e9a969aa3bd4f628798d8f67411",
+  "scope": [
+    "Exact sphere contact distance for orthogonal source OBBs instead of inverse-scale inflation",
+    "Box face ground support using existing port step/drop tolerances; source hatch 2407 bidirectional traversal",
+    "18 original static room canvas layers in seven existing views, merged with native active roster in source order"
+  ],
+  "host_validation": {
+    "geometry": true,
+    "room_compositions": 7,
+    "room_cpu_reference_mean_rgb_error_max": 0.27121744791666663,
+    "gles2_world_and_injected_fallback": true,
+    "apk_only_classpath_shaders": true,
+    "signatures": [
+      "v1",
+      "v2",
+      "v3"
+    ],
+    "pngs_fully_decoded": 1448,
+    "world_mesh_hashes": 100,
+    "original_music_tracks": 14
+  },
+  "android_device_execution_tested": false,
+  "android_emulator_execution_tested": false,
+  "new_rooms_unlocked": false,
+  "day1_campaign_implemented": false,
+  "full_campaign_implemented": false,
+  "limitations": [
+    "Runtime rendering and movement are reconstructed; recovered art is not the original Unity runtime",
+    "The seven room roots are authored 2D close-up views accessed from the 3D house",
+    "Conditional object states, additional progression and final URP visual parity are incomplete",
+    "Port capsule sampling and step tolerances do not establish source ECM2 controller parity"
+  ],
+  "native_source_tree_sha256": "33c9b6e4338fa2dba8e4c6673b79f94047901f62f46e8da9ce08b5a7e5ba9865",
+  "native_libraries_reused_from_exact_v08_sha256": "4a4440947b6c49f06a6b48222fcd31a48cc466ad2543cd04218aa89fe4b0f8be"
+}
