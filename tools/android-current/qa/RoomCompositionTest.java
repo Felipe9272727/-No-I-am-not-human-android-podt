@@ -23,6 +23,10 @@ public final class RoomCompositionTest {
         // Entry sky is authored behind the transparent porch, not a single flattened background.
         RoomComposition.Scene entrance = composition.room(5);
         if (entrance.layers.size() < 2) throw new AssertionError("Entry sky/porch layers were lost");
+        int conditionalBeds = 0;
+        for (RoomComposition.Layer layer : composition.room(6).layers)
+            if ("bed_visible".equals(layer.condition)) conditionalBeds++;
+        if (conditionalBeds != 1) throw new AssertionError("Missing decoded bed state condition");
         if (composition.room(7) != null) throw new AssertionError("Invented eighth room");
         if (composition.room(0).actorOrder(-1) != Integer.MAX_VALUE) throw new AssertionError("Unknown roster slot");
         RoomComposition invalid = RoomComposition.parse(new JSONObject("{\"schema_version\":1,\"rooms\":[{\"id\":0,\"layers\":[{\"asset\":\"../outside.png\",\"rect\":[0,0,1,1]}]}]}"));

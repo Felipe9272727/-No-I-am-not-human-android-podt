@@ -14,6 +14,8 @@ A versão 0.7 remove a camada de software que forçava a interface a ser rasteri
 
 A versão 0.8 recupera o tratamento de cor da cena noturna, anima seis portas internas a partir dos valores originais e permite voltar à exploração após a primeira conversa. A versão 0.9 corrige barreiras exageradas de caixas com escalas diferentes entre eixos e o apoio no alçapão. Recupera 18 camadas de cenário nas sete vistas internas originais, com posição, transparência e ordem de desenho da cena. Personagens e objetos condicionais continuam dependendo do estado do jogo; essa mudança não acrescenta novos dias ou libera áreas ainda sem progressão. Os testes de geometria e de desenho GLES2 passaram no host; o APK ainda precisa de teste no aparelho.
 
+A versão 0.10 acrescenta a primeira manhã: após concluir a visita inicial, entre no quarto e toque em **Dormir**. A virada aplica as regras recuperadas do dia 1, com duas ações disponíveis; **Assistir à TV** abre as sete falas originais de `tv_1_necessary`, em português. A cama usa sua imagem, posição e escala recuperadas. O fade de 500 ms e os botões são adaptações para toque. Pausa e segundo plano congelam a transição, e a música muda para a faixa original diurna. A próxima noite, as visitas seguintes e a iluminação diurna final continuam em desenvolvimento.
+
 ## Controles no celular
 
 - Durante o vídeo: **DEBUG: pular intro** entra na casa sem esperar 72 segundos.
@@ -25,7 +27,7 @@ A versão 0.8 recupera o tratamento de cor da cena noturna, anima seis portas in
 - Mirar perto de uma porta: mostrar a ação de interação.
 - Botão de pausa: continuar, opções, menu e salvar a sessão.
 
-O save é apenas em memória: fechar o aplicativo perde o estado. A sequência atual termina após a primeira conversa com o vizinho dentro da casa. Os próximos dias, o telefone em close-up, a iluminação final e outros efeitos permanecem em desenvolvimento.
+O save é apenas em memória: fechar o aplicativo perde o estado. A sequência atual chega à primeira manhã e ao primeiro noticiário. A noite do dia 1, o telefone em close-up, a iluminação final e outros efeitos permanecem em desenvolvimento.
 
 ## Código e dados
 

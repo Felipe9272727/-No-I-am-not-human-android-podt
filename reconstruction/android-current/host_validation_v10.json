@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "cpp_sources_sha256": "be7e63fca5f11daf8eecda50b0262cf02b6256fdc340cac452c90552d5c10891",
+  "host_sanitizers": [
+    "AddressSanitizer",
+    "UndefinedBehaviorSanitizer"
+  ],
+  "source_tv_node": "tv_1_necessary",
+  "source_tv_lines": 7,
+  "day1_energy": 2,
+  "transition_and_dialogue_save_restore": true,
+  "android_device_execution_tested": false,
+  "full_campaign_implemented": false,
+  "original_executables_loaded": false
+}

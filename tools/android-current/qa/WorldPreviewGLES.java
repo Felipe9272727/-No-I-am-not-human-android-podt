@@ -225,10 +225,30 @@ public final class WorldPreviewGLES {
             int error = Gdx.gl.glGetError();
             if (error != GL20.GL_NO_ERROR) throw new IllegalStateException("Room GLES error: " + error);
             Pixmap pixmap = ScreenUtils.getFrameBufferPixmap(0, 0, WIDTH, HEIGHT);
-            PixmapIO.writePNG(new com.badlogic.gdx.files.FileHandle(directory.resolve("room-" + room + ".png").toFile()), pixmap, -1, true);
+            writeRoomCapture(directory.resolve("room-" + room + ".png"), pixmap);
             pixmap.dispose();
         }
+        engine.setState(new JSONObject().put("phase", "playing").put("view_mode", "room").put("room", 6)
+                .put("campaign", new JSONObject().put("bed_visible", false)));
+        engine.render();
+        if (engine.getRendererStatus().startsWith("error:")) throw new IllegalStateException(engine.getRendererDiagnostic());
+        Pixmap hiddenBed = ScreenUtils.getFrameBufferPixmap(0, 0, WIDTH, HEIGHT);
+        writeRoomCapture(directory.resolve("room-6-bed-hidden.png"), hiddenBed);
+        hiddenBed.dispose();
         System.out.println("ROOM_COMPOSITIONS=7; original static layers, empty campaign roster");
+    }
+
+    private static void writeRoomCapture(Path path, Pixmap pixmap) throws Exception {
+        // Desktop-only capture writer. Close each PNG explicitly; this test
+        // writes several framebuffers in one EGL session.
+        java.awt.image.BufferedImage image = new java.awt.image.BufferedImage(pixmap.getWidth(), pixmap.getHeight(), java.awt.image.BufferedImage.TYPE_INT_ARGB);
+        for (int y = 0; y < pixmap.getHeight(); y++) for (int x = 0; x < pixmap.getWidth(); x++) {
+            int rgba = pixmap.getPixel(x, pixmap.getHeight() - 1 - y);
+            image.setRGB(x, y, ((rgba & 255) << 24) | (rgba >>> 8));
+        }
+        try (java.io.OutputStream stream = Files.newOutputStream(path)) {
+            if (!javax.imageio.ImageIO.write(image, "png", stream)) throw new IllegalStateException("No PNG ImageIO writer");
+        }
     }
 
     /** Optional CPU ray probe reports the first source mesh/material at screen center. */

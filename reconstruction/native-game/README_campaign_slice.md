@@ -1,43 +1,11 @@
-# Campaign slice after the first Neighbour conversation
+# Campaign slice through the first morning
 
-The native host now keeps the first verified visit and the first in-house
-conversation inside the playable house state. Ending `entrance_neighbour_0`
-completes the day-0 preset visit and returns to exploration. The reached
-Neighbour routes all call LetIn; no refusal choice is invented. Completing `talk_neighbour_1` returns to exploration,
-records one Neighbour room talk, and prevents replaying it as though an
-unverified `talk_neighbour_2` existed. The recovered Yarn program contains
-`talk_neighbour_1` but no `talk_neighbour_2` node.
+Day-0 Neighbour admission and the first in-house talk return to exploration. The source entrance routes end in LetIn; no refusal choice is invented. Completing talk_neighbour_1 records a pending talk, and the sleep transition commits it through the recovered UpdateTalksCount ordering. Completed Yarn snapshots retain variables and visited nodes between conversations.
 
-The campaign snapshot exposes `night_events_complete`, the Neighbour talk
-count, and `next_day_preset_visits`. The last field is schedule data, not an
-arrival event. It comes from the extracted preset records in
-`generated/production_characters.hpp`; for day 1 the records identify Daughter
-as guest 1, Esenin as guest 2, and Anxiety as guest 3. The host does not advance
-the clock or stage those visitors yet.
+Version 0.10 advances from night 0 to morning 1 through the explicit bedroom Sleep action. The native gate requires the room view, no active dialogue, and completed night events. Empty pending suicide/exile/coffee schedules are required before this bounded adapter starts. The recovered progression module applies deferred poses, calculates character counts, refills day-1 actions to 2, increments FEMA by the serialized 0.1 value, increments the unchecked-sign counter to 1, and resets the consumable summons counter. GameEventsManager.BeginNewDay is literally Return. The Prophet threshold is 2; its unimplemented consequence is guarded rather than reported as successful. Field offsets, raw hashes and the bed state are retained in ../reverse-campaign/morning_config.json.
 
-The static evidence chain consulted in the v0.8 checkpoint is:
+The bedroom TV action selects tv_1_necessary: seven original lines ending in Stop. Sleep completion requires an ACK after the adapted 500 ms mobile fade, and duplicate ACKs are rejected. In-memory checkpoints cover the pending transition and TV cursor without rerunning completed effects. Pausing/backgrounding freezes the fade and its clock.
 
-- `EntranceRoom.ShowFullSizeCharacter` captures the event condition and its
-  dialog-ended callback calls the game-events manager to complete that event.
-- `DialogManager.RunDialog` calls `AddTalk` for completed room dialogue, while
-  its entrance-node check excludes `entrance_*` nodes. `ARoom.GetDialogName`
-  derives the next `talk_<character>_<index>` from the saved talk count.
-- `DayNightController.Change` permits a Night-to-Day transition only when the
-  current night's ding-dongs are complete. The following `InitNewDay` performs
-  additional manager callbacks before the day is ready.
-- `EntranceRoom.GetDialogName` resolves the first Daughter visit to
-  `entrance_daughter_1`; that Yarn node and the day-1 preset slots are present
-  in the recovered compiled program and character configuration.
+Day-1 Daughter/Esenin/Anxiety preset slots remain schedule data only. Their visits and night 1 are not initialized. The final roster after all original startup callbacks remains unverified; this transition preserves the reconstruction's explicit roster. Original TV video/audio and final daytime URP visuals are not supplied by the seven-line dialogue integration. No original executable or library was run.
 
-The full next-day transition remains out of scope because `InitNewDay` invokes
-`CharactersManager.BeginNewDay`, dialog-sign refresh, consumables, and event
-generation. Those callbacks are not integrated into this host. The fresh-save
-inside roster after all startup callbacks also remains unverified. No day-1
-arrival is inferred from the schedule snapshot, and no original executable or
-library was run.
-
-`preset_schedule_tests.cpp` verifies day-0 and day-1 preset slots against the
-generated character catalog. The Android native host regression covers ending
-the Neighbour visit, completing the first room talk, resuming exploration,
-retaining talk/event state through the in-memory save, and rejecting the
-unavailable repeat dialogue.
+The host regression uses ASan/UBSan and covers both Neighbour routes, the first morning, all seven TV line IDs, inventory preservation, save/load before and during the transition and dialogue, duplicate/rejected actions, and the explicit next-night boundary. This is host rules validation, not Android execution.

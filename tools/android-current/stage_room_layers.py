@@ -363,7 +363,62 @@ def make_output(
         },
         "rooms": audit_rooms,
     }
-    return {"schema_version": 1, "rooms": output_rooms}, audit
+    runtime = {"schema_version": 1, "rooms": output_rooms}
+    add_verified_bed(runtime, audit, room_manifest, ui_components, assets_manifest, assets_root)
+    return runtime, audit
+
+
+def add_verified_bed(runtime, audit, room_manifest, ui_components, assets_manifest, assets_root):
+    """Use the decoded ObjectRoomObjectState rather than its inactive editor pose."""
+    evidence_path = Path(__file__).resolve().parents[2] / "reconstruction/reverse-campaign/morning_config.json"
+    evidence = read_json(evidence_path)
+    records = evidence["bed_object_room_object_views"]
+    if len(records) != 1 or records[0]["path_id"] != 4801:
+        raise ValueError("Expected source bed component 4801")
+    record = records[0]
+    fields = record["decoded_fields"]
+    if fields["bytes_consumed"] != record["raw_object_bytes"]:
+        raise ValueError("Bed state payload is not fully decoded")
+    states = fields["_states"]["values"]
+    if len(states) != 1 or states[0]["enum_value"] != fields["_startState"]["value"]:
+        raise ValueError("Bed runtime state needs an explicit selector")
+    state = states[0]
+    image = ui_components[fields["_image_ptr"]["path_id"]]
+    if image["path_id"] != 4843 or state["sprite"]["asset_file"] != "sharedassets1.assets" or state["sprite"]["path_id"] != 640:
+        raise ValueError("Unexpected bed sprite evidence")
+    room = next(r for r in room_manifest["rooms"] if r["enum_value"] == 6)
+    sprite_source = next(r for r in room["image_components"] if r["component_path_id"] == 4843)
+    asset, _ = image_asset(sprite_source, image, assets_manifest, assets_root)
+    if asset is None:
+        raise ValueError("Verified bed sprite is absent from staged assets")
+    transform = image["rect_transform"]
+    if transform["anchor_min"] != {"x": 0.5, "y": 0.5} or transform["anchor_max"] != {"x": 0.5, "y": 0.5}:
+        raise ValueError("Bed anchor layout needs a different transform adapter")
+    left, top, width, height = transform["screen_rect_1920x1080"]
+    px, py = state["position_shift"]
+    sx, sy = state["scale_shift"]
+    pivot = transform["pivot"]
+    dx = px - transform["anchored_position"]["x"]
+    dy = py - transform["anchored_position"]["y"]
+    rect = [left + dx - (width * sx - width) * pivot["x"],
+            top - dy - (height * sy - height) * (1 - pivot["y"]), width * sx, height * sy]
+    order = next(i for i, node in enumerate(room["hierarchy"]) if node["game_object_path_id"] == 398)
+    target = next(r for r in runtime["rooms"] if r["id"] == 6)
+    target["layers"].append({"image_component_path_id": 4843, "name": "Bed", "asset": asset,
+        "rect": [round(v, 6) for v in rect], "draw_order": order,
+        "color": image["image"]["color_rgba"], "preserve_aspect": image["image"]["preserve_aspect"],
+        "condition": "bed_visible", "source_state_component": 4801, "source_state_enum": state["enum_value"]})
+    target["layers"].sort(key=lambda layer: layer["draw_order"])
+    target["excluded_layers"] = [r for r in target["excluded_layers"] if r["image_component_path_id"] != 4843]
+    audit["totals"]["conditional_layers"] = 1
+    audit["totals"]["excluded_layers"] -= 1
+    audited_room = next(r for r in audit["rooms"] if r["id"] == 6)
+    audited_room["conditional_layers"] = 1
+    audited_room["excluded_layers"] -= 1
+    reason = "conditional_room_object_state:_Code.Rooms.ObjectRoomObjectView"
+    audited_room["exclusion_reasons"][reason] -= 1
+    audit["evidence"]["verified_bed_state"] = {"source": str(evidence_path.relative_to(Path(__file__).resolve().parents[2])),
+        "component_path_id": 4801, "activation": "bounded Android host bed_visible flag", "raw_object_sha256": record["raw_object_sha256"]}
 
 
 def write_json(path: Path, data: Any) -> None:

@@ -1,0 +1,1085 @@
+{
+  "provenance": "Unity serialized raw fields parsed with UnityPy asset references plus Cpp2IL declarations; no original game executable/library run",
+  "UnityPy": "1.25.4",
+  "schema_sources": [
+    "restore-v10/checkpoint/reconstruction/logic/cpp2il_cs/DiffableCs/Assembly-CSharp/_Code/Infrastructure/OtherGameData/OtherGameSOData.cs",
+    "restore-v10/checkpoint/reconstruction/logic/cpp2il_cs/DiffableCs/Assembly-CSharp/_Code/Infrastructure/Endings/Data/EndingsSOData.cs",
+    "restore-v10/checkpoint/reconstruction/logic/cpp2il_cs/DiffableCs/Assembly-CSharp/_Code/Infrastructure/DayNightControllerSOData.cs",
+    "restore-v10/checkpoint/reconstruction/logic/cpp2il_cs/DiffableCs/Assembly-CSharp/_Code/Rooms/ObjectRoomObjectView.cs",
+    "restore-v10/checkpoint/reconstruction/logic/cpp2il_cs/DiffableCs/Assembly-CSharp/_Code/Rooms/RoomObjectState`1.cs",
+    "restore-v10/checkpoint/reconstruction/logic/cpp2il_cs/DiffableCs/Assembly-CSharp/_Code/Rooms/EObjectsRoomObject.cs"
+  ],
+  "records": [
+    {
+      "source_file": "restore-v10/unity-data/sharedassets0.assets",
+      "source_sha256": "99a6ae7df177512a9fb2c27bb7c89e6fb8e1c14227fdd7b12e9fa42e564fb1d9",
+      "path_id": 2699,
+      "class": "DayNightControllerSOData",
+      "namespace": "_Code.Infrastructure",
+      "assembly": "Assembly-CSharp",
+      "serialized_object_name": "DayNightControllerData",
+      "raw_object_sha256": "83832d9954292d22d3814b5a16bf9906b656030ecde015928ce4b863f8e29450",
+      "raw_object_bytes": 312,
+      "custom_payload_offset": 56,
+      "raw_object_hex": "0000000000000000000000000100000001000000e30b000000000000160000004461794e69676874436f6e74726f6c6c6572446174610000020000000000000000000000a10a00000000000001000000010000000100000000000000a20a0000000000000000000000000000000000000f00000000000000000000000e00000000000000010000000200000000000000000000000b0000000000000013000000010000000200000002000000020000000300000003000000030000000300000003000000030000000300000003000000030000000400000005000000000000000000000000000000000000000600000000000000cdcc4cbdcdccccbd9a9919becdcc4cbe000080be060000000004000000020000000100008000000060000000400000000e00000010000000110000000f00000003000000",
+      "decoded_fields": {
+        "_volumeProfiles": [
+          {
+            "time_of_day": 0,
+            "profile": {
+              "file_id": 0,
+              "path_id": 2721,
+              "asset_file": "sharedassets0.assets",
+              "asset_type": "MonoBehaviour"
+            },
+            "has_light": true,
+            "has_actions_count": true
+          },
+          {
+            "time_of_day": 1,
+            "profile": {
+              "file_id": 0,
+              "path_id": 2722,
+              "asset_file": "sharedassets0.assets",
+              "asset_type": "MonoBehaviour"
+            },
+            "has_light": false,
+            "has_actions_count": false
+          }
+        ],
+        "_materialRefs": [
+          {
+            "file_id": 0,
+            "path_id": 15,
+            "asset_file": "sharedassets0.assets",
+            "asset_type": "Material",
+            "asset_name": "LightBeamNight"
+          },
+          {
+            "file_id": 0,
+            "path_id": 14,
+            "asset_file": "sharedassets0.assets",
+            "asset_type": "Material",
+            "asset_name": "LightBeamDay"
+          },
+          {
+            "file_id": 1,
+            "path_id": 2,
+            "asset_file": "globalgamemanagers.assets",
+            "asset_type": "Material",
+            "asset_name": "Post2"
+          },
+          {
+            "file_id": 0,
+            "path_id": 11,
+            "asset_file": "sharedassets0.assets",
+            "asset_type": "Material",
+            "asset_name": "Window"
+          }
+        ],
+        "_maxDayActionsByDays": {
+          "offset": 156,
+          "values": [
+            1,
+            2,
+            2,
+            2,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            4,
+            5,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "_lensDistortionByDays": {
+          "offset": 236,
+          "values": [
+            0.0,
+            -0.05000000074505806,
+            -0.10000000149011612,
+            -0.15000000596046448,
+            -0.20000000298023224,
+            -0.25
+          ]
+        },
+        "_colorsCountByDays": {
+          "offset": 264,
+          "values": [
+            1024,
+            512,
+            256,
+            128,
+            96,
+            64
+          ]
+        },
+        "_lastDay": {
+          "offset": 292,
+          "value": 14
+        },
+        "_babyEndingDay": {
+          "offset": 296,
+          "value": 16
+        },
+        "_killerEndingDay": {
+          "offset": 300,
+          "value": 17
+        },
+        "_femaEndingDay": {
+          "offset": 304,
+          "value": 15
+        },
+        "_coffeeBoostDays": {
+          "offset": 308,
+          "value": 3
+        },
+        "parsed_bytes_end": 312,
+        "unparsed_tail_bytes": 0
+      }
+    },
+    {
+      "source_file": "restore-v10/unity-data/sharedassets0.assets",
+      "source_sha256": "99a6ae7df177512a9fb2c27bb7c89e6fb8e1c14227fdd7b12e9fa42e564fb1d9",
+      "path_id": 2713,
+      "class": "EndingsSOData",
+      "namespace": "_Code.Infrastructure.Endings.Data",
+      "assembly": "Assembly-CSharp",
+      "serialized_object_name": "EndingsData",
+      "raw_object_sha256": "ef6c10b872d01dfbe0ea26a1fcbb6df7e175ca7cfce690a8d697043f88766d5c",
+      "raw_object_bytes": 64,
+      "custom_payload_offset": 44,
+      "raw_object_hex": "000000000000000000000000010000000100000078090000000000000b000000456e64696e677344617461000400000004000000020000000200000003000000",
+      "decoded_fields": {
+        "_killsCount": {
+          "offset": 44,
+          "value": 4
+        },
+        "_bodyEaterCount": {
+          "offset": 48,
+          "value": 4
+        },
+        "_prophetDontCheckSignsDaysNeeded": {
+          "offset": 52,
+          "value": 2
+        },
+        "_povistkasUsedCount": {
+          "offset": 56,
+          "value": 2
+        },
+        "_femaCallsCount": {
+          "offset": 60,
+          "value": 3
+        }
+      }
+    },
+    {
+      "source_file": "restore-v10/unity-data/sharedassets0.assets",
+      "source_sha256": "99a6ae7df177512a9fb2c27bb7c89e6fb8e1c14227fdd7b12e9fa42e564fb1d9",
+      "path_id": 2715,
+      "class": "OtherGameSOData",
+      "namespace": "_Code.Infrastructure.OtherGameData",
+      "assembly": "Assembly-CSharp",
+      "serialized_object_name": "OtherGameData",
+      "raw_object_sha256": "f6c54b961c02a810320592e3ceb28c329e62a0134193ae26f47f0cd994d73a2f",
+      "raw_object_bytes": 356,
+      "custom_payload_offset": 48,
+      "raw_object_hex": "0000000000000000000000000100000001000000b0090000000000000d0000004f7468657247616d654461746100000013000000000000000100000002000000020000000200000001000000020000000200000001000000010000000100000001000000000000000000000000000000000000000000000000000000000000000000e0400000404100008040000000410000b442cdcc4c3dcdcc4c3e000000000000403f020000000300000006000000030000000200000001000000000000000200000001000000060000000000000008000000010000000700000000000000b81e053e333333bf0000003fcdcc4c3e9a99993ecdcccc3dcdcccc3d03000000010000000400000000000000000000000200000004000000010000004ed58994030000000600000001000000187cb19c0300000002000000060000003030303435310000040000000600000037373734363000000b000000060000003839313533330000",
+      "decoded_fields": {
+        "_tvReportageCountByDay": {
+          "offset": 48,
+          "values": [
+            0,
+            1,
+            2,
+            2,
+            2,
+            1,
+            2,
+            2,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "_deficitConsumables": {
+          "offset": 172,
+          "raw_hex": "06000000030000000200000001000000000000000200000001000000060000000000000008000000010000000700000000000000"
+        },
+        "_badFemaRatingChance": {
+          "offset": 224,
+          "value": 0.12999999523162842
+        },
+        "_takeGunAfterCheck": {
+          "offset": 228,
+          "value": -0.699999988079071
+        },
+        "_notTakeGunAfterCheck": {
+          "offset": 232,
+          "value": 0.5
+        },
+        "_isHuman": {
+          "offset": 236,
+          "value": 0.20000000298023224
+        },
+        "_listenDialogFirstTime": {
+          "offset": 240,
+          "value": 0.30000001192092896
+        },
+        "_listenDialogRepeat": {
+          "offset": 244,
+          "value": 0.10000000149011612
+        },
+        "_everyDayIncrement": {
+          "offset": 248,
+          "value": 0.10000000149011612
+        },
+        "parsed_prefix_bytes_end": 252,
+        "preceding_fixed_fields": {
+          "_startKnockTime": [
+            7.0,
+            12.0
+          ],
+          "_endKnockTime": [
+            4.0,
+            8.0
+          ],
+          "_knockTimeProgressDuration": 90.0,
+          "_radioDelta": 0.05000000074505806,
+          "_radioThresholdStart": 0.20000000298023224,
+          "_wrongStateMultiplier": 0.0,
+          "_screamerOnImposterChance": 0.75,
+          "_daysRange": [
+            2,
+            3
+          ]
+        }
+      }
+    },
+    {
+      "source_file": "restore-v10/unity-data/level1",
+      "source_sha256": "400e6cfb07bf47df1d0b2ad3446a101870acf3905d5bfa5b68058d2364845dfd",
+      "path_id": 4341,
+      "class": "ObjectRoomObjectView",
+      "namespace": "_Code.Rooms",
+      "assembly": "Assembly-CSharp",
+      "serialized_object_name": "",
+      "raw_object_sha256": "5aae43feb8cdc8ad7fa0b89ebf43fadd7be9fccc6c65016f058eec040fce5e51",
+      "raw_object_bytes": 100,
+      "custom_payload_offset": 32,
+      "raw_object_hex": "0000000094020000000000000100000001000000050c0000000000000000000000000000000000000000000000000000891200000000000001000000ffffffff020000003e02000000000000000087c3000068420000803f0000803f01000000ffffffff",
+      "decoded_fields": {
+        "_button_ptr": {
+          "file_id": 0,
+          "path_id": 0
+        },
+        "_image_ptr": {
+          "file_id": 0,
+          "path_id": 4745
+        },
+        "_states": {
+          "offset": 56,
+          "values": [
+            {
+              "offset": 60,
+              "enum_value": -1,
+              "sprite": {
+                "file_id": 2,
+                "path_id": 574,
+                "asset_file": "sharedassets1.assets",
+                "asset_type": "Sprite",
+                "asset_name": "Kitchen_beer_8"
+              },
+              "position_shift": [
+                -270.0,
+                58.0
+              ],
+              "scale_shift": [
+                1.0,
+                1.0
+              ],
+              "cannot_interact": true,
+              "enum_name": "Unknown(-1)"
+            }
+          ]
+        },
+        "_startState": {
+          "offset": 96,
+          "value": -1
+        },
+        "bytes_consumed": 100
+      }
+    },
+    {
+      "source_file": "restore-v10/unity-data/level1",
+      "source_sha256": "400e6cfb07bf47df1d0b2ad3446a101870acf3905d5bfa5b68058d2364845dfd",
+      "path_id": 4475,
+      "class": "ObjectRoomObjectView",
+      "namespace": "_Code.Rooms",
+      "assembly": "Assembly-CSharp",
+      "serialized_object_name": "",
+      "raw_object_sha256": "92e872105d072d851df1caf6a02d95b440a96ed1c261b65caa775128c5cd42aa",
+      "raw_object_bytes": 100,
+      "custom_payload_offset": 32,
+      "raw_object_hex": "000000001b020000000000000100000001000000050c00000000000000000000000000000000000000000000000000008e1300000000000001000000ffffffff020000003e020000000000000080a0c3000080420000803f0000803f01000000ffffffff",
+      "decoded_fields": {
+        "_button_ptr": {
+          "file_id": 0,
+          "path_id": 0
+        },
+        "_image_ptr": {
+          "file_id": 0,
+          "path_id": 5006
+        },
+        "_states": {
+          "offset": 56,
+          "values": [
+            {
+              "offset": 60,
+              "enum_value": -1,
+              "sprite": {
+                "file_id": 2,
+                "path_id": 574,
+                "asset_file": "sharedassets1.assets",
+                "asset_type": "Sprite",
+                "asset_name": "Kitchen_beer_8"
+              },
+              "position_shift": [
+                -321.0,
+                64.0
+              ],
+              "scale_shift": [
+                1.0,
+                1.0
+              ],
+              "cannot_interact": true,
+              "enum_name": "Unknown(-1)"
+            }
+          ]
+        },
+        "_startState": {
+          "offset": 96,
+          "value": -1
+        },
+        "bytes_consumed": 100
+      }
+    },
+    {
+      "source_file": "restore-v10/unity-data/level1",
+      "source_sha256": "400e6cfb07bf47df1d0b2ad3446a101870acf3905d5bfa5b68058d2364845dfd",
+      "path_id": 4515,
+      "class": "ObjectRoomObjectView",
+      "namespace": "_Code.Rooms",
+      "assembly": "Assembly-CSharp",
+      "serialized_object_name": "",
+      "raw_object_sha256": "f4f08a58f4e908c5d93d072dbf1722e4905d1c673be1eb4405ef68592e4ec428",
+      "raw_object_bytes": 100,
+      "custom_payload_offset": 32,
+      "raw_object_hex": "0000000053030000000000000100000001000000050c0000000000000000000000000000ac1300000000000000000000581200000000000001000000ffffffff020000006e0200000000000000800b44000052430000803f0000803f00000000ffffffff",
+      "decoded_fields": {
+        "_button_ptr": {
+          "file_id": 0,
+          "path_id": 5036
+        },
+        "_image_ptr": {
+          "file_id": 0,
+          "path_id": 4696
+        },
+        "_states": {
+          "offset": 56,
+          "values": [
+            {
+              "offset": 60,
+              "enum_value": -1,
+              "sprite": {
+                "file_id": 2,
+                "path_id": 622,
+                "asset_file": "sharedassets1.assets",
+                "asset_type": "Sprite",
+                "asset_name": "Bedroom_clock"
+              },
+              "position_shift": [
+                558.0,
+                210.0
+              ],
+              "scale_shift": [
+                1.0,
+                1.0
+              ],
+              "cannot_interact": false,
+              "enum_name": "Unknown(-1)"
+            }
+          ]
+        },
+        "_startState": {
+          "offset": 96,
+          "value": -1
+        },
+        "bytes_consumed": 100
+      }
+    },
+    {
+      "source_file": "restore-v10/unity-data/level1",
+      "source_sha256": "400e6cfb07bf47df1d0b2ad3446a101870acf3905d5bfa5b68058d2364845dfd",
+      "path_id": 4559,
+      "class": "ObjectRoomObjectView",
+      "namespace": "_Code.Rooms",
+      "assembly": "Assembly-CSharp",
+      "serialized_object_name": "",
+      "raw_object_sha256": "701451c294ea99ac1dc758432263996a4f555a53fdb325e8b5e121e6a3bcccbe",
+      "raw_object_bytes": 100,
+      "custom_payload_offset": 32,
+      "raw_object_hex": "0000000065020000000000000100000001000000050c0000000000000000000000000000000000000000000000000000b91100000000000001000000ffffffff030000004f06000000000000000080430000b4c20000803f0000803f00000000ffffffff",
+      "decoded_fields": {
+        "_button_ptr": {
+          "file_id": 0,
+          "path_id": 0
+        },
+        "_image_ptr": {
+          "file_id": 0,
+          "path_id": 4537
+        },
+        "_states": {
+          "offset": 56,
+          "values": [
+            {
+              "offset": 60,
+              "enum_value": -1,
+              "sprite": {
+                "file_id": 3,
+                "path_id": 1615,
+                "asset_file": "sharedassets0.assets",
+                "asset_type": "Sprite",
+                "asset_name": "fake_jena corpse"
+              },
+              "position_shift": [
+                256.0,
+                -90.0
+              ],
+              "scale_shift": [
+                1.0,
+                1.0
+              ],
+              "cannot_interact": false,
+              "enum_name": "Unknown(-1)"
+            }
+          ]
+        },
+        "_startState": {
+          "offset": 96,
+          "value": -1
+        },
+        "bytes_consumed": 100
+      }
+    },
+    {
+      "source_file": "restore-v10/unity-data/level1",
+      "source_sha256": "400e6cfb07bf47df1d0b2ad3446a101870acf3905d5bfa5b68058d2364845dfd",
+      "path_id": 4583,
+      "class": "ObjectRoomObjectView",
+      "namespace": "_Code.Rooms",
+      "assembly": "Assembly-CSharp",
+      "serialized_object_name": "",
+      "raw_object_sha256": "ec584b057981761426090d2209a87daa72ad76a59d9cabcf1cb45b6d42a8bc17",
+      "raw_object_bytes": 100,
+      "custom_payload_offset": 32,
+      "raw_object_hex": "0000000029020000000000000100000001000000050c0000000000000000000000000000ab12000000000000000000000e1100000000000001000000ffffffff0200000078020000000000000040a8c300002e430000803f0000803f00000000ffffffff",
+      "decoded_fields": {
+        "_button_ptr": {
+          "file_id": 0,
+          "path_id": 4779
+        },
+        "_image_ptr": {
+          "file_id": 0,
+          "path_id": 4366
+        },
+        "_states": {
+          "offset": 56,
+          "values": [
+            {
+              "offset": 60,
+              "enum_value": -1,
+              "sprite": {
+                "file_id": 2,
+                "path_id": 632,
+                "asset_file": "sharedassets1.assets",
+                "asset_type": "Sprite",
+                "asset_name": "Livingroom1_apple"
+              },
+              "position_shift": [
+                -336.5,
+                174.0
+              ],
+              "scale_shift": [
+                1.0,
+                1.0
+              ],
+              "cannot_interact": false,
+              "enum_name": "Unknown(-1)"
+            }
+          ]
+        },
+        "_startState": {
+          "offset": 96,
+          "value": -1
+        },
+        "bytes_consumed": 100
+      }
+    },
+    {
+      "source_file": "restore-v10/unity-data/level1",
+      "source_sha256": "400e6cfb07bf47df1d0b2ad3446a101870acf3905d5bfa5b68058d2364845dfd",
+      "path_id": 4658,
+      "class": "ObjectRoomObjectView",
+      "namespace": "_Code.Rooms",
+      "assembly": "Assembly-CSharp",
+      "serialized_object_name": "",
+      "raw_object_sha256": "0788e93260c0b1c627c1b030ecb5acb30fb35a0ee48c44ee8bb6837da8303eac",
+      "raw_object_bytes": 100,
+      "custom_payload_offset": 32,
+      "raw_object_hex": "0000000080020000000000000100000001000000050c0000000000000000000000000000cb1100000000000000000000811200000000000001000000ffffffff020000006f0200000000000000002a439a9991410000803f0000803f00000000ffffffff",
+      "decoded_fields": {
+        "_button_ptr": {
+          "file_id": 0,
+          "path_id": 4555
+        },
+        "_image_ptr": {
+          "file_id": 0,
+          "path_id": 4737
+        },
+        "_states": {
+          "offset": 56,
+          "values": [
+            {
+              "offset": 60,
+              "enum_value": -1,
+              "sprite": {
+                "file_id": 2,
+                "path_id": 623,
+                "asset_file": "sharedassets1.assets",
+                "asset_type": "Sprite",
+                "asset_name": "Bedroom_note"
+              },
+              "position_shift": [
+                170.0,
+                18.200000762939453
+              ],
+              "scale_shift": [
+                1.0,
+                1.0
+              ],
+              "cannot_interact": false,
+              "enum_name": "Unknown(-1)"
+            }
+          ]
+        },
+        "_startState": {
+          "offset": 96,
+          "value": -1
+        },
+        "bytes_consumed": 100
+      }
+    },
+    {
+      "source_file": "restore-v10/unity-data/level1",
+      "source_sha256": "400e6cfb07bf47df1d0b2ad3446a101870acf3905d5bfa5b68058d2364845dfd",
+      "path_id": 4689,
+      "class": "ObjectRoomObjectView",
+      "namespace": "_Code.Rooms",
+      "assembly": "Assembly-CSharp",
+      "serialized_object_name": "",
+      "raw_object_sha256": "d9ddecee41948ccf722d928c76cc01cace9bf46775d15fb9fadc4200293070cb",
+      "raw_object_bytes": 100,
+      "custom_payload_offset": 32,
+      "raw_object_hex": "00000000a7020000000000000100000001000000050c00000000000000000000000000008313000000000000000000007e1400000000000001000000ffffffff020000006a0200000000000000808343000092c3000010400000104000000000ffffffff",
+      "decoded_fields": {
+        "_button_ptr": {
+          "file_id": 0,
+          "path_id": 4995
+        },
+        "_image_ptr": {
+          "file_id": 0,
+          "path_id": 5246
+        },
+        "_states": {
+          "offset": 56,
+          "values": [
+            {
+              "offset": 60,
+              "enum_value": -1,
+              "sprite": {
+                "file_id": 2,
+                "path_id": 618,
+                "asset_file": "sharedassets1.assets",
+                "asset_type": "Sprite",
+                "asset_name": "Bathroom_baby"
+              },
+              "position_shift": [
+                263.0,
+                -292.0
+              ],
+              "scale_shift": [
+                2.25,
+                2.25
+              ],
+              "cannot_interact": false,
+              "enum_name": "Unknown(-1)"
+            }
+          ]
+        },
+        "_startState": {
+          "offset": 96,
+          "value": -1
+        },
+        "bytes_consumed": 100
+      }
+    },
+    {
+      "source_file": "restore-v10/unity-data/level1",
+      "source_sha256": "400e6cfb07bf47df1d0b2ad3446a101870acf3905d5bfa5b68058d2364845dfd",
+      "path_id": 4801,
+      "class": "ObjectRoomObjectView",
+      "namespace": "_Code.Rooms",
+      "assembly": "Assembly-CSharp",
+      "serialized_object_name": "",
+      "raw_object_sha256": "56efffbb30609a83b7f50b292cd2ca945298feef067ff11b4876093776753632",
+      "raw_object_bytes": 100,
+      "custom_payload_offset": 32,
+      "raw_object_hex": "000000008e010000000000000100000001000000050c0000000000000000000000000000881100000000000000000000eb120000000000000100000000000000020000008002000000000000000004430080a1c366660640666606400000000000000000",
+      "decoded_fields": {
+        "_button_ptr": {
+          "file_id": 0,
+          "path_id": 4488
+        },
+        "_image_ptr": {
+          "file_id": 0,
+          "path_id": 4843
+        },
+        "_states": {
+          "offset": 56,
+          "values": [
+            {
+              "offset": 60,
+              "enum_value": 0,
+              "sprite": {
+                "file_id": 2,
+                "path_id": 640,
+                "asset_file": "sharedassets1.assets",
+                "asset_type": "Sprite",
+                "asset_name": "Livingroom2_obj1"
+              },
+              "position_shift": [
+                132.0,
+                -323.0
+              ],
+              "scale_shift": [
+                2.0999999046325684,
+                2.0999999046325684
+              ],
+              "cannot_interact": false,
+              "enum_name": "Bed"
+            }
+          ]
+        },
+        "_startState": {
+          "offset": 96,
+          "value": 0
+        },
+        "bytes_consumed": 100
+      }
+    },
+    {
+      "source_file": "restore-v10/unity-data/level1",
+      "source_sha256": "400e6cfb07bf47df1d0b2ad3446a101870acf3905d5bfa5b68058d2364845dfd",
+      "path_id": 4813,
+      "class": "ObjectRoomObjectView",
+      "namespace": "_Code.Rooms",
+      "assembly": "Assembly-CSharp",
+      "serialized_object_name": "",
+      "raw_object_sha256": "2453b1c4c39c0f2917120912b57d3e6ed0817452df29b699722e07bcdd83abc6",
+      "raw_object_bytes": 100,
+      "custom_payload_offset": 32,
+      "raw_object_hex": "00000000e7030000000000000100000001000000050c00000000000000000000000000003e14000000000000000000001a14000000000000010000000200000002000000640200000000000000802c44000082c200000040000000400000000002000000",
+      "decoded_fields": {
+        "_button_ptr": {
+          "file_id": 0,
+          "path_id": 5182
+        },
+        "_image_ptr": {
+          "file_id": 0,
+          "path_id": 5146
+        },
+        "_states": {
+          "offset": 56,
+          "values": [
+            {
+              "offset": 60,
+              "enum_value": 2,
+              "sprite": {
+                "file_id": 2,
+                "path_id": 612,
+                "asset_file": "sharedassets1.assets",
+                "asset_type": "Sprite",
+                "asset_name": "Kitchen_obj1"
+              },
+              "position_shift": [
+                690.0,
+                -65.0
+              ],
+              "scale_shift": [
+                2.0,
+                2.0
+              ],
+              "cannot_interact": false,
+              "enum_name": "Fridge"
+            }
+          ]
+        },
+        "_startState": {
+          "offset": 96,
+          "value": 2
+        },
+        "bytes_consumed": 100
+      }
+    },
+    {
+      "source_file": "restore-v10/unity-data/level1",
+      "source_sha256": "400e6cfb07bf47df1d0b2ad3446a101870acf3905d5bfa5b68058d2364845dfd",
+      "path_id": 4865,
+      "class": "ObjectRoomObjectView",
+      "namespace": "_Code.Rooms",
+      "assembly": "Assembly-CSharp",
+      "serialized_object_name": "",
+      "raw_object_sha256": "431e2ca53a19b48406f024737062ea807faf9228941e783d75c75cc2197fe7eb",
+      "raw_object_bytes": 100,
+      "custom_payload_offset": 32,
+      "raw_object_hex": "0000000075030000000000000100000001000000050c0000000000000000000000000000cb1300000000000000000000fd1300000000000001000000ffffffff02000000530200000000000000008c420000e943000010400000104000000000ffffffff",
+      "decoded_fields": {
+        "_button_ptr": {
+          "file_id": 0,
+          "path_id": 5067
+        },
+        "_image_ptr": {
+          "file_id": 0,
+          "path_id": 5117
+        },
+        "_states": {
+          "offset": 56,
+          "values": [
+            {
+              "offset": 60,
+              "enum_value": -1,
+              "sprite": {
+                "file_id": 2,
+                "path_id": 595,
+                "asset_file": "sharedassets1.assets",
+                "asset_type": "Sprite",
+                "asset_name": "Livingroom2_baby"
+              },
+              "position_shift": [
+                70.0,
+                466.0
+              ],
+              "scale_shift": [
+                2.25,
+                2.25
+              ],
+              "cannot_interact": false,
+              "enum_name": "Unknown(-1)"
+            }
+          ]
+        },
+        "_startState": {
+          "offset": 96,
+          "value": -1
+        },
+        "bytes_consumed": 100
+      }
+    },
+    {
+      "source_file": "restore-v10/unity-data/level1",
+      "source_sha256": "400e6cfb07bf47df1d0b2ad3446a101870acf3905d5bfa5b68058d2364845dfd",
+      "path_id": 4938,
+      "class": "ObjectRoomObjectView",
+      "namespace": "_Code.Rooms",
+      "assembly": "Assembly-CSharp",
+      "serialized_object_name": "",
+      "raw_object_sha256": "c54428472a6478fa087e4d1507f41649cc1f61162e19af189a2da5435d8b22b7",
+      "raw_object_bytes": 100,
+      "custom_payload_offset": 32,
+      "raw_object_hex": "000000006b030000000000000100000001000000050c0000000000000000000000000000000000000000000000000000e61000000000000001000000ffffffff0200000069020000000000009a9931c3666618c30000803f0000803f00000000ffffffff",
+      "decoded_fields": {
+        "_button_ptr": {
+          "file_id": 0,
+          "path_id": 0
+        },
+        "_image_ptr": {
+          "file_id": 0,
+          "path_id": 4326
+        },
+        "_states": {
+          "offset": 56,
+          "values": [
+            {
+              "offset": 60,
+              "enum_value": -1,
+              "sprite": {
+                "file_id": 2,
+                "path_id": 617,
+                "asset_file": "sharedassets1.assets",
+                "asset_type": "Sprite",
+                "asset_name": "Livingroom2_sheets"
+              },
+              "position_shift": [
+                -177.60000610351562,
+                -152.39999389648438
+              ],
+              "scale_shift": [
+                1.0,
+                1.0
+              ],
+              "cannot_interact": false,
+              "enum_name": "Unknown(-1)"
+            }
+          ]
+        },
+        "_startState": {
+          "offset": 96,
+          "value": -1
+        },
+        "bytes_consumed": 100
+      }
+    },
+    {
+      "source_file": "restore-v10/unity-data/level1",
+      "source_sha256": "400e6cfb07bf47df1d0b2ad3446a101870acf3905d5bfa5b68058d2364845dfd",
+      "path_id": 5045,
+      "class": "ObjectRoomObjectView",
+      "namespace": "_Code.Rooms",
+      "assembly": "Assembly-CSharp",
+      "serialized_object_name": "",
+      "raw_object_sha256": "010e12c248e3da6241c037f10da39c67ae992d694397925c9fbdfda37756f3b1",
+      "raw_object_bytes": 100,
+      "custom_payload_offset": 32,
+      "raw_object_hex": "000000009c010000000000000100000001000000050c00000000000000000000000000001213000000000000000000007d1300000000000001000000ffffffff0200000019020000000000009a99c0c20000a6420000803f0000803f00000000ffffffff",
+      "decoded_fields": {
+        "_button_ptr": {
+          "file_id": 0,
+          "path_id": 4882
+        },
+        "_image_ptr": {
+          "file_id": 0,
+          "path_id": 4989
+        },
+        "_states": {
+          "offset": 56,
+          "values": [
+            {
+              "offset": 60,
+              "enum_value": -1,
+              "sprite": {
+                "file_id": 2,
+                "path_id": 537,
+                "asset_file": "sharedassets1.assets",
+                "asset_type": "Sprite",
+                "asset_name": "fake_curtain_0"
+              },
+              "position_shift": [
+                -96.30000305175781,
+                83.0
+              ],
+              "scale_shift": [
+                1.0,
+                1.0
+              ],
+              "cannot_interact": false,
+              "enum_name": "Unknown(-1)"
+            }
+          ]
+        },
+        "_startState": {
+          "offset": 96,
+          "value": -1
+        },
+        "bytes_consumed": 100
+      }
+    }
+  ],
+  "constants": {
+    "every_day_fema_increment": {
+      "class": "OtherGameSOData",
+      "serialized_field": "_everyDayIncrement",
+      "value": 0.10000000149011612,
+      "serialized_byte_offset": 248,
+      "declared_field_offset": "0x70",
+      "declared_type": "float"
+    },
+    "prophet_no_signs_days": {
+      "class": "EndingsSOData",
+      "serialized_field": "_prophetDontCheckSignsDaysNeeded",
+      "value": 2,
+      "serialized_byte_offset": 52,
+      "declared_field_offset": "0x20",
+      "declared_type": "int"
+    },
+    "coffee_boost_days": {
+      "class": "DayNightControllerSOData",
+      "serialized_field": "_coffeeBoostDays",
+      "value": 3,
+      "serialized_byte_offset": 308,
+      "declared_field_offset": "0x68",
+      "declared_type": "int",
+      "raw_object_sha256": "83832d9954292d22d3814b5a16bf9906b656030ecde015928ce4b863f8e29450"
+    }
+  },
+  "bed_object_room_object_views": [
+    {
+      "source_file": "restore-v10/unity-data/level1",
+      "source_sha256": "400e6cfb07bf47df1d0b2ad3446a101870acf3905d5bfa5b68058d2364845dfd",
+      "path_id": 4801,
+      "class": "ObjectRoomObjectView",
+      "namespace": "_Code.Rooms",
+      "assembly": "Assembly-CSharp",
+      "serialized_object_name": "",
+      "raw_object_sha256": "56efffbb30609a83b7f50b292cd2ca945298feef067ff11b4876093776753632",
+      "raw_object_bytes": 100,
+      "custom_payload_offset": 32,
+      "raw_object_hex": "000000008e010000000000000100000001000000050c0000000000000000000000000000881100000000000000000000eb120000000000000100000000000000020000008002000000000000000004430080a1c366660640666606400000000000000000",
+      "decoded_fields": {
+        "_button_ptr": {
+          "file_id": 0,
+          "path_id": 4488
+        },
+        "_image_ptr": {
+          "file_id": 0,
+          "path_id": 4843
+        },
+        "_states": {
+          "offset": 56,
+          "values": [
+            {
+              "offset": 60,
+              "enum_value": 0,
+              "sprite": {
+                "file_id": 2,
+                "path_id": 640,
+                "asset_file": "sharedassets1.assets",
+                "asset_type": "Sprite",
+                "asset_name": "Livingroom2_obj1"
+              },
+              "position_shift": [
+                132.0,
+                -323.0
+              ],
+              "scale_shift": [
+                2.0999999046325684,
+                2.0999999046325684
+              ],
+              "cannot_interact": false,
+              "enum_name": "Bed"
+            }
+          ]
+        },
+        "_startState": {
+          "offset": 96,
+          "value": 0
+        },
+        "bytes_consumed": 100
+      }
+    }
+  ],
+  "bed_render_application": {
+    "source": "restore-v10/checkpoint/reconstruction/logic/recovered_isil/Assembly-CSharp/_Code/Rooms/ARoomObjectView`1.txt, SelectState(T state)",
+    "evidence": [
+      {
+        "isil_instruction": 71,
+        "call": "Image.set_sprite",
+        "meaning": "Image receives selected state's Sprite reference."
+      },
+      {
+        "isil_instructions": [
+          75,
+          90
+        ],
+        "call": "Transform.set_localPosition",
+        "meaning": "selected PositionShift components are assembled directly into the localPosition Vector3 and assigned."
+      },
+      {
+        "isil_instructions": [
+          94,
+          108
+        ],
+        "call": "Transform.set_localScale",
+        "meaning": "selected ScaleShift components are assembled directly into localScale and assigned."
+      }
+    ],
+    "equations": {
+      "final_local_position_xy": "state.PositionShift",
+      "final_local_scale_xy": "state.ScaleShift"
+    },
+    "not_in_method": [
+      "No additive-to-home-position operation appears in SelectState.",
+      "No SetNativeSize, Image.rectTransform.sizeDelta, or sprite-size setter appears in SelectState."
+    ],
+    "bed_component_4801_result": {
+      "state": "Bed",
+      "local_position": [
+        132.0,
+        -323.0
+      ],
+      "local_scale": [
+        2.0999999046325684,
+        2.0999999046325684
+      ],
+      "sprite": "Livingroom2_obj1"
+    }
+  },
+  "tv_reportage_count_by_day": {
+    "serialized_field": "_tvReportageCountByDay",
+    "serialized_byte_offset": 48,
+    "array_values": [
+      0,
+      1,
+      2,
+      2,
+      2,
+      1,
+      2,
+      2,
+      1,
+      1,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "index_1_value": 1,
+    "indexing_note": "The serialized array has value 1 at index 1. This is consistent with a day-1 slot, but no managed consumer was recovered to prove the index convention."
+  },
+  "notes": [
+    "All serialized fields and raw object hashes are retained in records.",
+    "Unknown or public-status-related fields are left as serialized and are not assigned inferred semantics."
+  ]
+}

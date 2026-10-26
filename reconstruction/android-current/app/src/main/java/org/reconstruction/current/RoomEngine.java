@@ -50,6 +50,7 @@ public final class RoomEngine extends ApplicationAdapter {
     private String viewMode = "world";
     private boolean inBatch;
     private JSONArray roomObjects = new JSONArray();
+    private JSONObject layerConditions = new JSONObject();
     private RoomComposition composition = RoomComposition.parse(null);
     private volatile String rendererStatus = "loading: waiting for GL surface";
     private volatile String rendererStage = "create room renderer";
@@ -256,6 +257,7 @@ public final class RoomEngine extends ApplicationAdapter {
         room = -1;
         viewMode = "world";
         roomObjects = new JSONArray();
+        layerConditions = new JSONObject();
         try {
             JSONObject state = new JSONObject(serialized);
             String phase = state.optString("phase", "");
@@ -266,6 +268,11 @@ public final class RoomEngine extends ApplicationAdapter {
             if (worldRenderer != null) worldRenderer.applyState(state);
             JSONArray objects = state.optJSONArray("room_objects");
             if (objects != null) roomObjects = objects;
+            JSONObject campaign = state.optJSONObject("campaign");
+            if (campaign != null) layerConditions = campaign;
+            // The recovered bed has one initial Bed state. Activating a selected
+            // room initializes that view; story eligibility still gates Sleep.
+            if (!layerConditions.has("bed_visible")) layerConditions.put("bed_visible", scenePhase && room == 6);
         } catch (JSONException ignored) {
             // Invalid state clears the room until the next safe update arrives.
         }
@@ -300,6 +307,7 @@ public final class RoomEngine extends ApplicationAdapter {
     }
 
     private void drawLayer(RoomComposition.Layer layer) {
+        if (!layer.condition.isEmpty() && !layerConditions.optBoolean(layer.condition, false)) return;
         Texture sprite = texture(layer.asset);
         if (sprite == null || layer.a <= 0f) return;
         float scale = roomScale();

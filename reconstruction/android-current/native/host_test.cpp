@@ -24,6 +24,7 @@ Json call(const Json& action) {
 }
 Json act(const Json& action) {
   auto result = call(action);
+  if(!result.at("error").is_null())std::cerr<<action.dump()<<": "<<result.at("error")<<'\n';
   assert(result.at("error").is_null());
   return result;
 }
@@ -169,6 +170,68 @@ Json finish_first_inside_talk(Json state, std::size_t asking_choice) {
   return state;
 }
 
+Json finish_first_morning(Json state,const std::filesystem::path& root) {
+  assert(state.at("day")==0 && state.at("campaign").at("time_of_day")=="night");
+  assert(!call({{"action","sleep"}}).at("error").is_null()); // world view
+  state=act({{"action","enter_room"},{"room",6}});
+  assert(state.at("campaign").at("can_sleep")==true);
+  const auto original_inventory=state.at("inventory");
+  state=act({{"action","sleep"}});
+  assert(state.at("day")==0 && state.at("campaign").at("transition_pending")==true);
+  assert(state.at("campaign").at("can_sleep")==false);
+  assert(state.at("campaign").at("neighbour_talk_count")==1);
+  assert(!call({{"action","sleep"}}).at("error").is_null());
+  assert(!call({{"action","enter_world"}}).at("error").is_null());
+  state=act({{"action","save"}}); // transition checkpoint before any morning effects
+  state=act({{"action","complete_day_transition"}});
+  assert(state.at("day")==1 && state.at("energy")==2);
+  assert(state.at("campaign").at("transition_pending")==false);
+  assert(state.at("campaign").at("time_of_day")=="day");
+  assert(state.at("campaign").at("didnt_check_signs_days")==1);
+  assert(state.at("campaign").at("morning_tv_pending")==true);
+  assert(state.at("inventory")==original_inventory);
+  assert(!call({{"action","complete_day_transition"}}).at("error").is_null());
+  state=act({{"action","load"}});
+  assert(state.at("day")==0 && state.at("campaign").at("transition_pending")==true);
+  state=act({{"action","complete_day_transition"}});
+  assert(state.at("day")==1 && state.at("campaign").at("didnt_check_signs_days")==1);
+  assert(state.at("campaign").at("neighbour_talk_count")==1);
+  state=act({{"action","campaign_tick"},{"elapsed_ms",999999}});
+  assert(state.at("campaign").at("door_waiting")==false);
+  assert(!call({{"action","open_door"}}).at("error").is_null());
+  state=act({{"action","enter_world"}});
+  assert(state.at("campaign").at("can_watch_morning_tv")==false);
+  assert(!call({{"action","watch_morning_tv"}}).at("error").is_null());
+  state=act({{"action","enter_room"},{"room",6}});
+  assert(state.at("campaign").at("can_watch_morning_tv")==true);
+  state=act({{"action","watch_morning_tv"}});
+  assert(state.at("portrait").at("character")=="TV");
+  assert(state.at("campaign").at("morning_tv_pending")==false);
+  const auto first_line=state.at("dialogue");
+  state=act({{"action","save"}});
+  state=act({{"action","advance"}});
+  state=act({{"action","load"}});
+  assert(state.at("dialogue")==first_line);
+  const auto program=Json::parse(read(root/"narrative/program.json"));
+  std::size_t lines=0;
+  for(const auto& instruction:program.at("nodes").at("tv_1_necessary").at("instructions")) {
+    if(instruction.at("opcode_name")!="RunLine")continue;
+    assert(state.at("dialogue").at("line_id")==instruction.at("operands").at(0));
+    ++lines;state=act({{"action","advance"}});
+  }
+  assert(lines==7 && state.at("dialogue").is_null());
+  assert(state.at("campaign").at("morning_tv_complete")==true);
+  assert(state.at("view_mode")=="world" && state.at("energy")==2);
+  assert(state.at("inventory")==original_inventory);
+  assert(!call({{"action","watch_morning_tv"}}).at("error").is_null());
+  state=act({{"action","save"}});state=act({{"action","menu"}});state=act({{"action","load"}});
+  assert(state.at("day")==1 && state.at("campaign").at("morning_tv_complete")==true);
+  state=act({{"action","enter_room"},{"room",6}});
+  assert(state.at("campaign").at("can_sleep")==false);
+  assert(!call({{"action","sleep"}}).at("error").is_null()); // next night is explicitly bounded
+  return act({{"action","state"}});
+}
+
 int main(int argc, char** argv) {
   assert(argc == 2);
   const auto root = std::filesystem::path(argv[1]);
@@ -256,12 +319,18 @@ int main(int argc, char** argv) {
   assert(state.at("campaign").at("phone_number_count") == 15);
   assert(state.at("campaign").at("neighbour_phone_number").get<std::string>().size() == 6);
   assert(state.at("campaign").at("door_waiting") == false);
+  state=act({{"action","enter_room"},{"room",6}});
+  assert(state.at("campaign").at("can_sleep")==false);
+  assert(!call({{"action","sleep"}}).at("error").is_null());
+  assert(!call({{"action","watch_morning_tv"}}).at("error").is_null());
+  state=act({{"action","enter_world"}});
   // The first preset visit and talk conclude into exploration. Day 1 preset
   // slots are exposed as source data; no next-day initialization is synthesized.
   state = admit_neighbour(state, 0);
   state = act({{"action", "enter_room"}, {"room", 0}});
   assert(state.at("room") == 0 && active_object(state, "Neighbour"));
   state = finish_first_inside_talk(state, 0);
+  state = finish_first_morning(state,root);
 
   state = act({{"action", "new_game"}});
   const auto initial_pose_revision = state.at("world_pose").at("revision").get<std::int64_t>();
@@ -281,5 +350,5 @@ int main(int argc, char** argv) {
   state = finish_first_inside_talk(state, 1);
 
   std::cout << "Current Android host: menu, intro captions, first Neighbour admission/talk, "
-               "legacy tools routes, and in-memory snapshots passed\n";
+               "first morning and seven original TV lines, legacy tools routes, and in-memory snapshots passed\n";
 }

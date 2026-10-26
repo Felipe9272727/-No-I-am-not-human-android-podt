@@ -28,7 +28,7 @@ ASSET_DIR = ANDROID_APP / "assets"
 NATIVE_ROOT = ROOT / "reconstruction/native-game"
 BRIDGE_MANIFEST = NATIVE_ROOT / "bridge/Cargo.toml"
 BRIDGE_ROOT = NATIVE_ROOT / "bridge"
-DEFAULT_APK = ROOT / "deliverables/NINAH-Port-Comodos-Colisao.apk"
+DEFAULT_APK = ROOT / "deliverables/NINAH-Port-Primeira-Manha.apk"
 REPORT = ANDROID_ROOT / "port3d_validation_report.json"
 PACKAGE_NAME = "org.reconstruction.port.preview"
 JNI_ACTIVITY = "org.reconstruction.current.MainActivity"
@@ -695,6 +695,11 @@ def collect_report(output: Path, build_tools: Path, source_modules: list[str],
                     if "assets/" + layer["asset"] not in names:
                         raise RuntimeError("Missing authored room sprite: " + layer["asset"])
                 room_layer_count += len(layers)
+            if version_code >= 10:
+                bedroom = next(room for room in rooms if room["id"] == 6)
+                bed = [layer for layer in bedroom["layers"] if layer.get("source_state_component") == 4801]
+                if len(bed) != 1 or bed[0].get("condition") != "bed_visible" or bed[0].get("source_state_enum") != 0:
+                    raise RuntimeError("Missing verified first-morning bed layer")
         java_resources = validate_gdx_java_resources(apk)
         libraries = sorted(name for name in names if re.fullmatch(
             r"lib/[^/]+/(?:libninah_current|libgdx)\.so", name))
@@ -853,6 +858,8 @@ def collect_report(output: Path, build_tools: Path, source_modules: list[str],
         "sha256": digest, "bytes": apk_size, "zip_crc_check": "passed",
         "package_name": package_name, "launch_activity": launch_activity,
         "version_code": int(version_match.group(1)), "version_name": version_name,
+        "native_source_tree_sha256": native_source_fingerprint()[0],
+        "native_source_fingerprint_inputs": native_source_fingerprint()[1],
         "min_sdk": int(MIN_API), "target_sdk": int(ANDROID_API),
         "android_ui_hardware_acceleration_requested":hardware_requested,
         "abis": ["arm64-v8a", "x86_64"], "native_libraries": libraries,
@@ -907,8 +914,8 @@ def main() -> None:
     parser.add_argument("--skip-assets", action="store_true", help="reuse an existing staged asset tree")
     parser.add_argument("--reference-apk", type=Path,
                         help="reuse JNI libraries only from the exact hash-locked current APK")
-    parser.add_argument("--version-code", type=int, default=9)
-    parser.add_argument("--version-name", default="0.9-rooms-collision")
+    parser.add_argument("--version-code", type=int, default=10)
+    parser.add_argument("--version-name", default="0.10-first-morning")
     parser.add_argument("--rebuild-rust", action="store_true", help="force locked release builds for both Rust targets")
     args = parser.parse_args()
 
@@ -934,6 +941,7 @@ def main() -> None:
             raise FileNotFoundError(f"staged asset missing: {path}; rerun prepare_assets.py")
 
     cargo = cargo_path()
+    source_fingerprint_before = native_source_fingerprint()
     work_root = ANDROID_ROOT / "build"
     work_root.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix="apk-build-", dir=work_root) as temporary:
@@ -957,6 +965,8 @@ def main() -> None:
         dex, _, unresolved_dependencies = compile_java(
             build_tools, android_jar, work, generated_sources, engine_jars,
         )
+        if native_source_fingerprint() != source_fingerprint_before:
+            raise RuntimeError("Native sources changed during compilation; refusing mixed inputs")
         output = args.output.resolve()
         package_apk(build_tools, base_apk, native_libs, gdx_native_libs,
                     dex, work, output, engine_jars)

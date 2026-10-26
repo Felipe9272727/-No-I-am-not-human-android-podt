@@ -37,7 +37,7 @@ final class RoomComposition {
                 JSONArray color = layer.optJSONArray("color");
                 scene.layers.add(new Layer(asset, x, y, w, h, layer.optInt("draw_order", j),
                         channel(color, 0), channel(color, 1), channel(color, 2), channel(color, 3),
-                        layer.optBoolean("preserve_aspect", true)));
+                        layer.optBoolean("preserve_aspect", true), layer.optString("condition", "")));
             }
             Collections.sort(scene.layers, new Comparator<Layer>() {
                 @Override public int compare(Layer a, Layer b) { return Integer.compare(a.order, b.order); }
@@ -75,14 +75,16 @@ final class RoomComposition {
 
     static final class Layer {
         final String asset;
+        final String condition;
         final float x, top, width, height, r, g, b, a;
         final int order;
         final boolean preserveAspect;
         Layer(String asset, float x, float top, float width, float height, int order,
-                float r, float g, float b, float a, boolean preserveAspect) {
+                float r, float g, float b, float a, boolean preserveAspect, String condition) {
             this.asset = asset; this.x = x; this.top = top; this.width = width; this.height = height;
             this.order = order; this.r = r; this.g = g; this.b = b; this.a = a;
             this.preserveAspect = preserveAspect;
+            this.condition = condition;
         }
     }
 }

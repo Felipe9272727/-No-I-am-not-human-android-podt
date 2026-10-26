@@ -40,7 +40,13 @@
       "sharedassets1.assets:640",
       "sharedassets1.assets:643",
       "sharedassets1.assets:644"
-    ]
+    ],
+    "verified_bed_state": {
+      "source": "reconstruction/reverse-campaign/morning_config.json",
+      "component_path_id": 4801,
+      "activation": "bounded Android host bed_visible flag",
+      "raw_object_sha256": "56efffbb30609a83b7f50b292cd2ca945298feef067ff11b4876093776753632"
+    }
   },
   "asset_resolution": {
     "presentation/assets.json": 13,
@@ -53,8 +59,9 @@
     "resolved_sprite_references": 35,
     "unique_resolved_sprite_keys": 33,
     "visible_layers": 18,
-    "excluded_layers": 77,
-    "character_orders": 61
+    "excluded_layers": 76,
+    "character_orders": 61,
+    "conditional_layers": 1
   },
   "rooms": [
     {
@@ -139,13 +146,14 @@
       "source_image_components": 12,
       "resolved_sprite_references": 10,
       "visible_layers": 3,
-      "excluded_layers": 9,
+      "excluded_layers": 8,
       "exclusion_reasons": {
         "character_view_or_descendant": 3,
-        "conditional_room_object_state:_Code.Rooms.ObjectRoomObjectView": 5,
+        "conditional_room_object_state:_Code.Rooms.ObjectRoomObjectView": 4,
         "inactive_self_or_ancestor": 1
       },
-      "character_orders": 2
+      "character_orders": 2,
+      "conditional_layers": 1
     }
   ]
 }

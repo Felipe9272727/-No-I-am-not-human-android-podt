@@ -1,0 +1,540 @@
+{
+  "scope": "static only; compiled Yarn bytecode and recovered text metadata; original executable/libraries not run",
+  "sources": [
+    "reconstruction/android-current/app/src/main/assets/narrative/program.json",
+    "restore-v10/checkpoint/reconstruction/logic/recovered_isil/Assembly-CSharp/_Code/Rooms/EntranceRoom.txt",
+    "reconstruction/native-game/src/dialogue_services.cpp",
+    "reconstruction/native-game/src/dialogue_commands.cpp",
+    "reconstruction/native-game/src/scene_commands.cpp"
+  ],
+  "routes": {
+    "tv_1_necessary": {
+      "reachable_nodes": [
+        "tv_1_necessary"
+      ],
+      "start_present": true
+    },
+    "entrance_daughter_1": {
+      "reachable_nodes": [
+        "Daughter_Entrance_1_1",
+        "Daughter_Entrance_1_2",
+        "Daughter_Entrance_1_3",
+        "Daughter_Entrance_1_4",
+        "Daughter_Entrance_1_5",
+        "entrance_daughter_1"
+      ],
+      "start_present": true
+    },
+    "Esenin_Entrance_11": {
+      "reachable_nodes": [
+        "Esenin_Entrance_11",
+        "Esenin_Entrance_3",
+        "Esenin_Entrance_4",
+        "Esenin_Entrance_NoLet",
+        "Esenin_Entrance_Occupied",
+        "Esenin_Entrance_Occupied_NoLet",
+        "Esenin_Entrance_Occupied_YesLet",
+        "Esenin_Entrance_YesLet"
+      ],
+      "start_present": true
+    },
+    "Anxiety_Entrance_11": {
+      "reachable_nodes": [
+        "Anxiety_Entrance_11",
+        "Anxiety_Entrance_3",
+        "Anxiety_Entrance_4",
+        "Anxiety_Entrance_NoLet",
+        "Anxiety_Entrance_Occupied",
+        "Anxiety_Entrance_Occupied_NoLet",
+        "Anxiety_Entrance_Occupied_YesLet",
+        "Anxiety_Entrance_YesLet"
+      ],
+      "start_present": true
+    }
+  },
+  "nodes": {
+    "tv_1_necessary": {
+      "name": "tv_1_necessary",
+      "commands": [],
+      "functions": [],
+      "run_node_edges": []
+    },
+    "entrance_daughter_1": {
+      "name": "entrance_daughter_1",
+      "commands": [
+        {
+          "instruction": 0,
+          "text": "SetEmotion Base",
+          "host_dispatch": "supported"
+        }
+      ],
+      "functions": [],
+      "run_node_edges": [
+        {
+          "instruction": 9,
+          "target": "Daughter_Entrance_1_1"
+        },
+        {
+          "instruction": 12,
+          "target": "Daughter_Entrance_1_2"
+        }
+      ]
+    },
+    "Esenin_Entrance_11": {
+      "name": "Esenin_Entrance_11",
+      "commands": [],
+      "functions": [],
+      "run_node_edges": [
+        {
+          "instruction": 8,
+          "target": "Esenin_Entrance_3"
+        },
+        {
+          "instruction": 11,
+          "target": "Esenin_Entrance_4"
+        }
+      ]
+    },
+    "Anxiety_Entrance_11": {
+      "name": "Anxiety_Entrance_11",
+      "commands": [
+        {
+          "instruction": 0,
+          "text": "SetEmotion Base",
+          "host_dispatch": "supported"
+        }
+      ],
+      "functions": [],
+      "run_node_edges": [
+        {
+          "instruction": 10,
+          "target": "Anxiety_Entrance_3"
+        },
+        {
+          "instruction": 13,
+          "target": "Anxiety_Entrance_4"
+        }
+      ]
+    },
+    "Daughter_Entrance_1_1": {
+      "name": "Daughter_Entrance_1_1",
+      "commands": [
+        {
+          "instruction": 1,
+          "text": "SetEmotion Happy",
+          "host_dispatch": "supported"
+        }
+      ],
+      "functions": [],
+      "run_node_edges": [
+        {
+          "instruction": 8,
+          "target": "Daughter_Entrance_1_3"
+        },
+        {
+          "instruction": 11,
+          "target": "Daughter_Entrance_1_4"
+        }
+      ]
+    },
+    "Daughter_Entrance_1_2": {
+      "name": "Daughter_Entrance_1_2",
+      "commands": [
+        {
+          "instruction": 1,
+          "text": "SetEmotion Happy",
+          "host_dispatch": "supported"
+        },
+        {
+          "instruction": 3,
+          "text": "SetEmotion Base",
+          "host_dispatch": "supported"
+        }
+      ],
+      "functions": [],
+      "run_node_edges": [
+        {
+          "instruction": 13,
+          "target": "Daughter_Entrance_1_3"
+        },
+        {
+          "instruction": 16,
+          "target": "Daughter_Entrance_1_4"
+        }
+      ]
+    },
+    "Esenin_Entrance_3": {
+      "name": "Esenin_Entrance_3",
+      "commands": [],
+      "functions": [
+        {
+          "instruction": 11,
+          "name": "IsCharacterPlaceEmpty"
+        }
+      ],
+      "run_node_edges": [
+        {
+          "instruction": 14,
+          "target": "Esenin_Entrance_YesLet"
+        },
+        {
+          "instruction": 18,
+          "target": "Esenin_Entrance_Occupied"
+        },
+        {
+          "instruction": 22,
+          "target": "Esenin_Entrance_NoLet"
+        }
+      ]
+    },
+    "Esenin_Entrance_4": {
+      "name": "Esenin_Entrance_4",
+      "commands": [],
+      "functions": [
+        {
+          "instruction": 10,
+          "name": "IsCharacterPlaceEmpty"
+        }
+      ],
+      "run_node_edges": [
+        {
+          "instruction": 13,
+          "target": "Esenin_Entrance_YesLet"
+        },
+        {
+          "instruction": 17,
+          "target": "Esenin_Entrance_Occupied"
+        },
+        {
+          "instruction": 21,
+          "target": "Esenin_Entrance_NoLet"
+        }
+      ]
+    },
+    "Anxiety_Entrance_3": {
+      "name": "Anxiety_Entrance_3",
+      "commands": [
+        {
+          "instruction": 0,
+          "text": "SetEmotion Base",
+          "host_dispatch": "supported"
+        },
+        {
+          "instruction": 3,
+          "text": "SetEmotion Sad",
+          "host_dispatch": "supported"
+        }
+      ],
+      "functions": [
+        {
+          "instruction": 12,
+          "name": "IsCharacterPlaceEmpty"
+        }
+      ],
+      "run_node_edges": [
+        {
+          "instruction": 15,
+          "target": "Anxiety_Entrance_YesLet"
+        },
+        {
+          "instruction": 19,
+          "target": "Anxiety_Entrance_Occupied"
+        },
+        {
+          "instruction": 23,
+          "target": "Anxiety_Entrance_NoLet"
+        }
+      ]
+    },
+    "Anxiety_Entrance_4": {
+      "name": "Anxiety_Entrance_4",
+      "commands": [
+        {
+          "instruction": 0,
+          "text": "SetEmotion Base",
+          "host_dispatch": "supported"
+        },
+        {
+          "instruction": 4,
+          "text": "SetEmotion Sad",
+          "host_dispatch": "supported"
+        }
+      ],
+      "functions": [
+        {
+          "instruction": 12,
+          "name": "IsCharacterPlaceEmpty"
+        }
+      ],
+      "run_node_edges": [
+        {
+          "instruction": 15,
+          "target": "Anxiety_Entrance_YesLet"
+        },
+        {
+          "instruction": 19,
+          "target": "Anxiety_Entrance_Occupied"
+        },
+        {
+          "instruction": 23,
+          "target": "Anxiety_Entrance_NoLet"
+        }
+      ]
+    },
+    "Daughter_Entrance_1_3": {
+      "name": "Daughter_Entrance_1_3",
+      "commands": [
+        {
+          "instruction": 0,
+          "text": "SetEmotion Base",
+          "host_dispatch": "supported"
+        }
+      ],
+      "functions": [],
+      "run_node_edges": [
+        {
+          "instruction": 10,
+          "target": "Daughter_Entrance_1_5"
+        },
+        {
+          "instruction": 13,
+          "target": "Daughter_Entrance_1_5"
+        }
+      ]
+    },
+    "Daughter_Entrance_1_4": {
+      "name": "Daughter_Entrance_1_4",
+      "commands": [
+        {
+          "instruction": 0,
+          "text": "SetEmotion Base",
+          "host_dispatch": "supported"
+        }
+      ],
+      "functions": [],
+      "run_node_edges": [
+        {
+          "instruction": 12,
+          "target": "Daughter_Entrance_1_5"
+        },
+        {
+          "instruction": 15,
+          "target": "Daughter_Entrance_1_5"
+        }
+      ]
+    },
+    "Esenin_Entrance_YesLet": {
+      "name": "Esenin_Entrance_YesLet",
+      "commands": [
+        {
+          "instruction": 0,
+          "text": "SetEmotion Happy",
+          "host_dispatch": "supported"
+        },
+        {
+          "instruction": 3,
+          "text": "LetIn Esenin",
+          "host_dispatch": "supported"
+        }
+      ],
+      "functions": [],
+      "run_node_edges": []
+    },
+    "Esenin_Entrance_Occupied": {
+      "name": "Esenin_Entrance_Occupied",
+      "commands": [],
+      "functions": [
+        {
+          "instruction": 2,
+          "name": "GetCharacterOnPlace"
+        }
+      ],
+      "run_node_edges": [
+        {
+          "instruction": 10,
+          "target": "Esenin_Entrance_Occupied_YesLet"
+        },
+        {
+          "instruction": 13,
+          "target": "Esenin_Entrance_Occupied_NoLet"
+        }
+      ]
+    },
+    "Esenin_Entrance_NoLet": {
+      "name": "Esenin_Entrance_NoLet",
+      "commands": [
+        {
+          "instruction": 4,
+          "text": "Refuse Esenin",
+          "host_dispatch": "supported"
+        }
+      ],
+      "functions": [],
+      "run_node_edges": []
+    },
+    "Anxiety_Entrance_YesLet": {
+      "name": "Anxiety_Entrance_YesLet",
+      "commands": [
+        {
+          "instruction": 0,
+          "text": "SetEmotion Happy",
+          "host_dispatch": "supported"
+        },
+        {
+          "instruction": 3,
+          "text": "LetIn Anxiety",
+          "host_dispatch": "supported"
+        }
+      ],
+      "functions": [],
+      "run_node_edges": []
+    },
+    "Anxiety_Entrance_Occupied": {
+      "name": "Anxiety_Entrance_Occupied",
+      "commands": [],
+      "functions": [
+        {
+          "instruction": 2,
+          "name": "GetCharacterOnPlace"
+        }
+      ],
+      "run_node_edges": [
+        {
+          "instruction": 12,
+          "target": "Anxiety_Entrance_Occupied_YesLet"
+        },
+        {
+          "instruction": 15,
+          "target": "Anxiety_Entrance_Occupied_NoLet"
+        }
+      ]
+    },
+    "Anxiety_Entrance_NoLet": {
+      "name": "Anxiety_Entrance_NoLet",
+      "commands": [
+        {
+          "instruction": 0,
+          "text": "SetEmotion Base",
+          "host_dispatch": "supported"
+        },
+        {
+          "instruction": 4,
+          "text": "SetEmotion Sad",
+          "host_dispatch": "supported"
+        },
+        {
+          "instruction": 6,
+          "text": "Refuse Anxiety",
+          "host_dispatch": "supported"
+        }
+      ],
+      "functions": [],
+      "run_node_edges": []
+    },
+    "Daughter_Entrance_1_5": {
+      "name": "Daughter_Entrance_1_5",
+      "commands": [
+        {
+          "instruction": 0,
+          "text": "SetEmotion Happy",
+          "host_dispatch": "supported"
+        },
+        {
+          "instruction": 2,
+          "text": "SetEmotion Base",
+          "host_dispatch": "supported"
+        },
+        {
+          "instruction": 4,
+          "text": "SetEmotion Happy",
+          "host_dispatch": "supported"
+        },
+        {
+          "instruction": 8,
+          "text": "ExileCharacter Neighbour true",
+          "host_dispatch": "supported"
+        },
+        {
+          "instruction": 9,
+          "text": "ChangeState Beer1 1",
+          "host_dispatch": "unsupported_or_unmapped"
+        },
+        {
+          "instruction": 10,
+          "text": "ChangeState Beer2 1",
+          "host_dispatch": "unsupported_or_unmapped"
+        }
+      ],
+      "functions": [],
+      "run_node_edges": []
+    },
+    "Esenin_Entrance_Occupied_YesLet": {
+      "name": "Esenin_Entrance_Occupied_YesLet",
+      "commands": [
+        {
+          "instruction": 1,
+          "text": "AggressiveLetIn Esenin",
+          "host_dispatch": "supported"
+        }
+      ],
+      "functions": [],
+      "run_node_edges": []
+    },
+    "Esenin_Entrance_Occupied_NoLet": {
+      "name": "Esenin_Entrance_Occupied_NoLet",
+      "commands": [
+        {
+          "instruction": 1,
+          "text": "Refuse Esenin",
+          "host_dispatch": "supported"
+        }
+      ],
+      "functions": [],
+      "run_node_edges": []
+    },
+    "Anxiety_Entrance_Occupied_YesLet": {
+      "name": "Anxiety_Entrance_Occupied_YesLet",
+      "commands": [
+        {
+          "instruction": 1,
+          "text": "AggressiveLetIn Anxiety",
+          "host_dispatch": "supported"
+        }
+      ],
+      "functions": [],
+      "run_node_edges": []
+    },
+    "Anxiety_Entrance_Occupied_NoLet": {
+      "name": "Anxiety_Entrance_Occupied_NoLet",
+      "commands": [
+        {
+          "instruction": 1,
+          "text": "Refuse Anxiety",
+          "host_dispatch": "supported"
+        }
+      ],
+      "functions": [],
+      "run_node_edges": []
+    }
+  },
+  "missing_node_targets": [],
+  "schedule_evidence": {
+    "day": 1,
+    "preset_visits": [
+      "Daughter (guest 1)",
+      "Esenin (guest 2)",
+      "Anxiety (guest 3)"
+    ],
+    "meaning": "preset schedule only; does not establish actual arrival/order or event generation"
+  },
+  "entrance_resolution": {
+    "source": "EntranceRoom.GetDialogName recovered disassembly, lines 392 onward",
+    "finding": "Daughter's first preset visit maps to entrance_daughter_1 according to checkpoint reconstruction notes; disassembly indicates a branch on character identity/category and visit state, but recovered text is native disassembly rather than managed C# source, so exact index/visited-bit field mapping is not claimed here."
+  },
+  "morning_tv": {
+    "found_named_node": false,
+    "candidate_node": "tv_1_necessary",
+    "caveat": "No node named morningTV/morning_tv was found. The TV Yarn node is dialogue content, not proof an event is scheduled or reachable in the day-start sequence."
+  },
+  "integration_conclusion": "Only manually starting recovered nodes can be considered for the next integration slice. Day/night transition, initialization callbacks, day-1 event generation and arrival ordering are not established by this node inventory. Do not synthesize missing commands or infer arrival from preset slots."
+}

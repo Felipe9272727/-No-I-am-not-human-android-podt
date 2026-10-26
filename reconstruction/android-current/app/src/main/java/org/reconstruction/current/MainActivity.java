@@ -109,6 +109,7 @@ public final class MainActivity extends AndroidApplication {
     private String lastPhase = "";
     private long campaignClockOrigin;
     private boolean resetCampaignClock;
+    private final SleepTransition sleepTransition = new SleepTransition();
     private long lastIntroTick = -1;
     private boolean introFinishedPending;
     private int introCompletionTickAttempts;
@@ -281,6 +282,22 @@ public final class MainActivity extends AndroidApplication {
     }
 
     private void applyState(JSONObject next) {
+        JSONObject previousCampaign = state.optJSONObject("campaign");
+        boolean wasTransitionPending = previousCampaign != null && previousCampaign.optBoolean("transition_pending", false);
+        JSONObject nextCampaign = next.optJSONObject("campaign");
+        boolean transitionPending = nextCampaign != null && nextCampaign.optBoolean("transition_pending", false);
+        boolean dayReady = nextCampaign != null && SleepTransition.useDayMusic(
+            nextCampaign.optString("time_of_day", ""), nextCampaign.optInt("day", 0), transitionPending);
+        boolean playing = "playing".equals(next.optString("phase", ""));
+        if (!playing) sleepTransition.cancel();
+        else if (transitionPending && sleepTransition.mode() == SleepTransition.IDLE)
+            beginSleepFadeToBlack();
+        else if (wasTransitionPending && !transitionPending) {
+            if (dayReady && sleepTransition.mode() == SleepTransition.WAITING_FOR_DAY_ACK) beginSleepFadeReveal();
+            else sleepTransition.cancel();
+        }
+        else if (!transitionPending && sleepTransition.isActive() && !dayReady)
+            sleepTransition.cancel();
         state = next;
         CrashDiagnostics.stage(this, "phase=" + next.optString("phase", "") + " view=" + next.optString("view_mode", ""));
         initialized = "state".equals(next.optString("type", ""));
@@ -291,6 +308,8 @@ public final class MainActivity extends AndroidApplication {
         updateMusic();
         if (canvas != null) canvas.invalidate();
         advanceIntroCompletion();
+        maybeScheduleSleepFadeTick();
+        refreshMorningTvButton();
     }
 
     /** Debug adaptation: run the normal end-of-video transition without waiting for playback. */
@@ -345,6 +364,66 @@ public final class MainActivity extends AndroidApplication {
         });
     }
 
+    private boolean sleepTransitionPending() {
+        JSONObject campaign=state.optJSONObject("campaign");
+        return campaign!=null&&campaign.optBoolean("transition_pending",false);
+    }
+
+    private boolean sleepTransitionBlocking() {
+        return sleepTransitionPending() || sleepTransition.isBlocking();
+    }
+
+    private boolean campaignClockBlocked() {
+        return !activityResumed || sleepTransitionBlocking() ||
+            (canvas != null && (canvas.isPauseOpen() || canvas.isSettingsOpen()));
+    }
+
+    private void reanchorCampaignClock() {
+        JSONObject campaign=state.optJSONObject("campaign");
+        long elapsed=campaign==null?0L:Math.max(0L,campaign.optLong("elapsed_ms",0L));
+        campaignClockOrigin=SystemClock.uptimeMillis()-elapsed;
+    }
+
+    private void beginSleepFadeToBlack() {
+        sleepTransition.beginToBlack(SystemClock.uptimeMillis());
+        maybeScheduleSleepFadeTick();
+    }
+
+    private void beginSleepFadeReveal() {
+        sleepTransition.beginReveal(SystemClock.uptimeMillis());
+        maybeScheduleSleepFadeTick();
+    }
+
+    private void maybeScheduleSleepFadeTick() {
+        ui.removeCallbacks(sleepFadeTicker);
+        if (activityResumed && sleepTransition.isActive()) ui.post(sleepFadeTicker);
+    }
+
+    private final Runnable sleepFadeTicker = new Runnable() {
+        @Override public void run() {
+            if (!sleepTransition.isActive()) return;
+            long now=SystemClock.uptimeMillis();
+            boolean advancing=activityResumed && (canvas == null || (!canvas.isPauseOpen() && !canvas.isSettingsOpen()));
+            int before=sleepTransition.mode();
+            sleepTransition.tick(now,advancing);
+            if (sleepTransition.claimDayTransitionAck(nativeBusy,sleepTransitionPending())) act("complete_day_transition",null,null);
+            if (before==SleepTransition.REVEALING_DAY && !sleepTransition.isActive()) {
+                updateEngine(); updateMusic(); refreshMorningTvButton();
+            }
+            if (canvas != null) canvas.invalidate();
+            if (sleepTransition.mode()==SleepTransition.TO_BLACK || sleepTransition.mode()==SleepTransition.REVEALING_DAY)
+                ui.postDelayed(this,canvas!=null&&(canvas.isPauseOpen()||canvas.isSettingsOpen())?100L:16L);
+            else if (sleepTransition.needsAckRetry() && sleepTransitionPending()) ui.postDelayed(this,50L);
+        }
+    };
+
+    private void refreshMorningTvButton() {
+        if (!activityResumed || nativeBusy || sleepTransitionBlocking() || !"playing".equals(state.optString("phase","")) ||
+            !"room".equals(viewMode()) || state.optInt("room",-1)!=6 || state.optJSONObject("dialogue")!=null) return;
+        JSONObject campaign=state.optJSONObject("campaign");
+        if (campaign!=null && campaign.optBoolean("can_watch_morning_tv",false)) canvas.postInvalidateOnAnimation();
+    }
+
     private void updateEngine() {
         if (roomEngine == null || roomEngineView == null) return;
         roomEngine.setState(state);
@@ -354,9 +433,10 @@ public final class MainActivity extends AndroidApplication {
         if (!world) { rendererStatusPolling = false; ui.removeCallbacks(rendererStatusTicker); }
         boolean enable = "playing".equals(state.optString("phase", "")) && "world".equals(viewMode()) &&
             !nativeBusy && pendingDoorAction == null && !toolsMode && state.optJSONObject("dialogue") == null &&
+            !sleepTransitionBlocking() &&
             (canvas == null || (!canvas.isPauseOpen() && !canvas.isSettingsOpen()));
         roomEngine.setInputEnabled(enable);
-        roomEngine.setPresentationPaused(!activityResumed || (canvas != null && (canvas.isPauseOpen() || canvas.isSettingsOpen())));
+        roomEngine.setPresentationPaused(!activityResumed || sleepTransitionBlocking() || (canvas != null && (canvas.isPauseOpen() || canvas.isSettingsOpen())));
         if (!enable) resetWorldInput();
         if (enable) { ui.removeCallbacks(interactionPoll); ui.post(interactionPoll); }
         else { ui.removeCallbacks(interactionPoll); nearbyInteraction = null; nearbyInteractionSignature = ""; }
@@ -498,8 +578,12 @@ public final class MainActivity extends AndroidApplication {
 
     private final Runnable campaignTicker = new Runnable() {
         @Override public void run() {
-            if (!initialized || !"playing".equals(state.optString("phase", ""))) return;
-            if (!nativeBusy) {
+            if (!initialized || !"playing".equals(state.optString("phase", "")) || !activityResumed) return;
+            if (campaignClockBlocked()) {
+                JSONObject campaign=state.optJSONObject("campaign");
+                long elapsed=campaign==null?0L:Math.max(0L,campaign.optLong("elapsed_ms",0L));
+                campaignClockOrigin=SystemClock.uptimeMillis()-elapsed;
+            } else if (!nativeBusy) {
                 JSONObject action = new JSONObject();
                 try { action.put("action", "campaign_tick"); action.put("elapsed_ms", Math.max(0L, SystemClock.uptimeMillis() - campaignClockOrigin)); }
                 catch (JSONException ignored) { }
@@ -530,7 +614,10 @@ public final class MainActivity extends AndroidApplication {
         if (toolsMode || "tools".equals(phase)) ambience="ambience_house";
         else if ("menu".equals(phase)) music="main_menu";
         else if ("playing".equals(phase) || "boundary".equals(phase)) {
-            music="night1"; ambience="ambience_house";
+            JSONObject campaign=state.optJSONObject("campaign");
+            boolean day=SleepTransition.useDayMusic(campaign==null?"":campaign.optString("time_of_day",""),
+                campaign==null?0:campaign.optInt("day",0),campaign!=null&&campaign.optBoolean("transition_pending",false));
+            music=sleepTransition.isActive()?selectedMusic:(day?"day":"night1"); ambience="ambience_house";
         }
         // Intro MP4 already contains its original soundtrack.
         if (!music.equals(selectedMusic)) {
@@ -628,6 +715,7 @@ public final class MainActivity extends AndroidApplication {
         if (canvas != null) canvas.pauseAnimations();
         ui.removeCallbacks(doorTransitionPoll);
         ui.removeCallbacks(campaignTicker); ui.removeCallbacks(introTicker); ui.removeCallbacks(interactionPoll); ui.removeCallbacks(rendererStatusTicker); rendererStatusPolling=false;
+        ui.removeCallbacks(sleepFadeTicker); sleepTransition.onHostPause(SystemClock.uptimeMillis());
         if (roomEngine != null) roomEngine.setInputEnabled(false); resetWorldInput();
         if (roomEngine != null) roomEngine.setPresentationPaused(true);
         lastPhase = "";
@@ -644,6 +732,7 @@ public final class MainActivity extends AndroidApplication {
         if (ambiencePlayer!=null) ambiencePlayer.onHostResume();
         if(roomEngineView!=null)roomEngineView.post(this::applyRenderResolution);
         updateIntro(); updateCampaignClock(); updateEngine(); updateMusic(); maybeShowPreviousCrash();
+        sleepTransition.onHostResume(SystemClock.uptimeMillis()); maybeScheduleSleepFadeTick(); refreshMorningTvButton();
         if(pendingDoorAction!=null)ui.post(doorTransitionPoll);
         if ("intro".equals(state.optString("phase", "")) && introPrepared) { ui.removeCallbacks(introTicker); ui.post(introTicker); }
     }
@@ -681,7 +770,7 @@ public final class MainActivity extends AndroidApplication {
 
     private void showOptionsDialog() {
         if(canvas==null)return;
-        canvas.settingsOpen=true;updateEngine();canvas.invalidate();
+        canvas.settingsOpen=true;reanchorCampaignClock();updateEngine();canvas.invalidate();
     }
 
     private final class GameCanvas extends View {
@@ -739,6 +828,8 @@ public final class MainActivity extends AndroidApplication {
             else if ("boundary".equals(phase)) drawBoundary(screen);
             else drawPlayingHud(screen);
             drawError(screen);
+            drawSleepTransition(screen);
+            if (sleepTransitionBlocking()) hits.clear();
             screen.restore();
             long now=System.nanoTime();
             if(hudWindowStart==0)hudWindowStart=started;
@@ -864,7 +955,7 @@ public final class MainActivity extends AndroidApplication {
             JSONObject dialogue=state.optJSONObject("dialogue");
             if(dialogue!=null){drawDialogue(c,dialogue);drawPortrait(c,state.optJSONObject("portrait"));return;}
             drawHudComponents(c,"world",true,"SaveIcon");
-            drawSourceKeyControl(c,"Ⅱ",1778,23,1882,112,()->{pauseOpen=true;updateEngine();invalidate();});
+            drawSourceKeyControl(c,"Ⅱ",1778,23,1882,112,()->{pauseOpen=true;reanchorCampaignClock();updateEngine();invalidate();});
             if(nearbyInteraction!=null&&!nativeBusy) {
                 drawWorldInteractionPrompt(c,nearbyLabel(nearbyInteraction));
             }
@@ -954,8 +1045,17 @@ public final class MainActivity extends AndroidApplication {
             if(dialogue!=null){drawDialogue(c,dialogue);drawPortrait(c,state.optJSONObject("portrait"));return;}
             button(c,"Voltar ao mundo",1630,28,1870,105,0xCC242B32,12,()->act("enter_world",null,null));
             JSONObject campaign=state.optJSONObject("campaign");
+            if(state.optInt("room",-1)==6 && campaign!=null && campaign.optBoolean("can_sleep",false))
+                drawMobileSourceButton(c,"Dormir",1570,135,1870,235,0xCCFFFFFF,()->act("sleep",null,null));
+            if(state.optInt("room",-1)==6 && campaign!=null && campaign.optBoolean("morning_tv_pending",false) && campaign.optBoolean("can_watch_morning_tv",false))
+                drawMobileSourceButton(c,"Assistir à TV",1510,260,1870,360,0xCCFFFFFF,()->act("watch_morning_tv",null,null));
             if(campaign!=null&&campaign.optBoolean("neighbour_can_talk",false))
                 button(c,"Conversar com o Vizinho",1390,870,1810,970,0xEE874C34,14,this::actorTalkNeighbour);
+        }
+
+        private void drawSleepTransition(Canvas c) {
+            if (!sleepTransition.isActive()) return;
+            c.drawColor(Color.argb(sleepTransition.blackAlpha(),0,0,0));
         }
 
         private void drawSettingsPanel(Canvas c) {
@@ -973,13 +1073,13 @@ public final class MainActivity extends AndroidApplication {
             button(c,muteMusic?"Músicas desligadas":"Músicas ligadas",680,660,1240,730,0xFFFFFFFF,0,MainActivity.this::toggleMusic);
             button(c,muteIntro?"Som da introdução desligado":"Som da introdução ligado",680,745,1240,815,0xFFFFFFFF,0,()->{muteIntro=!muteIntro;if(introPlayer!=null)introPlayer.setVolume(muteIntro?0f:1f,muteIntro?0f:1f);invalidate();});
             button(c,"Diagnóstico",680,830,1240,900,0xFFFFFFFF,0,MainActivity.this::showRendererDiagnostic);
-            button(c,"Voltar",680,915,1240,985,0xFFFFFFFF,0,()->{settingsOpen=false;updateEngine();invalidate();});
+            button(c,"Voltar",680,915,1240,985,0xFFFFFFFF,0,()->{settingsOpen=false;reanchorCampaignClock();updateEngine();invalidate();});
         }
 
         private void drawPausePanel(Canvas c) {
             drawHudComponents(c,"pause",false,null);
             drawPauseLabel(c,"PauseText","PAUSADO");
-            drawPauseButton(c,"Continue","Continuar",()->{pauseOpen=false;updateEngine();invalidate();});
+            drawPauseButton(c,"Continue","Continuar",()->{pauseOpen=false;reanchorCampaignClock();updateEngine();invalidate();});
             drawPauseButton(c,"Settings","Opções",MainActivity.this::showOptionsDialog);
             drawPauseButton(c,"Menu","Menu principal",()->{pauseOpen=false;act("menu",null,null);});
             drawPauseButton(c,"Exit","Salvar sessão",this::saveWorldState);
@@ -1449,6 +1549,7 @@ public final class MainActivity extends AndroidApplication {
 
         private void pointerDown(MotionEvent e,int index) {
             int id=e.getPointerId(index);float[] q=logicalPoint(e.getX(index),e.getY(index));
+            if(sleepTransitionBlocking()){pointerRoles.put(id,ROLE_NONE);return;}
             for(int i=hits.size()-1;i>=0;i--)if(hits.get(i).rect.contains(q[0],q[1])){pointerRoles.put(id,ROLE_UI);pointerHits.put(id,hits.get(i));return;}
             if(!initialized||nativeBusy||pendingDoorAction!=null||!"playing".equals(state.optString("phase",""))||!"world".equals(viewMode())||toolsMode||pauseOpen||settingsOpen){pointerRoles.put(id,ROLE_NONE);return;}
             if(q[0]<560&&q[1]>520&&joystickPointer<0){pointerRoles.put(id,ROLE_MOVE);joystickPointer=id;moveJoystick(q[0],q[1]);postInvalidateOnAnimation();}

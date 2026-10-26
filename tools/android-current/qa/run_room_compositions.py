@@ -6,6 +6,7 @@ host rendering, not an Android device or the original Unity runtime.
 """
 import json
 import os
+import argparse
 from pathlib import Path
 import subprocess
 from PIL import Image, ImageChops, ImageStat
@@ -13,12 +14,16 @@ from PIL import Image, ImageChops, ImageStat
 ROOT = Path(__file__).resolve().parents[3]
 QA = Path(__file__).resolve().parent
 ASSETS = ROOT / 'reconstruction/android-current/app/src/main/assets'
-OUTPUT = ROOT / 'reconstruction/android-current/qa/rooms-v09'
+OUTPUT = ROOT / 'reconstruction/android-current/qa/rooms-v10'
 
 
-def reference(room):
+def reference(room, flags=None):
+    if flags is None:
+        flags = {'bed_visible': True}
     canvas = Image.new('RGBA', (1280, 720), (0, 0, 0, 255))
     for layer in sorted(room['layers'], key=lambda row: row['draw_order']):
+        if layer.get('condition') and not flags.get(layer['condition'], False):
+            continue
         with Image.open(ASSETS / layer['asset']) as source:
             source.load()
             sprite = source.convert('RGBA')
@@ -40,6 +45,11 @@ def reference(room):
 
 
 def main():
+    global OUTPUT
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--version-code', type=int, default=10)
+    version = parser.parse_args().version_code
+    OUTPUT = ROOT / f'reconstruction/android-current/qa/rooms-v{version:02d}'
     OUTPUT.mkdir(parents=True, exist_ok=True)
     cp = os.pathsep.join([str(QA / 'build-gles')] + [str(p) for p in sorted((QA / 'deps').glob('*.jar')) if not p.name.endswith('-sources.jar')])
     env = dict(os.environ, EGL_PLATFORM='surfaceless', MESA_GLES_VERSION_OVERRIDE='2.0', LIBGL_ALWAYS_SOFTWARE='1')
@@ -67,8 +77,15 @@ def main():
         metrics.append({'room': room['id'], 'layers': len(room['layers']), 'mean_absolute_rgb_error': mean})
         if mean > 5:
             raise AssertionError(f"Room {room['id']} diverges from source composition: {mean:.3f}")
-    report = {'host_gles2': True, 'android_execution': False, 'rooms': metrics}
-    target = ROOT / 'reconstruction/android-current/room_layers_v09_validation.json'
+    bedroom = next(room for room in manifest['rooms'] if room['id'] == 6)
+    with Image.open(OUTPUT / 'room-6-bed-hidden.png') as screenshot:
+        screenshot.load()
+        hidden_error = sum(ImageStat.Stat(ImageChops.difference(screenshot.convert('RGB'), reference(bedroom, {'bed_visible': False}))).mean) / 3
+    if hidden_error > 5:
+        raise AssertionError('Conditional bed remains visible when disabled')
+    report = {'host_gles2': True, 'android_execution': False, 'rooms': metrics,
+              'bed_hidden_mean_absolute_rgb_error': hidden_error}
+    target = ROOT / f'reconstruction/android-current/room_layers_v{version:02d}_validation.json'
     target.write_text(json.dumps(report, indent=2) + '\n')
     print(json.dumps(report, indent=2))
 

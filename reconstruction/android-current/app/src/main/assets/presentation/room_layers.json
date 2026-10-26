@@ -1208,6 +1208,28 @@
           "preserve_aspect": true
         },
         {
+          "image_component_path_id": 4843,
+          "name": "Bed",
+          "asset": "ui/exported_images/sharedassets1_640_Livingroom2_obj1.png",
+          "rect": [
+            461.370029,
+            572.585013,
+            1261.259943,
+            580.229974
+          ],
+          "draw_order": 2,
+          "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "preserve_aspect": false,
+          "condition": "bed_visible",
+          "source_state_component": 4801,
+          "source_state_enum": 0
+        },
+        {
           "image_component_path_id": 4646,
           "name": "Window",
           "asset": "ui/exported_images/sharedassets1_577_Bedroom_curtain.png",
@@ -1259,14 +1281,6 @@
         }
       ],
       "excluded_layers": [
-        {
-          "image_component_path_id": 4843,
-          "game_object_path_id": 398,
-          "name": "Bed",
-          "reason": "conditional_room_object_state:_Code.Rooms.ObjectRoomObjectView",
-          "asset": "ui/exported_images/sharedassets1_640_Livingroom2_obj1.png",
-          "draw_order": 2
-        },
         {
           "image_component_path_id": 4447,
           "game_object_path_id": 339,
