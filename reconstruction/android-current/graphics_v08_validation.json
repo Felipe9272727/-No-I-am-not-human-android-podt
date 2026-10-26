@@ -1,0 +1,54 @@
+{
+  "original_game_executed": false,
+  "android_device_execution_tested": false,
+  "host_renderer": "Mesa llvmpipe / OpenGL ES 2.0",
+  "source_color_pipeline": {
+    "color_space": "Linear",
+    "scene_volume": "Night",
+    "tonemapping": "Neutral",
+    "post_exposure_ev": 0,
+    "proof": "reconstruction/reverse-graphics/unity-render-settings-evidence.json",
+    "limitations": [
+      "Static lighting approximation; runtime shadows and complete URP material/postprocess stack are not reproduced.",
+      "Very wide spotlights retain a point-light approximation.",
+      "Current opening remains night; later Day profile switching is not implemented."
+    ]
+  },
+  "ceiling_regression": {
+    "passed": true,
+    "source_pose": {
+      "position": [
+        -4,
+        1.584,
+        -10
+      ],
+      "yaw": 0,
+      "pitch": -75
+    },
+    "renderer_path_id": 2124,
+    "material_index": 28,
+    "before_clipped_fraction": 1.0,
+    "after_clipped_fraction": 0.0,
+    "after_unique_center_colors": 153,
+    "before_sha256": "649ac64f86e6411c7dbd037c8d304da747eed5383b6fbb016bf65602931a46ed",
+    "after_sha256": "cac0e6312dba8b31187aa4d6e28ac8afeccacb352d31b9a32ffde883b2aa2fdc",
+    "log": "reconstruction/android-current/qa/v08-ceiling.log"
+  },
+  "door_regression": {
+    "passed": true,
+    "renderer_path_id": 2141,
+    "room": 0,
+    "open_angle_degrees": -90,
+    "open_seconds": 1,
+    "close_seconds": 0.5,
+    "pause_freezes": true,
+    "cancel_resets_without_completing": true,
+    "room_return_closes": true,
+    "hinge_drift": 2.3841858e-07,
+    "changed_pixels": 27430,
+    "endpoint_tolerance_frames": 1
+  },
+  "all_six_source_hinges_host_math_passed": true,
+  "shader_compile_failure_fallback_passed": true,
+  "full_urpshader_fidelity": false
+}

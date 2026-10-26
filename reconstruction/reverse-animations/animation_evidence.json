@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "provenance": {
+    "basis": "retained Unity C# field declarations and recovered ISIL from the v1.3.18 checkpoint",
+    "original_executables_executed": false,
+    "instance_values_included": false,
+    "instance_values_manifest": "animation_manifest.json",
+    "status": "source behavior proven; authored scene values exported in animation_manifest.json"
+  },
+  "door_trigger": {
+    "component": "_Code.Infrastructure.TriggerObjects.Objects.TriggerObjectOpenDoor",
+    "source_files": [
+      "reconstruction/logic/cpp2il_cs/DiffableCs/Assembly-CSharp/_Code/Infrastructure/TriggerObjects/Objects/TriggerObjectOpenDoor.cs",
+      "reconstruction/logic/recovered_isil/Assembly-CSharp/_Code/Infrastructure/TriggerObjects/Objects/TriggerObjectOpenDoor.txt"
+    ],
+    "serialized_fields": {
+      "_doorTransform": {"type": "UnityEngine.Transform", "field_offset": "0x20"},
+      "_rotateAngle": {"type": "UnityEngine.Vector3", "field_offset": "0x28", "unit": "degrees"},
+      "_duration": {"type": "System.Single", "field_offset": "0x34", "unit": "seconds"},
+      "_sounds": {"type": "_Code.Infrastructure.Sound.ESound[]", "field_offset": "0x38"}
+    },
+    "on_enter_inner": {
+      "one_shot_guard": "If _isTriggered is already true, return. Otherwise set it true before starting the action.",
+      "rotation_call": "ShortcutExtensions.DORotate(_doorTransform, _rotateAngle, _duration, 0)",
+      "rotation_semantics": "DOTween rotation tween toward the serialized Euler endpoint; integer mode 0 is passed as the final overload argument. Scene instance values for six level4 actions are in animation_manifest.json.",
+      "sound_call": "Select one element randomly from serialized _sounds, then raise the common sound event with ESoundSource value 3.",
+      "sound_limit": "The trigger stores ESound enum entries, not AudioClip pointers. A WAV named House_Doors_Open_* alone does not prove it is the selected sound."
+    },
+    "remaining_limits": [
+      "The retained level1 main-house scene has no TriggerObjectOpenDoor instance; its six room doors use DoorTrigger instead.",
+      "The runtime ESound-to-AudioClip route is not included in this animation manifest."
+    ],
+    "required_static_inputs": [
+      "NoImNotAHuman_Data/level1",
+      "NoImNotAHuman_Data/sharedassets0.assets",
+      "NoImNotAHuman_Data/globalgamemanagers (for external script/type metadata when needed)",
+      "matching sharedassets0 resource companion files only if referenced streamed media bytes are to be verified"
+    ]
+  },
+  "room_door_trigger": {
+    "component": "DoorTrigger : AActionableObjectView",
+    "source_files": [
+      "reconstruction/logic/cpp2il_cs/DiffableCs/Assembly-CSharp/DoorTrigger.cs",
+      "reconstruction/logic/recovered_isil/Assembly-CSharp/DoorTrigger.txt",
+      "reconstruction/logic/recovered_isil/Assembly-CSharp/DoorTrigger_NestedType___get_ExtraActionIn_b__23_0_d.txt",
+      "reconstruction/logic/recovered_isil/Assembly-CSharp/DoorTrigger_NestedType___get_ExtraActionOut_b__25_0_d.txt"
+    ],
+    "serialized_fields": {
+      "_doorPivot": {"type": "UnityEngine.Transform", "field_offset": "0x100"},
+      "_openAngle": {"type": "System.Single", "field_offset": "0x108", "unit": "degrees"},
+      "_slightOpenAngle": {"type": "System.Single", "field_offset": "0x10C", "unit": "degrees"},
+      "_duration": {"type": "System.Single", "field_offset": "0x110", "unit": "seconds"},
+      "_linkedRoom": {"type": "ERoom", "field_offset": "0x114"},
+      "_doorCollider": {"type": "UnityEngine.Collider", "field_offset": "0x118"},
+      "_closeSpeedModifier": {"type": "System.Single", "field_offset": "0x120"}
+    },
+    "runtime_rules": {
+      "start_rotation": "Awake captures Transform.rotation, converts quaternion to positive world Euler degrees, and stores as _startRotation.",
+      "open_target": "(_startRotation.x, _startRotation.y + _openAngle, _startRotation.z)",
+      "slight_open_target": "(_startRotation.x, _startRotation.y + _slightOpenAngle, _startRotation.z)",
+      "close_target": "_startRotation",
+      "open_duration": "_duration",
+      "close_duration": "_duration / _closeSpeedModifier",
+      "ease_values": {
+        "normal_open": {"numeric": 9, "standard_DOTween_name": "OutCubic", "name_mapping_status": "mapped from standard DOTween Ease enumeration; enum declaration not retained locally"},
+        "normal_close": {"numeric": 2, "standard_DOTween_name": "InSine", "name_mapping_status": "mapped from standard DOTween Ease enumeration; enum declaration not retained locally"},
+        "source_call_target": "0x180AA6520 follows DORotate and receives the numeric Ease value; retained disassembly has no method name."
+      },
+      "await": "Room extra-action coroutine awaits the rotation tween. The exact inherited base-view dispatch point relative to a host scene transition is unresolved."
+    },
+    "scene_instances": "Six room-linked instances and their pivot, world transform, renderer, room-action raycast target, and collider IDs are in animation_manifest.json."
+  },
+  "sprite_animation": {
+    "component": "_Code.Utils.UI.ImageAnimating.AnimatedImage",
+    "source_files": [
+      "reconstruction/logic/cpp2il_cs/DiffableCs/Assembly-CSharp/_Code/Utils/UI/ImageAnimating/AnimatedImage.cs",
+      "reconstruction/logic/cpp2il_cs/DiffableCs/Assembly-CSharp/_Code/Utils/UI/ImageAnimating/AnimationData.cs",
+      "reconstruction/logic/cpp2il_cs/DiffableCs/Assembly-CSharp/_Code/Menues/HUD/Animations/EAnimationCyclingType.cs",
+      "reconstruction/logic/recovered_isil/Assembly-CSharp/_Code/Utils/UI/ImageAnimating/AnimatedImage_NestedType__StartPlayingAnimation_d__12.txt",
+      "reconstruction/logic/recovered_isil/Assembly-CSharp/_Code/Utils/UI/ImageAnimating/AnimationData.txt"
+    ],
+    "frame_timing": {
+      "source_formula": "AnimationData.Duration = Frames.Length / (float)FramesPerSecond",
+      "frame_rate_field": "integer FramesPerSecond; constructor default 8",
+      "cycling_enum": {"PlayOnce": 0, "Cycle": 1, "FixLastFrame": 2},
+      "behavior_note": "AnimatedImage sets the first frame for Cycle on StartAnimationOrSetFirstFrame; other types start the playback coroutine. Runtime elapsed time and Unity scheduling are not reproduced by this source manifest."
+    },
+    "scene_inventory": {
+      "room_character_instances": 61,
+      "animated_image_components": 39,
+      "source": "reconstruction/reverse-scenes/README_rendering.md",
+      "limit": "Aggregate counts establish authored scene animation components, not that all characters animate or which one is visible in an initial gameplay state."
+    },
+    "character_data": {
+      "character_config_records": 73,
+      "emotion_records": 275,
+      "source": "reconstruction/reverse-characters/README.md",
+      "limit": "A real NPC playback choice requires its exact AnimationData frames/FPS/cycling type and runtime-selected emotion. No character is asserted as the initial live actor from these aggregates."
+    }
+  },
+  "implementation_boundary": {
+    "door": "Use extracted scene transform and serialized angle/duration when available. If the runtime interpolates only the hinge transform with a generic easing approximation, label it as a host approximation and preserve source duration/endpoint separately.",
+    "character": "Use the exact source frame order and FPS from the emotion registry. If frame scheduling is adapted to Android elapsed time, label the scheduler adaptation; do not claim Unity coroutine timing identity.",
+    "no_invented_values": true
+  }
+}

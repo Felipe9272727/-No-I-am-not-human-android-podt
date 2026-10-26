@@ -1,12 +1,24 @@
 #pragma once
 
 #include "ninah/core.hpp"
+#include "ninah/characters.hpp"
 #include <functional>
 #include <string>
 #include <unordered_set>
 #include <vector>
 
 namespace ninah {
+
+// Static preset slots recovered from CharacterSOData. These are schedule facts,
+// not synthesized GameEvents: callers still provide the recovered event timing
+// and manager callbacks separately.
+struct PresetVisitSlot {
+    std::int32_t character_id;
+    std::int32_t day;
+    std::int32_t guest_number;
+};
+
+std::vector<PresetVisitSlot> preset_visits_for_day(const CharacterCatalog&, std::int32_t day);
 
 struct StagedVisit {
     std::int32_t character_id;

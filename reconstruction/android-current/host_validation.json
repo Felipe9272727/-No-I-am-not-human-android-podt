@@ -7,8 +7,8 @@
   ],
   "leak_sanitizer_enabled": false,
   "leak_sanitizer_reason": "Environment ptrace/proc task access failure; no leak validation claimed",
-  "test_binary": "build-host/host-test-asan",
-  "execution_command": "ASAN_OPTIONS=detect_leaks=0:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1 reconstruction/android-current/build-host/host-test-asan reconstruction",
+  "test_binary": "/tmp/current_host_test",
+  "execution_command": "ASAN_OPTIONS=detect_leaks=0:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1 /tmp/current_host_test /tmp/ninah-host-assets",
   "exit_code": 0,
   "passed": true,
   "output": "Current Android host: menu, intro captions, first Neighbour admission/talk, legacy tools routes, and in-memory snapshots passed",
@@ -27,16 +27,22 @@
     "character inspection and delayed Mother pose",
     "world/room mode defaults and active-dialogue navigation guards",
     "six source room RaycastTarget collider mappings and Entrance ray collider2432",
-    "source-eye camera pose validation and joint save/load revision"
+    "source-eye camera pose validation and joint save/load revision",
+    "visit completes and first talk returns to house exploration",
+    "completed visitor does not ring again after campaign ticks or save/load",
+    "unverified second Neighbour room talk rejected",
+    "preset schedule data: day0 Neighbour, day1 Daughter/Esenin/Anxiety; schedule is not a generated visit"
   ],
   "source_sha256": {
-    "reconstruction/android-current/native/current_game.cpp": "a6586ebbedaf6ef0c665a51a6aa05b99d2759a8a35fc5e592c2f3c30aee1bcc0",
-    "reconstruction/android-current/native/host_test.cpp": "b89fab71b906801480ee1da084417b7cce0010d02dcda490a36a97616683b262"
+    "reconstruction/android-current/native/current_game.cpp": "cbc7abb0a71aea267140ff62a5a175e404aceffc7150709fc2ea22be027bd0fd",
+    "reconstruction/android-current/native/host_test.cpp": "cff0ab9d0fc97919832c8cb04a2fb5e6ba45c42aaa5c3a5524864de7f0263c0a",
+    "reconstruction/native-game/src/arrivals.cpp": "eba0ade5520d376690459724d99049c28d231968fef7a74b71c31ea31ee77f4e",
+    "reconstruction/native-game/include/ninah/arrivals.hpp": "7247c042e33cc71a4a57a610197c044ffb3b2c0a916900d248eceec7b903854a"
   },
   "full_campaign_implemented": false,
   "android_device_execution_tested": false,
   "limitations": [
-    "Only the bounded opening and first Neighbour interaction are wired.",
+    "Only day0 Neighbour admission and first room conversation are wired; completed dialogue returns to exploration.",
     "Save state is in process memory only.",
     "Phone close-up and pin UI are not implemented.",
     "Original complete startup roster and any additional automatic first-scene Yarn event remain unresolved."

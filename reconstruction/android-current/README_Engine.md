@@ -51,3 +51,18 @@ without GL. `WorldGeometryTest.java` parses the staged manifest and mesh collide
 checks all seven source ray colliders and action mappings, then walks from the Main Camera pose
 until the entrance collider stops movement. `WorldPreview.java [output.png] [walkSeconds] [forward]`
 is the desktop GL screenshot harness when an X11/EGL Mesa display is available.
+
+DoorMotion reads animations/animation_manifest.json and the world Transform
+hierarchy, binds the six hinge descendants to renderer IDs, and applies a
+reflected world-Y rotation to the original matrices. Culling bounds follow
+the animated matrices. A queued token crosses from Android input to the GL
+thread; the UI dispatches enter_room only after that token completes. Door
+animation never calls native gameplay from the GL thread. Pause is explicit;
+the front-door action has no inferred swing animation.
+
+The v0.8 source shader applies the recovered opening Night Neutral curve and
+Linear/sRGB color path. Custom range/cone uniforms read original light
+attributes, rather than DefaultShader's copied PointLight/SpotLight caches.
+Uniform locations and values are cached to avoid repeated per-draw lookups.
+The existing unlit shader-compile fallback remains. This reproduces only part
+of Unity URP's lighting/material/postprocess behavior.

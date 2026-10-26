@@ -1,0 +1,31 @@
+{
+  "version": "0.8-graphics-doors",
+  "artifact": "NINAH-Port-Animacoes.apk",
+  "sha256": "4a4440947b6c49f06a6b48222fcd31a48cc466ad2543cd04218aa89fe4b0f8be",
+  "bytes": 338611243,
+  "native_source_tree_sha256": "33c9b6e4338fa2dba8e4c6673b79f94047901f62f46e8da9ce08b5a7e5ba9865",
+  "native_source_fingerprint_inputs": 52,
+  "new_work": [
+    "Reproduced clipped source ceiling; added source Linear/sRGB color processing and recovered Night Neutral curve.",
+    "URP smooth range attenuation for source point lights and inner/outer cone attenuation for supported spots.",
+    "Source light metadata uniforms read from original attributes and cached by shader location/value.",
+    "Six authored room-door hinges, OutCubic opening over1s, InSine closing over0.5s; touch waits for opening before room transition.",
+    "Source sprite PlayOnce/Cycle/FixLastFrame scheduling with lifecycle/pause clocks and autoplay UI frame lists.",
+    "Day0 visitor and room-talk completion persists; house exploration resumes and completed visit cannot rearm."
+  ],
+  "validation": [
+    "Host C++ ASan/UBSan regressions and source preset schedule test",
+    "Java host math/collision/frustum/interaction/render-loop/resolution/frame/door tests",
+    "Mesa GLES2 world, injected shader-failure fallback, ceiling detail and kitchen door movement",
+    "Final APK classpath-only GLSL resource render test",
+    "Both Android ABIs compiled, all PNGs decoded, mesh/audio hashes, ZIP/signatures/alignment validated"
+  ],
+  "limits": [
+    "No physical Android execution or device FPS gain measured for this build.",
+    "Day1 initialization, new visitors and full campaign remain unimplemented.",
+    "Main entrance/front-door swing not integrated; its FallingDoor Animator clip does not establish opening behavior.",
+    "All source clips are catalogued; only reached runtime portraits/signs and visible autoplay UI clips are played.",
+    "Lighting/materials/postprocess effects remain partial; no pixel-identical graphics claim.",
+    "Save remains in memory only."
+  ]
+}

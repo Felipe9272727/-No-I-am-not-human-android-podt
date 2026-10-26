@@ -1,0 +1,13 @@
+CENTER_RAY_HIT=renderer=2141 name=Дверь межкомнатная 4 materials=[2] distance=5.278698
+DOOR_GLES={"room":0,"renderer":2141,"token":1,"midAngle":-78.75001,"openAngle":-90.0,"openComplete":true,"pauseFrozen":true,"cancelAngle":0.0,"cancelComplete":false,"closedAngle":0.0,"hingeDrift":2.3841858E-7,"changedPixels":27430}
+HOST_RENDER_MEAN_MS=5.4232448799999995
+RENDERER_DIAGNOSTIC=ready
+
+GL vendor=Mesa, renderer=llvmpipe (LLVM 20.1.2, 256 bits), version=OpenGL ES 2.0 Mesa 25.2.8-0ubuntu0.24.04.2, maxTextureSize=16384, depthBits=24
+World meshes=91, render items=111, mesh colliders=24, texture cache=77598784 bytes, visible textures=22
+FPS=60 render-submit=4.19 ms, surface=1280x720, draws=59 triangles=28705, texture loads=22 evictions=0, cached materials=111 interaction snapshots=1
+GL_RENDERER=llvmpipe (LLVM 20.1.2, 256 bits)
+GL_VERSION=OpenGL ES 2.0 Mesa 25.2.8-0ubuntu0.24.04.2
+WORLD_PREVIEW_POSE={"position":[-3.985,1.584,-6.998],"pitch":6.1,"yaw":159.2}
+WORLD_PREVIEW_PNG=/workspace/scratch/ad0b61c5ef81/tools/android-current/qa/fixtures/door-room-0-final.png
+Door GLES regression: PASS (hinge, 1s open, pause, cancel, 0.5s close, rendered movement)

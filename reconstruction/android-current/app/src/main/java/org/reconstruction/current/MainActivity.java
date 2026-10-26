@@ -71,6 +71,7 @@ public final class MainActivity extends AndroidApplication {
     private final Map<String, String> translatedLines = new HashMap<>();
     private final Map<String, Typeface> uiFonts = new HashMap<>();
     private JSONObject uiManifest = new JSONObject();
+    private final Map<Integer,UiAnimation> uiAnimations = new HashMap<>();
     private final LruCache<String, Bitmap> bitmaps = new LruCache<String, Bitmap>(32 * 1024 * 1024) {
         @Override protected int sizeOf(String key, Bitmap value) { return Math.max(1, value.getAllocationByteCount()); }
     };
@@ -113,6 +114,8 @@ public final class MainActivity extends AndroidApplication {
     private int introCompletionTickAttempts;
     private volatile JSONObject nearbyInteraction;
     private String nearbyInteractionSignature = "";
+    private JSONObject pendingDoorAction;
+    private long pendingDoorToken;
     private int joystickPointer = -1, lookPointer = -1;
     private float joystickX, joystickY, lookLastX, lookLastY;
     private final Map<Integer,Integer> pointerRoles = new HashMap<>();
@@ -172,6 +175,7 @@ public final class MainActivity extends AndroidApplication {
                 JSONObject gameUi = assets.optJSONObject("game_ui");
                 String uiPath = gameUi == null ? "presentation/ui/ui_manifest.json" : gameUi.optString("manifest", "presentation/ui/ui_manifest.json");
                 try { uiManifest = new JSONObject(readAssetText(uiPath)); } catch (Exception ignored) { }
+                loadUiAnimations(assets.optString("animations_manifest",""));
                 roomEngine.setAssets(assets);
                 loadTranslations();
                 initial = parseState(nativeCreate(readAssetText("narrative/program.json"), readAssetText("narrative/line_metadata.json")));
@@ -244,6 +248,27 @@ public final class MainActivity extends AndroidApplication {
         copyMap(root.optJSONObject("ids"), translatedLines);
     }
 
+    private void loadUiAnimations(String path) throws Exception {
+        if(path.isEmpty())return;
+        JSONArray components=new JSONObject(readAssetText(path)).optJSONArray("animated_image_components");
+        if(components==null)return;
+        for(int i=0;i<components.length();i++){
+            JSONObject entry=components.optJSONObject(i);if(entry==null||!entry.optBoolean("enabled",false)||!entry.optBoolean("play_from_awake",false))continue;
+            JSONObject image=entry.optJSONObject("image");JSONArray frames=entry.optJSONArray("frames"),paths=new JSONArray();
+            if(image==null||frames==null)continue;
+            for(int f=0;f<frames.length();f++){
+                JSONObject frame=frames.optJSONObject(f);String asset=frame==null?"":frame.optString("android_asset","");
+                if(!asset.isEmpty())paths.put(asset);
+            }
+            if(paths.length()==frames.length()&&paths.length()>0)
+                uiAnimations.put(image.optInt("path_id",-1),new UiAnimation(paths,entry.optInt("frames_per_second",8),entry.optInt("cycling_type_value",2),entry.optBoolean("ignore_timescale",false)));
+        }
+    }
+    private static final class UiAnimation {
+        final JSONArray frames;final int fps,cycling;final boolean unscaled;
+        UiAnimation(JSONArray f,int rate,int cycle,boolean ignore){frames=f;fps=rate;cycling=cycle;unscaled=ignore;}
+    }
+
     private JSONObject parseState(String raw) {
         try { return new JSONObject(raw == null ? "{}" : raw); }
         catch (JSONException e) { JSONObject bad = new JSONObject(); try { bad.put("error", "Resposta inválida do núcleo: " + e.getMessage()); } catch (JSONException ignored) { } return bad; }
@@ -298,6 +323,7 @@ public final class MainActivity extends AndroidApplication {
 
     private void dispatch(JSONObject action) {
         if (!initialized || nativeBusy) return;
+        if (!"campaign_tick".equals(action.optString("action")) && pendingDoorAction != null) cancelDoorTransition();
         if ("new_game".equals(action.optString("action"))) {
             resetCampaignClock = true;
             if (canvas != null) canvas.resetAnimations();
@@ -327,9 +353,10 @@ public final class MainActivity extends AndroidApplication {
         if (world && activityResumed && !rendererStatusPolling) { rendererStatusPolling = true; ui.post(rendererStatusTicker); }
         if (!world) { rendererStatusPolling = false; ui.removeCallbacks(rendererStatusTicker); }
         boolean enable = "playing".equals(state.optString("phase", "")) && "world".equals(viewMode()) &&
-            !nativeBusy && !toolsMode && state.optJSONObject("dialogue") == null &&
+            !nativeBusy && pendingDoorAction == null && !toolsMode && state.optJSONObject("dialogue") == null &&
             (canvas == null || (!canvas.isPauseOpen() && !canvas.isSettingsOpen()));
         roomEngine.setInputEnabled(enable);
+        roomEngine.setPresentationPaused(!activityResumed || (canvas != null && (canvas.isPauseOpen() || canvas.isSettingsOpen())));
         if (!enable) resetWorldInput();
         if (enable) { ui.removeCallbacks(interactionPoll); ui.post(interactionPoll); }
         else { ui.removeCallbacks(interactionPoll); nearbyInteraction = null; nearbyInteractionSignature = ""; }
@@ -419,7 +446,7 @@ public final class MainActivity extends AndroidApplication {
 
     private void dispatchNearbyInteraction() {
         JSONObject target = nearbyInteraction;
-        if (target == null || nativeBusy) return;
+        if (target == null || nativeBusy || pendingDoorAction != null) return;
         String actionName = target.optString("action", "");
         JSONObject action = new JSONObject();
         try {
@@ -431,8 +458,30 @@ public final class MainActivity extends AndroidApplication {
                 action.put("action", "enter_room"); action.put("room", target.optInt("room", -1));
             } else return;
         } catch (JSONException ignored) { return; }
+        if ("enter_room".equals(actionName) && roomEngine != null) {
+            long token=roomEngine.beginDoorOpen(target.optInt("room",-1));
+            if(token>0){pendingDoorAction=action;pendingDoorToken=token;updateEngine();canvas.invalidate();ui.post(doorTransitionPoll);return;}
+        }
         dispatch(action);
     }
+
+    private void cancelDoorTransition() {
+        pendingDoorAction=null;pendingDoorToken=0;ui.removeCallbacks(doorTransitionPoll);
+        if(roomEngine!=null)roomEngine.cancelDoorMotion();
+    }
+
+    private final Runnable doorTransitionPoll=new Runnable(){
+        @Override public void run(){
+            if(pendingDoorAction==null)return;
+            if(!"playing".equals(state.optString("phase",""))||!"world".equals(viewMode())){cancelDoorTransition();return;}
+            if(roomEngine!=null&&roomEngine.getRendererStatus().startsWith("error:")){cancelDoorTransition();updateEngine();return;}
+            boolean paused=!activityResumed||(canvas!=null&&(canvas.isPauseOpen()||canvas.isSettingsOpen()));
+            if(!paused&&!nativeBusy&&roomEngine!=null&&roomEngine.isDoorOpenComplete(pendingDoorToken)){
+                JSONObject action=pendingDoorAction;pendingDoorAction=null;pendingDoorToken=0;dispatch(action);return;
+            }
+            ui.postDelayed(this,paused?100L:16L);
+        }
+    };
 
     private void updateCampaignClock() {
         String phase = state.optString("phase", "");
@@ -577,8 +626,10 @@ public final class MainActivity extends AndroidApplication {
     @Override protected void onPause() {
         activityResumed = false;
         if (canvas != null) canvas.pauseAnimations();
+        ui.removeCallbacks(doorTransitionPoll);
         ui.removeCallbacks(campaignTicker); ui.removeCallbacks(introTicker); ui.removeCallbacks(interactionPoll); ui.removeCallbacks(rendererStatusTicker); rendererStatusPolling=false;
         if (roomEngine != null) roomEngine.setInputEnabled(false); resetWorldInput();
+        if (roomEngine != null) roomEngine.setPresentationPaused(true);
         lastPhase = "";
         if (introPlayer != null && introPlayer.isPlaying()) introPlayer.pause();
         if (musicPlayer!=null) musicPlayer.onHostPause();
@@ -593,10 +644,12 @@ public final class MainActivity extends AndroidApplication {
         if (ambiencePlayer!=null) ambiencePlayer.onHostResume();
         if(roomEngineView!=null)roomEngineView.post(this::applyRenderResolution);
         updateIntro(); updateCampaignClock(); updateEngine(); updateMusic(); maybeShowPreviousCrash();
+        if(pendingDoorAction!=null)ui.post(doorTransitionPoll);
         if ("intro".equals(state.optString("phase", "")) && introPrepared) { ui.removeCallbacks(introTicker); ui.post(introTicker); }
     }
 
     @Override protected void onDestroy() {
+        cancelDoorTransition();
         ui.removeCallbacks(campaignTicker); ui.removeCallbacks(rendererStatusTicker); rendererStatusPolling=false; releaseIntro();
         if (musicPlayer!=null) musicPlayer.close();
         if (ambiencePlayer!=null) ambiencePlayer.close();
@@ -640,6 +693,8 @@ public final class MainActivity extends AndroidApplication {
         private final Map<String, String> animationSignature = new HashMap<>();
         private final Map<String, Long> animationStart = new HashMap<>();
         private final FrameSequence.Clock animationClock = new FrameSequence.Clock();
+        private final FrameSequence.Clock hostAnimationClock = new FrameSequence.Clock();
+        private String animationContext="";
         private float scale;
         private boolean pauseOpen, settingsOpen;
         private Typeface textFontOverride;
@@ -654,7 +709,7 @@ public final class MainActivity extends AndroidApplication {
         boolean isToolsMode() { return toolsMode; }
         boolean isPauseOpen() { return pauseOpen; }
         boolean isSettingsOpen() { return settingsOpen; }
-        void pauseAnimations() { animationClock.setPaused(true, SystemClock.uptimeMillis()); }
+        void pauseAnimations() { long now=SystemClock.uptimeMillis();animationClock.setPaused(true,now);hostAnimationClock.setPaused(true,now); }
         void resetAnimations() { animationSignature.clear(); animationStart.clear(); }
         void clearPointersFromHost() { pointerRoles.clear(); pointerHits.clear(); }
 
@@ -665,6 +720,13 @@ public final class MainActivity extends AndroidApplication {
         @Override protected void onDraw(Canvas screen) {
             long started=System.nanoTime();hardwareCanvas=screen.isHardwareAccelerated();
             animationClock.setPaused(!activityResumed || pauseOpen || settingsOpen, SystemClock.uptimeMillis());
+            hostAnimationClock.setPaused(!activityResumed,SystemClock.uptimeMillis());
+            String context=state.optString("phase","")+":"+viewMode()+":"+state.optInt("room",-1)+":"+pauseOpen+":"+settingsOpen;
+            if(!context.equals(animationContext)){
+                animationContext=context;
+                for(Iterator<String> it=animationSignature.keySet().iterator();it.hasNext();)if(it.next().startsWith("ui:"))it.remove();
+                for(Iterator<String> it=animationStart.keySet().iterator();it.hasNext();)if(it.next().startsWith("ui:"))it.remove();
+            }
             super.onDraw(screen);
             scale = Math.min(getWidth() / W, getHeight() / H);
             float ox = (getWidth() - W * scale) / 2f, oy = (getHeight() - H * scale) / 2f;
@@ -1014,6 +1076,8 @@ public final class MainActivity extends AndroidApplication {
 
         private String uiAsset(JSONObject item) {
             if(item==null)return "";
+            int imageId=item.optInt("path_id",-1);UiAnimation animation=uiAnimations.get(imageId);
+            if(animation!=null)return animated("ui:"+imageId,"",animation.frames,animation.fps,animation.cycling,animation.unscaled);
             String path=item.isNull("asset")?"":item.optString("asset","");if(!path.isEmpty()&&!("null".equals(path)))return path;
             JSONObject image=item.optJSONObject("image");String key=image==null||image.isNull("sprite_key")?"":image.optString("sprite_key","");
             if(key.isEmpty())return "";
@@ -1326,13 +1390,17 @@ public final class MainActivity extends AndroidApplication {
         private void act(String type,String key,Object value){JSONObject a=new JSONObject();try{a.put("action",type);if(key!=null)a.put(key,value);}catch(JSONException ignored){}dispatch(a);}
 
         private String animated(String key,String identity,JSONArray frames,int fps,int cycling){
+            return animated(key,identity,frames,fps,cycling,false);
+        }
+        private String animated(String key,String identity,JSONArray frames,int fps,int cycling,boolean unscaled){
             if(frames.length()==0)return "";String sig=identity+":"+frames.toString()+":"+fps+":"+cycling;
-            long now=animationClock.now(SystemClock.uptimeMillis());
+            FrameSequence.Clock clock=unscaled?hostAnimationClock:animationClock;
+            long now=clock.now(SystemClock.uptimeMillis());
             if(!sig.equals(animationSignature.get(key))){animationSignature.put(key,sig);animationStart.put(key,now);}
             long elapsed=Math.max(0L,now-animationStart.getOrDefault(key,now));
             int i=FrameSequence.frameAt(frames.length(),fps,cycling,elapsed);
             long delay=FrameSequence.nextFrameDelay(frames.length(),fps,cycling,elapsed);
-            if(!animationClock.isPaused() && delay>0)postInvalidateDelayed(delay);
+            if(!clock.isPaused() && delay>0)postInvalidateDelayed(delay);
             return i<0?"":frames.optString(i,"");
         }
 
@@ -1382,7 +1450,7 @@ public final class MainActivity extends AndroidApplication {
         private void pointerDown(MotionEvent e,int index) {
             int id=e.getPointerId(index);float[] q=logicalPoint(e.getX(index),e.getY(index));
             for(int i=hits.size()-1;i>=0;i--)if(hits.get(i).rect.contains(q[0],q[1])){pointerRoles.put(id,ROLE_UI);pointerHits.put(id,hits.get(i));return;}
-            if(!initialized||nativeBusy||!"playing".equals(state.optString("phase",""))||!"world".equals(viewMode())||toolsMode||pauseOpen||settingsOpen){pointerRoles.put(id,ROLE_NONE);return;}
+            if(!initialized||nativeBusy||pendingDoorAction!=null||!"playing".equals(state.optString("phase",""))||!"world".equals(viewMode())||toolsMode||pauseOpen||settingsOpen){pointerRoles.put(id,ROLE_NONE);return;}
             if(q[0]<560&&q[1]>520&&joystickPointer<0){pointerRoles.put(id,ROLE_MOVE);joystickPointer=id;moveJoystick(q[0],q[1]);postInvalidateOnAnimation();}
             else if(q[0]>900&&lookPointer<0){pointerRoles.put(id,ROLE_LOOK);lookPointer=id;lookLastX=e.getX(index);lookLastY=e.getY(index);postInvalidateOnAnimation();}
             else pointerRoles.put(id,ROLE_NONE);

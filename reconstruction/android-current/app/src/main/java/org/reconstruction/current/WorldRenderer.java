@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.RenderableProvider;
+import com.badlogic.gdx.graphics.g3d.Shader;
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.DepthTestAttribute;
@@ -22,6 +23,8 @@ import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.environment.PointLight;
 import com.badlogic.gdx.graphics.g3d.environment.SpotLight;
+import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
+import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
@@ -91,10 +94,69 @@ final class WorldRenderer implements Disposable {
     private int profileFrames, visibleDraws, visibleTriangles;
     private volatile int frameRate;
     private volatile String performanceStatus="Measuring renderer…";
+    private String doorManifestPath="";
+    private DoorMotion doorMotion;
+    private volatile int doorRoomMask;
+    private volatile DoorRequest doorRequest;
+    private volatile boolean resetDoorRequested,presentationPaused;
+    private volatile long completedDoorToken;
+    private long doorTokenCounter,activeDoorToken;
+
+    void setDoorManifestPath(String path){
+        String next=path==null?"":path;if(next.equals(doorManifestPath))return;
+        doorManifestPath=next;
+        if(loaded)try{loadDoorMotion(new JSONObject(appliedManifest));}catch(JSONException error){recordWarning("load door animation",error);}
+    }
+    synchronized long beginDoorOpen(int room){
+        if(room<0||room>6||(doorRoomMask&(1<<room))==0)return 0;
+        long token=++doorTokenCounter;doorRequest=new DoorRequest(room,token);return token;
+    }
+    boolean isDoorOpenComplete(long token){return token>0&&completedDoorToken>=token;}
+    void cancelDoorMotion(){doorRequest=null;resetDoorRequested=true;}
+    void setPresentationPaused(boolean paused){presentationPaused=paused;}
+
+    private void loadDoorMotion(JSONObject world){
+        doorMotion=null;doorRoomMask=0;
+        for(RenderItem item:renderItems)item.door=null;
+        if(doorManifestPath.isEmpty())return;
+        try{
+            JSONObject animation=new JSONObject(Gdx.files.internal(doorManifestPath).readString("UTF-8"));
+            doorMotion=new DoorMotion(world,animation);doorRoomMask=doorMotion.roomMask();
+            for(RenderItem item:renderItems)item.door=doorMotion.forRenderer(item.sourceRendererId);
+        }catch(Exception error){recordWarning("load source door animation",error);}
+    }
+    private void updateDoorMotion(float delta){
+        if(doorMotion==null)return;
+        if(resetDoorRequested){resetDoorRequested=false;doorMotion.reset();activeDoorToken=0;}
+        DoorRequest request=doorRequest;
+        if(request!=null){
+            doorRequest=null;activeDoorToken=request.token;
+            if(!doorMotion.open(request.room)){completedDoorToken=request.token;activeDoorToken=0;}
+        }
+        if(!presentationPaused)doorMotion.advance(Math.min(.25f,Math.max(0,delta)));
+        for(RenderItem item:renderItems){
+            DoorMotion.Door door=item.door;if(door==null)continue;
+            if(door.angle==0){item.renderable.worldTransform.set(item.matrix);item.bounds=item.baseBounds;}
+            else{
+                item.renderable.worldTransform.set(door.delta).mul(item.matrix);
+                item.bounds=rotateBounds(door.delta.val,item.baseBounds);
+            }
+        }
+        if(activeDoorToken>0&&!doorMotion.moving()){completedDoorToken=activeDoorToken;activeDoorToken=0;}
+    }
+    private static Bounds rotateBounds(float[] m,Bounds b){
+        float ax=Float.MAX_VALUE,ay=ax,az=ax,bx=-ax,by=-ax,bz=-ax;
+        for(int i=0;i<8;i++){
+            float x=(i&1)==0?b.minX:b.maxX,y=(i&2)==0?b.minY:b.maxY,z=(i&4)==0?b.minZ:b.maxZ;
+            float wx=m[0]*x+m[4]*y+m[8]*z+m[12],wy=m[1]*x+m[5]*y+m[9]*z+m[13],wz=m[2]*x+m[6]*y+m[10]*z+m[14];
+            ax=Math.min(ax,wx);ay=Math.min(ay,wy);az=Math.min(az,wz);bx=Math.max(bx,wx);by=Math.max(by,wy);bz=Math.max(bz,wz);
+        }
+        return new Bounds(ax,ay,az,bx,by,bz);
+    }
 
     WorldRenderer(String path){setManifestPath(path);}
     void setManifestPath(String path){String p=path==null?"":path;if(p.equals(manifestPath))return;manifestPath=p;int slash=p.lastIndexOf('/');manifestDirectory=slash<0?"":p.substring(0,slash+1);appliedManifest="";loadManifest();}
-    void create(){captureGlInfo();renderStage="create ModelBatch";modelBatch=new ModelBatch();renderStage="create world camera";camera=new PerspectiveCamera(60,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());camera.near=.1f;camera.far=1000f;loadManifest();}
+    void create(){captureGlInfo();renderStage="create ModelBatch";modelBatch=new ModelBatch(new SourceShaderProvider());renderStage="create world camera";camera=new PerspectiveCamera(60,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());camera.near=.1f;camera.far=1000f;loadManifest();}
     int getFrameRate(){return frameRate;}
     String getPerformanceStatus(){return performanceStatus;}
     String getStatus(){return warningStatus==null?status:warningStatus;}
@@ -111,7 +173,11 @@ final class WorldRenderer implements Disposable {
     JSONObject getInteraction(){String snapshot=interactionJson;if(snapshot.isEmpty())return null;try{return new JSONObject(snapshot);}catch(JSONException invalid){return null;}}
 
     void applyState(JSONObject state){if(state==null)return;try{latestState=new JSONObject(state.toString());}catch(JSONException ignored){latestState=null;}
-        worldEnabled="world".equals(state.optString("view_mode","world"));updateNavigation(state.optJSONObject("world_navigation"));
+        boolean nextWorld="world".equals(state.optString("view_mode","world"));
+        if(nextWorld&&!worldEnabled&&doorMotion!=null){doorMotion.close();activeDoorToken=0;}
+        worldEnabled=nextWorld;
+        if(!"playing".equals(state.optString("phase","")))cancelDoorMotion();
+        updateNavigation(state.optJSONObject("world_navigation"));
         JSONObject p=state.optJSONObject("world_pose");if(p==null)return;long revision=p.optLong("revision",0);String key=revision+":"+p.optString("position","")+":"+p.optDouble("yaw",0)+":"+p.optDouble("pitch",0);
         synchronized(this){if(key.equals(appliedPoseKey)||(poseRevision!=Long.MIN_VALUE&&revision==poseRevision))return;JSONArray a=p.optJSONArray("position");if(a!=null&&a.length()>=3)player.set((float)a.optDouble(0,0),(float)a.optDouble(1,0),(float)-a.optDouble(2,0));yaw=finite((float)p.optDouble("yaw",yaw));pitch=Math.max(-PITCH_LIMIT,Math.min(PITCH_LIMIT,finite((float)p.optDouble("pitch",pitch))));poseRevision=revision;appliedPoseKey=key;}}
 
@@ -124,8 +190,9 @@ final class WorldRenderer implements Disposable {
         if(!loaded||!worldEnabled||camera==null)return;
         long frameStart=System.nanoTime();
         renderStage="prepare visible meshes";
+        updateDoorMotion(delta);
         float x,f;boolean enabled;
-        synchronized(this){enabled=inputEnabled;x=enabled?moveX:0;f=enabled?moveForward:0;}
+        synchronized(this){enabled=inputEnabled&&(doorMotion==null||!doorMotion.moving());x=enabled?moveX:0;f=enabled?moveForward:0;}
         if(enabled)movePlayer(x,f,Math.min(.05f,Math.max(0,delta)));
         updateCamera();camera.update();
         depthWritingVisible.clear();transparentVisible.clear();visibleTextures.clear();
@@ -218,7 +285,7 @@ final class WorldRenderer implements Disposable {
         return lo<=max?lo:-1;
     }
 
-    private void loadManifest(){if(manifestPath.isEmpty()||Gdx.files==null)return;String json;status="loading: read world manifest";renderStage=status;try{json=Gdx.files.internal(manifestPath).readString("UTF-8");}catch(Exception e){status=errorStatus("read world manifest",e);diagnostic=errorDiagnostic("read world manifest",e);return;}if(json.equals(appliedManifest)){if(camera!=null)try{applyCameraClip(findCamera(new JSONObject(json).optJSONArray("cameras")));}catch(JSONException ignored){}return;}appliedManifest=json;clearScene();warningStatus=null;diagnostic="";try{status="loading: parse world scene";renderStage=status;JSONObject root=new JSONObject(json);parseTextures(root.optJSONArray("textures"));parseMaterials(root.optJSONArray("materials"));parseLighting(root.optJSONArray("lights"),root.optJSONArray("render_settings"));JSONArray meshArray=root.optJSONArray("meshes");status="loading: allocate source meshes";renderStage=status;parseRenderers(root.optJSONArray("renderers"),meshArray);status="loading: build collision geometry";renderStage=status;parseColliders(root.optJSONArray("colliders"),meshArray);parseTargets(root.optJSONArray("interaction_targets"),root.optJSONArray("named_door_targets"));JSONObject cam=findCamera(root.optJSONArray("cameras"));applyCameraClip(cam);if(poseRevision==Long.MIN_VALUE&&cam!=null)setCameraPose(cam);moveSpeed=(float)root.optDouble("player_movement_speed_mps",2.5);if(latestState!=null)updateNavigation(latestState.optJSONObject("world_navigation"));loaded=true;status=warningStatus==null?"ready":warningStatus;}catch(Exception e){clearScene();loaded=false;status=errorStatus("load world manifest",e);diagnostic=errorDiagnostic("load world manifest",e);}}
+    private void loadManifest(){if(manifestPath.isEmpty()||Gdx.files==null)return;String json;status="loading: read world manifest";renderStage=status;try{json=Gdx.files.internal(manifestPath).readString("UTF-8");}catch(Exception e){status=errorStatus("read world manifest",e);diagnostic=errorDiagnostic("read world manifest",e);return;}if(json.equals(appliedManifest)){if(camera!=null)try{applyCameraClip(findCamera(new JSONObject(json).optJSONArray("cameras")));}catch(JSONException ignored){}return;}appliedManifest=json;clearScene();warningStatus=null;diagnostic="";try{status="loading: parse world scene";renderStage=status;JSONObject root=new JSONObject(json);parseTextures(root.optJSONArray("textures"));parseMaterials(root.optJSONArray("materials"));parseLighting(root.optJSONArray("lights"),root.optJSONArray("render_settings"));JSONArray meshArray=root.optJSONArray("meshes");status="loading: allocate source meshes";renderStage=status;parseRenderers(root.optJSONArray("renderers"),meshArray);status="loading: build collision geometry";renderStage=status;parseColliders(root.optJSONArray("colliders"),meshArray);parseTargets(root.optJSONArray("interaction_targets"),root.optJSONArray("named_door_targets"));JSONObject cam=findCamera(root.optJSONArray("cameras"));applyCameraClip(cam);if(poseRevision==Long.MIN_VALUE&&cam!=null)setCameraPose(cam);moveSpeed=(float)root.optDouble("player_movement_speed_mps",2.5);if(latestState!=null)updateNavigation(latestState.optJSONObject("world_navigation"));loaded=true;loadDoorMotion(root);status=warningStatus==null?"ready":warningStatus;}catch(Exception e){clearScene();loaded=false;status=errorStatus("load world manifest",e);diagnostic=errorDiagnostic("load world manifest",e);}}
     private void applyCameraClip(JSONObject source){if(camera==null||source==null)return;camera.near=(float)source.optDouble("near_clip",.1);camera.far=(float)source.optDouble("far_clip",1000);if(camera.near<=0||camera.far<=camera.near){camera.near=.1f;camera.far=1000f;}}
     private void parseTextures(JSONArray a){if(a==null)return;for(int i=0;i<a.length();i++){JSONObject t=a.optJSONObject(i),ref=t==null?null:t.optJSONObject("source_ref");if(ref==null)continue;String path=resolve(t.optString("android_asset",t.optString("asset","")));texturesByIndex.put(i,path);texturesByPathId.put(ref.optInt("path_id",-1),path);JSONObject s=t.optJSONObject("sampler");if(s!=null)samplers.put(path,new Sampler(s.optInt("filter_mode",1),s.optInt("wrap_u",0),s.optInt("wrap_v",0),s.optInt("aniso",1)));}}
     private void parseMaterials(JSONArray a){if(a==null)return;for(int i=0;i<a.length();i++){JSONObject m=a.optJSONObject(i);if(m==null)continue;JSONArray c=m.optJSONArray("color");Color color=new Color((float)(c==null?1:c.optDouble(0,1)),(float)(c==null?1:c.optDouble(1,1)),(float)(c==null?1:c.optDouble(2,1)),(float)(c==null?1:c.optDouble(3,1)));JSONObject fp=m.optJSONObject("float_properties");int cull=fp==null?2:fp.optInt("_Cull",2);boolean trans=(fp!=null&&fp.optDouble("_Surface",0)>.5)||(fp!=null&&((int)fp.optDouble("_SrcBlend",1)!=1||(int)fp.optDouble("_DstBlend",0)!=0))||color.a<.999f;int src=blendFactor(fp==null?(trans?5:1):fp.optInt("_SrcBlend",trans?5:1)),dst=blendFactor(fp==null?(trans?10:0):fp.optInt("_DstBlend",trans?10:0));if(src==GL20.GL_ONE&&dst==GL20.GL_ONE_MINUS_SRC_ALPHA)src=GL20.GL_SRC_ALPHA;String path="";float[] uv=unityUvTransform(1,1,0,0);JSONObject chosen=preferredDiffuseTexture(m.optJSONArray("texture_refs"));if(chosen!=null){path=texturesByIndex.getOrDefault(chosen.optInt("texture_index",-1),"");if(path.isEmpty()){JSONObject ref=chosen.optJSONObject("ref");if(ref!=null)path=texturesByPathId.getOrDefault(ref.optInt("path_id",-1),"");}float[] s=vec2(chosen.optJSONArray("scale"),1,1),o=vec2(chosen.optJSONArray("offset"),0,0);uv=unityUvTransform(s[0],s[1],o[0],o[1]);}boolean zWrite=fp==null?!trans:fp.optDouble("_ZWrite",!trans?1:0)>.5;boolean alphaClip=fp!=null&&fp.optDouble("_AlphaClip",0)>.5;float cutoff=fp==null?.5f:(float)fp.optDouble("_Cutoff",.5);materials.put(i,new MaterialInfo(color,path,uv,cull,trans,src,dst,zWrite,alphaClip,cutoff));}}
@@ -227,9 +294,9 @@ final class WorldRenderer implements Disposable {
     static float determinant3x3(float[] m){return m[0]*(m[5]*m[10]-m[9]*m[6])-m[4]*(m[1]*m[10]-m[9]*m[2])+m[8]*(m[1]*m[6]-m[5]*m[2]);}
     /** Unity material Cull is 0=off, 1=front, 2=back; GL uses different constants. */
     static int cullFaceForTransform(int unityCull,float determinant){int cull=unityCull==0?GL20.GL_NONE:unityCull==1?GL20.GL_FRONT:GL20.GL_BACK;if(cull==GL20.GL_NONE||determinant>=0)return cull;return cull==GL20.GL_FRONT?GL20.GL_BACK:GL20.GL_FRONT;}
-    private void parseLighting(JSONArray lights,JSONArray settings){environment=new Environment();JSONObject s=settings==null?null:settings.optJSONObject(0);JSONArray ambient=s==null?null:s.optJSONArray("ambient_equator_color");environment.set(ColorAttribute.createAmbientLight((float)(ambient==null?.13:ambient.optDouble(0,.13)),(float)(ambient==null?.14:ambient.optDouble(1,.14)),(float)(ambient==null?.15:ambient.optDouble(2,.15)),1));if(lights==null)return;for(int i=0;i<lights.length();i++){JSONObject l=lights.optJSONObject(i);if(l==null||!l.optBoolean("active_in_hierarchy",false)||!l.optBoolean("enabled",false))continue;JSONArray color=l.optJSONArray("color"),m=l.optJSONArray("world_matrix_row_major");if(color==null||m==null)continue;float r=(float)color.optDouble(0,1),g=(float)color.optDouble(1,1),b=(float)color.optDouble(2,1),intensity=(float)l.optDouble("intensity",1);float x=(float)m.optJSONArray(0).optDouble(3,0),y=(float)m.optJSONArray(1).optDouble(3,0),z=(float)-m.optJSONArray(2).optDouble(3,0);Vector3 dir=new Vector3(-(float)m.optJSONArray(0).optDouble(2,0),-(float)m.optJSONArray(1).optDouble(2,0),(float)m.optJSONArray(2).optDouble(2,0)).nor();int type=l.optInt("type",2);if(type==1)environment.add(new DirectionalLight().set(r*intensity,g*intensity,b*intensity,dir));else if(type==0){float cutoff=Math.max(1,Math.min(90,(float)l.optDouble("spot_angle",45)*.5f));environment.add(new SpotLight().set(new Color(r,g,b,1),new Vector3(x,y,z),dir,intensity,cutoff,1));}else environment.add(new PointLight().set(new Color(r,g,b,1),new Vector3(x,y,z),intensity));}}
+    private void parseLighting(JSONArray lights,JSONArray settings){environment=new Environment();JSONObject s=settings==null?null:settings.optJSONObject(0);JSONArray ambient=s==null?null:s.optJSONArray("ambient_equator_color");environment.set(ColorAttribute.createAmbientLight((float)(ambient==null?.13:ambient.optDouble(0,.13)),(float)(ambient==null?.14:ambient.optDouble(1,.14)),(float)(ambient==null?.15:ambient.optDouble(2,.15)),1));if(lights==null)return;for(int i=0;i<lights.length();i++){JSONObject l=lights.optJSONObject(i);if(l==null||!l.optBoolean("active_in_hierarchy",false)||!l.optBoolean("enabled",false))continue;JSONArray color=l.optJSONArray("color"),m=l.optJSONArray("world_matrix_row_major");if(color==null||m==null)continue;float r=(float)color.optDouble(0,1),g=(float)color.optDouble(1,1),b=(float)color.optDouble(2,1),intensity=(float)l.optDouble("intensity",1),range=Math.max(.01f,(float)l.optDouble("range",10));float x=(float)m.optJSONArray(0).optDouble(3,0),y=(float)m.optJSONArray(1).optDouble(3,0),z=(float)-m.optJSONArray(2).optDouble(3,0);Vector3 pos=new Vector3(x,y,z),dir=new Vector3(-(float)m.optJSONArray(0).optDouble(2,0),-(float)m.optJSONArray(1).optDouble(2,0),(float)m.optJSONArray(2).optDouble(2,0)).nor();int type=l.optInt("type",2);if(type==1)environment.add(new DirectionalLight().set(r*intensity,g*intensity,b*intensity,dir));else if(type==0){float angle=(float)l.optDouble("spot_angle",45);if(angle>=170)environment.add(new RangedPointLight().set(new Color(r,g,b,1),pos,intensity,range));else{float inner=(float)l.optDouble("inner_spot_angle",angle*.5f),cutoff=Math.max(1,Math.min(90,angle*.5f));environment.add(new RangedSpotLight().set(new Color(r,g,b,1),pos,dir,intensity,cutoff,1,range,inner*.5f));}}else environment.add(new RangedPointLight().set(new Color(r,g,b,1),pos,intensity,range));}}
 
-    private void parseRenderers(JSONArray renderers,JSONArray meshArray){if(renderers==null||meshArray==null)return;Map<Integer,MeshData> cache=new HashMap<>();for(int i=0;i<renderers.length();i++){JSONObject r=renderers.optJSONObject(i);if(r==null||!r.optBoolean("active_in_hierarchy",false)||!r.optBoolean("enabled",true))continue;int mi=r.optInt("mesh_index",-1);JSONObject info=meshArray.optJSONObject(mi);if(info==null)continue;MeshData data=cache.get(mi);if(data==null){data=loadMesh(info);if(data==null)continue;cache.put(mi,data);}float[] mat=matrix(r.optJSONArray("world_matrix_row_major"));Matrix4 transform=new Matrix4(mat);Bounds bounds=transformBounds(mat,data.bounds);JSONArray subs=info.optJSONArray("submeshes"),mats=r.optJSONArray("material_indices");int subCount=subs==null?1:subs.length();for(int si=0;si<subCount;si++){JSONObject sub=subs==null?null:subs.optJSONObject(si);int start=sub==null?0:sub.optInt("index_start",0),count=sub==null?info.optInt("index_count",0):sub.optInt("index_count",0),mi2=mats==null||mats.length()==0?-1:mats.optInt(Math.min(si,mats.length()-1),-1);MaterialInfo material=materials.get(mi2);int cursor=0;for(Mesh mesh:data.chunks){int n=mesh.getNumIndices(),lo=Math.max(start,cursor),hi=Math.min(start+count,cursor+n);if(hi>lo)renderItems.add(new RenderItem("world-"+i+"-"+si,mesh,lo-cursor,hi-lo,transform,material,bounds));cursor+=n;}}}}
+    private void parseRenderers(JSONArray renderers,JSONArray meshArray){if(renderers==null||meshArray==null)return;Map<Integer,MeshData> cache=new HashMap<>();for(int i=0;i<renderers.length();i++){JSONObject r=renderers.optJSONObject(i);if(r==null||!r.optBoolean("active_in_hierarchy",false)||!r.optBoolean("enabled",true))continue;int mi=r.optInt("mesh_index",-1);JSONObject info=meshArray.optJSONObject(mi);if(info==null)continue;MeshData data=cache.get(mi);if(data==null){data=loadMesh(info);if(data==null)continue;cache.put(mi,data);}float[] mat=matrix(r.optJSONArray("world_matrix_row_major"));Matrix4 transform=new Matrix4(mat);Bounds bounds=transformBounds(mat,data.bounds);JSONArray subs=info.optJSONArray("submeshes"),mats=r.optJSONArray("material_indices");int subCount=subs==null?1:subs.length();for(int si=0;si<subCount;si++){JSONObject sub=subs==null?null:subs.optJSONObject(si);int start=sub==null?0:sub.optInt("index_start",0),count=sub==null?info.optInt("index_count",0):sub.optInt("index_count",0),mi2=mats==null||mats.length()==0?-1:mats.optInt(Math.min(si,mats.length()-1),-1);MaterialInfo material=materials.get(mi2);int cursor=0;for(Mesh mesh:data.chunks){int n=mesh.getNumIndices(),lo=Math.max(start,cursor),hi=Math.min(start+count,cursor+n);if(hi>lo)renderItems.add(new RenderItem("world-"+i+"-"+si,r.optInt("renderer_path_id",-1),mesh,lo-cursor,hi-lo,transform,material,bounds));cursor+=n;}}}}
     private MeshData loadMesh(JSONObject info){try{String path=resolve(info.optString("android_asset",info.optString("mesh_asset","")));int vc=info.optInt("android_vertex_count",info.optInt("vertex_count",0)),ic=info.optInt("android_index_count",info.optInt("index_count",0));if(path.isEmpty()||vc<=0||vc>1000000||ic<3||ic>3000000||ic%3!=0)return null;byte[] bytes=Gdx.files.internal(path).readBytes();if(bytes.length!=vc*32+ic*4)return null;ByteBuffer b=ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN);float[] v=new float[vc*8];float ax=Float.MAX_VALUE,ay=ax,az=ax,bx=-ax,by=-ax,bz=-ax;for(int i=0;i<vc;i++){int j=i*8;float x=b.getFloat(),y=b.getFloat(),z=b.getFloat(),nx=b.getFloat(),ny=b.getFloat(),nz=b.getFloat(),u=b.getFloat(),w=b.getFloat();v[j]=x;v[j+1]=y;v[j+2]=-z;v[j+3]=nx;v[j+4]=ny;v[j+5]=-nz;v[j+6]=u;v[j+7]=w;ax=Math.min(ax,x);ay=Math.min(ay,y);az=Math.min(az,z);bx=Math.max(bx,x);by=Math.max(by,y);bz=Math.max(bz,z);}b.position(vc*32);int[] idx=new int[ic];for(int i=0;i<ic;i++){idx[i]=b.getInt();if(idx[i]<0||idx[i]>=vc)return null;}List<Mesh> chunks=new ArrayList<>();
         // Retain shared indices from the lossless C++ optimizer. Re-expanding
         // every triangle here would discard vertex-cache reuse on the GPU.
@@ -247,7 +314,7 @@ final class WorldRenderer implements Disposable {
     private Texture texture(String path){TextureEntry e=textureCache.get(path);if(e!=null)return e.texture;try{FileHandle f=Gdx.files.internal(path);byte[] head=new byte[24];int read=0;try(java.io.InputStream input=f.read()){while(read<24){int n=input.read(head,read,24-read);if(n<0)break;read+=n;}}if(read<24||head[0]!=(byte)137||head[1]!='P'||head[2]!='N'||head[3]!='G')return null;int w=be(head,16),h=be(head,20);if(w>2048||h>2048)return null;Sampler s=samplers.get(path);boolean mipmaps=s!=null&&s.filter==2;Texture t=new Texture(f,mipmaps);Texture.TextureFilter min=s!=null&&s.filter==0?Texture.TextureFilter.Nearest:mipmaps?Texture.TextureFilter.MipMapLinearLinear:Texture.TextureFilter.Linear;Texture.TextureFilter mag=s!=null&&s.filter==0?Texture.TextureFilter.Nearest:Texture.TextureFilter.Linear;t.setFilter(min,mag);t.setWrap(wrap(s==null?0:s.u),wrap(s==null?0:s.v));if(s!=null&&s.aniso>1)t.setAnisotropicFilter(s.aniso);long bytes=textureBytes(t.getWidth(),t.getHeight(),mipmaps);textureCache.put(path,new TextureEntry(t,bytes));textureBytes+=bytes;textureLoads++;return t;}catch(Exception error){recordWarning("load texture "+path,error);return null;}}
     private static long textureBytes(int width,int height,boolean mipmaps){long total=0;int w=width,h=height;do{total+=(long)w*h*4;if(!mipmaps||(w==1&&h==1))break;w=Math.max(1,w/2);h=Math.max(1,h/2);}while(true);return total;}
     private void trimTextures(){if(textureBytes<=TEXTURE_BUDGET)return;Iterator<Map.Entry<String,TextureEntry>> it=textureCache.entrySet().iterator();while(textureBytes>TEXTURE_BUDGET&&it.hasNext()){Map.Entry<String,TextureEntry> e=it.next();if(visibleTextures.contains(e.getKey()))continue;textureBytes-=e.getValue().bytes;e.getValue().texture.dispose();textureEvictions++;it.remove();}}
-    private void clearScene(){for(Mesh m:meshes)try{m.dispose();}catch(Exception ignored){}for(TextureEntry t:textureCache.values())try{t.texture.dispose();}catch(Exception ignored){}meshes.clear();textureCache.clear();textureBytes=0;renderItems.clear();boxColliders.clear();boxById.clear();meshColliders.clear();interactions.clear();interactionJson="";publishedInteraction=null;publishedNavigationRevision=Long.MIN_VALUE;interactionSnapshots=0;roomByCollider.clear();materials.clear();texturesByIndex.clear();texturesByPathId.clear();samplers.clear();depthWritingVisible.clear();transparentVisible.clear();profileStarted=profileNanos=textureLoads=textureEvictions=0;profileFrames=0;loaded=false;}
+    private void clearScene(){for(Mesh m:meshes)try{m.dispose();}catch(Exception ignored){}for(TextureEntry t:textureCache.values())try{t.texture.dispose();}catch(Exception ignored){}meshes.clear();textureCache.clear();textureBytes=0;renderItems.clear();doorMotion=null;doorRoomMask=0;doorRequest=null;activeDoorToken=0;boxColliders.clear();boxById.clear();meshColliders.clear();interactions.clear();interactionJson="";publishedInteraction=null;publishedNavigationRevision=Long.MIN_VALUE;interactionSnapshots=0;roomByCollider.clear();materials.clear();texturesByIndex.clear();texturesByPathId.clear();samplers.clear();depthWritingVisible.clear();transparentVisible.clear();profileStarted=profileNanos=textureLoads=textureEvictions=0;profileFrames=0;loaded=false;}
     private String resolve(String p){if(p==null||p.isEmpty()||p.startsWith("/")||p.contains(".."))return "";return p.startsWith(manifestDirectory)||manifestDirectory.isEmpty()?p:manifestDirectory+p;}
     private static float[] matrix(JSONArray rows){float[] m=new Matrix4().val;if(rows==null||rows.length()!=4)return m;for(int r=0;r<4;r++){JSONArray row=rows.optJSONArray(r);if(row==null)return m;for(int c=0;c<4;c++){float v=(float)row.optDouble(c,0);if((r==2)^(c==2))v=-v;m[c*4+r]=v;}}return m;}
     private static Bounds transformBounds(float[] m,float[] b){float ax=Float.MAX_VALUE,ay=ax,az=ax,bx=-ax,by=-ax,bz=-ax;for(int mask=0;mask<8;mask++){float x=b[0]+((mask&1)==0?-b[3]:b[3]),y=b[1]+((mask&2)==0?-b[4]:b[4]),z=-(b[2]+((mask&4)==0?-b[5]:b[5]));float wx=m[0]*x+m[4]*y+m[8]*z+m[12],wy=m[1]*x+m[5]*y+m[9]*z+m[13],wz=m[2]*x+m[6]*y+m[10]*z+m[14];ax=Math.min(ax,wx);ay=Math.min(ay,wy);az=Math.min(az,wz);bx=Math.max(bx,wx);by=Math.max(by,wy);bz=Math.max(bz,wz);}return new Bounds(ax,ay,az,bx,by,bz);}
@@ -261,14 +328,149 @@ final class WorldRenderer implements Disposable {
     private static Texture.TextureWrap wrap(int x){return x==1?Texture.TextureWrap.ClampToEdge:x==2?Texture.TextureWrap.MirroredRepeat:Texture.TextureWrap.Repeat;}
     private static float finite(float x){return Float.isNaN(x)||Float.isInfinite(x)?0:x;}private static float wrap(float v){v%=360;if(v>180)v-=360;if(v< -180)v+=360;return v;}
     @Override public void dispose(){clearScene();if(modelBatch!=null)modelBatch.dispose();}
+    private static final class RangedPointLight extends PointLight {
+        float range;
+        RangedPointLight set(Color color,Vector3 position,float intensity,float range){super.set(color,position,intensity);this.range=range;return this;}
+    }
+    private static final class RangedSpotLight extends SpotLight {
+        float range,innerCos,outerCos;
+        RangedSpotLight set(Color color,Vector3 position,Vector3 direction,float intensity,float cutoff,float exponent,float range,float innerCutoff){
+            super.set(color,position,direction,intensity,cutoff,exponent);this.range=range;innerCos=(float)Math.cos(Math.toRadians(innerCutoff));outerCos=(float)Math.cos(Math.toRadians(cutoff));return this;
+        }
+    }
+    /** Uses the source project's sRGB/Linear path and its active URP Neutral volume curve. */
+    private static final class SourceShaderProvider extends DefaultShaderProvider {
+        private final DefaultShader.Config config;
+        private final String vertex,fragment;
+        SourceShaderProvider(){
+            config=new DefaultShader.Config();
+            config.numSpotLights=8;
+            vertex=sourceVertex(DefaultShader.getDefaultVertexShader());
+            fragment=sourceFragment(DefaultShader.getDefaultFragmentShader());
+        }
+        @Override protected Shader createShader(Renderable renderable){
+            return new SourceDefaultShader(renderable,config,DefaultShader.createPrefix(renderable,config),vertex,fragment);
+        }
+        private static String sourceVertex(String original){
+            String declaration="uniform PointLight u_pointLights[numPointLights];";
+            String loop="vec3 value = u_pointLights[i].color * (NdotL / (1.0 + dist2));";
+            if(!original.contains(declaration)||!original.contains(loop))throw new GdxRuntimeException("GDX point-light shader layout changed");
+            // Unity Graphics URP/ShaderLibrary/RealtimeLights.hlsl: inverse-square attenuation with its smooth range window.
+            String vertex=original.replace(declaration,declaration+"\nuniform float u_pointLightRanges[numPointLights];")
+                .replace(loop,"float rangeSq = max(u_pointLightRanges[i] * u_pointLightRanges[i], 0.0001);\n"
+                    +"\t\t\t\tfloat rangeFactor = clamp(1.0 - (dist2 / rangeSq) * (dist2 / rangeSq), 0.0, 1.0);\n"
+                    +"\t\t\t\trangeFactor *= rangeFactor;\n"
+                    +"\t\t\t\tvec3 value = u_pointLights[i].color * (NdotL * rangeFactor / max(dist2, 0.0001));");
+            String pointStruct="#endif // numPointLights";
+            if(!vertex.contains(pointStruct))throw new GdxRuntimeException("GDX point-light block changed");
+            int pointEnd=vertex.indexOf(pointStruct);
+            vertex=vertex.substring(0,pointEnd)+"#endif // numPointLights\n"
+                +"#if numSpotLights > 0\nstruct SpotLight { vec3 color; vec3 position; vec3 direction; float cutoffAngle; float exponent; };\n"
+                +"uniform SpotLight u_spotLights[numSpotLights];\nuniform float u_spotLightRanges[numSpotLights];\n"
+                +"uniform float u_spotLightInnerCos[numSpotLights];\nuniform float u_spotLightOuterCos[numSpotLights];\n#endif // numSpotLights"+vertex.substring(pointEnd+pointStruct.length());
+            String lightEnd="\t#endif // lightingFlag\n}";int end=vertex.lastIndexOf(lightEnd);
+            if(end<0)throw new GdxRuntimeException("GDX lighting block changed");
+            String spotLoop="""
+                #if (numSpotLights > 0) && defined(normalFlag)
+                    for (int i = 0; i < numSpotLights; i++) {
+                        vec3 lightDir = u_spotLights[i].position - pos.xyz;
+                        float dist2 = dot(lightDir, lightDir);
+                        lightDir *= inversesqrt(max(dist2, 0.0001));
+                        float NdotL = clamp(dot(normal, lightDir), 0.0, 1.0);
+                        float rangeSq = max(u_spotLightRanges[i] * u_spotLightRanges[i], 0.0001);
+                        float rangeFactor = clamp(1.0 - (dist2 / rangeSq) * (dist2 / rangeSq), 0.0, 1.0);
+                        rangeFactor *= rangeFactor;
+                        float SdotL = dot(-lightDir, u_spotLights[i].direction);
+                        float spotFactor = clamp((SdotL - u_spotLightOuterCos[i]) / max(u_spotLightInnerCos[i] - u_spotLightOuterCos[i], 0.0001), 0.0, 1.0);
+                        spotFactor *= spotFactor;
+                        vec3 value = u_spotLights[i].color * (NdotL * rangeFactor * spotFactor / max(dist2, 0.0001));
+                        v_lightDiffuse += value;
+                    }
+                #endif // numSpotLights
+                """;
+            return vertex.substring(0,end)+spotLoop+vertex.substring(end);
+        }
+        private static String sourceFragment(String original){
+            String main="void main() {",afterDiffuse="\n\t#if defined(emissiveTextureFlag)";
+            String alpha="\n\t#ifdef blendedFlag\n\t\tgl_FragColor.a = diffuse.a * v_opacity;";
+            if(!original.contains(main)||!original.contains(afterDiffuse)||!original.contains(alpha))throw new GdxRuntimeException("GDX fragment shader layout changed");
+            // sRGB transfer and NeutralCurve constants follow Unity Graphics Core/ShaderLibrary/Color.hlsl.
+            String functions="""
+                float sourceSrgbToLinearChannel(float c) {
+                    c = max(c, 0.0);
+                    return c <= 0.04045 ? c / 12.92 : pow((c + 0.055) / 1.055, 2.4);
+                }
+                vec3 sourceSrgbToLinear(vec3 c) {
+                    return vec3(sourceSrgbToLinearChannel(c.r), sourceSrgbToLinearChannel(c.g), sourceSrgbToLinearChannel(c.b));
+                }
+                float sourceLinearToSrgbChannel(float c) {
+                    c = max(c, 0.0);
+                    return c <= 0.0031308 ? 12.92 * c : 1.055 * pow(c, 0.416666667) - 0.055;
+                }
+                vec3 sourceLinearToSrgb(vec3 c) {
+                    return vec3(sourceLinearToSrgbChannel(c.r), sourceLinearToSrgbChannel(c.g), sourceLinearToSrgbChannel(c.b));
+                }
+                vec3 sourceNeutralCurve(vec3 x) {
+                    const float a = 0.2, b = 0.29, c = 0.24, d = 0.272, e = 0.02, f = 0.3;
+                    return ((x * (a * x + c * b) + d * e) / (x * (a * x + b) + d * f)) - e / f;
+                }
+                vec3 sourceNeutralTonemap(vec3 x) {
+                    x = max(vec3(0.0), x);
+                    vec3 whiteScale = vec3(1.0) / sourceNeutralCurve(vec3(5.3));
+                    return sourceNeutralCurve(x * whiteScale) * whiteScale;
+                }
+                """;
+            return original.replace(main,functions+"\n"+main)
+                .replace(afterDiffuse,"\n\tdiffuse.rgb = sourceSrgbToLinear(diffuse.rgb);\n"+afterDiffuse)
+                .replace(alpha,"\n\tgl_FragColor.rgb = sourceLinearToSrgb(sourceNeutralTonemap(gl_FragColor.rgb));"+alpha);
+        }
+    }
+    private static final class SourceDefaultShader extends DefaultShader {
+        private final int[] pointRangeLocations,spotRangeLocations,spotInnerCosLocations,spotOuterCosLocations;
+        private final float[] lastPointRanges,lastSpotRanges,lastSpotInnerCos,lastSpotOuterCos;
+        SourceDefaultShader(Renderable renderable,DefaultShader.Config config,String prefix,String vertex,String fragment){
+            super(renderable,config,prefix,vertex,fragment);
+            pointRangeLocations=uniformLocations("u_pointLightRanges[",config.numPointLights);
+            spotRangeLocations=uniformLocations("u_spotLightRanges[",config.numSpotLights);
+            spotInnerCosLocations=uniformLocations("u_spotLightInnerCos[",config.numSpotLights);
+            spotOuterCosLocations=uniformLocations("u_spotLightOuterCos[",config.numSpotLights);
+            lastPointRanges=uninitialized(config.numPointLights);lastSpotRanges=uninitialized(config.numSpotLights);
+            lastSpotInnerCos=uninitialized(config.numSpotLights);lastSpotOuterCos=uninitialized(config.numSpotLights);
+        }
+        private int[] uniformLocations(String prefix,int count){int[] locations=new int[count];for(int i=0;i<count;i++)locations[i]=program.fetchUniformLocation(prefix+i+"]",false);return locations;}
+        private static float[] uninitialized(int size){float[] values=new float[size];java.util.Arrays.fill(values,Float.NaN);return values;}
+        private void setIfChanged(int location,float value,float[] cached,int index){if(location<0||Float.floatToIntBits(value)==Float.floatToIntBits(cached[index]))return;program.setUniformf(location,value);cached[index]=value;}
+        @Override protected void bindLights(Renderable renderable,com.badlogic.gdx.graphics.g3d.Attributes attributes){
+            super.bindLights(renderable,attributes);
+            com.badlogic.gdx.graphics.g3d.attributes.PointLightsAttribute pointAttribute=(com.badlogic.gdx.graphics.g3d.attributes.PointLightsAttribute)attributes.get(com.badlogic.gdx.graphics.g3d.attributes.PointLightsAttribute.Type);
+            com.badlogic.gdx.graphics.g3d.attributes.SpotLightsAttribute spotAttribute=(com.badlogic.gdx.graphics.g3d.attributes.SpotLightsAttribute)attributes.get(com.badlogic.gdx.graphics.g3d.attributes.SpotLightsAttribute.Type);
+            com.badlogic.gdx.utils.Array<PointLight> sourcePoints=pointAttribute==null?null:pointAttribute.lights;
+            com.badlogic.gdx.utils.Array<SpotLight> sourceSpots=spotAttribute==null?null:spotAttribute.lights;
+            int pointCount=Math.min(sourcePoints==null?0:sourcePoints.size,pointRangeLocations.length);
+            for(int i=0;i<pointCount;i++){
+                PointLight light=sourcePoints.get(i);float range=light instanceof RangedPointLight?((RangedPointLight)light).range:10000f;
+                setIfChanged(pointRangeLocations[i],range,lastPointRanges,i);
+            }
+            int spotCount=Math.min(sourceSpots==null?0:sourceSpots.size,spotRangeLocations.length);
+            for(int i=0;i<spotCount;i++){
+                SpotLight light=sourceSpots.get(i);float range=light instanceof RangedSpotLight?((RangedSpotLight)light).range:10000f;
+                float inner=light instanceof RangedSpotLight?((RangedSpotLight)light).innerCos:(float)Math.cos(Math.toRadians(light.cutoffAngle*.9));
+                float outer=light instanceof RangedSpotLight?((RangedSpotLight)light).outerCos:(float)Math.cos(Math.toRadians(light.cutoffAngle));
+                setIfChanged(spotRangeLocations[i],range,lastSpotRanges,i);
+                setIfChanged(spotInnerCosLocations[i],inner,lastSpotInnerCos,i);
+                setIfChanged(spotOuterCosLocations[i],outer,lastSpotOuterCos,i);
+            }
+        }
+    }
     private static final class Bounds{final float minX,minY,minZ,maxX,maxY,maxZ,cx,cy,cz,hx,hy,hz,radius;Bounds(float a,float b,float c,float d,float e,float f){minX=a;minY=b;minZ=c;maxX=d;maxY=e;maxZ=f;cx=(a+d)*.5f;cy=(b+e)*.5f;cz=(c+f)*.5f;hx=(d-a)*.5f;hy=(e-b)*.5f;hz=(f-c)*.5f;radius=(float)Math.sqrt(hx*hx+hy*hy+hz*hz);}}
     private static final class MeshData{final List<Mesh> chunks;final float[] bounds;MeshData(List<Mesh>a,float[]b){chunks=a;bounds=b;}}
     private static final class RenderItem implements RenderableProvider {
-        final String id;final Mesh mesh;final int offset,count;final Matrix4 matrix;final MaterialInfo material;final Bounds bounds;
+        final String id;final Mesh mesh;final int sourceRendererId,offset,count;final Matrix4 matrix;final MaterialInfo material;final Bounds baseBounds;Bounds bounds;DoorMotion.Door door;
         final Renderable renderable=new Renderable();Texture boundTexture;
-        RenderItem(String i,Mesh m,int o,int c,Matrix4 x,MaterialInfo f,Bounds b){id=i;mesh=m;offset=o;count=c;matrix=x;material=f;bounds=b;renderable.meshPart.set(i,m,o,c,GL20.GL_TRIANGLES);renderable.worldTransform.set(x);renderable.material=makeMaterial(f,x);}
+        RenderItem(String i,int sourceId,Mesh m,int o,int c,Matrix4 x,MaterialInfo f,Bounds b){id=i;sourceRendererId=sourceId;mesh=m;offset=o;count=c;matrix=x;material=f;bounds=baseBounds=b;renderable.meshPart.set(i,m,o,c,GL20.GL_TRIANGLES);renderable.worldTransform.set(x);renderable.material=makeMaterial(f,x);}
         @Override public void getRenderables(Array<Renderable> output,Pool<Renderable> pool){output.add(pool.obtain().set(renderable));}
     }
+    private static final class DoorRequest{final int room;final long token;DoorRequest(int r,long t){room=r;token=t;}}
     private static final class MaterialInfo{final Color color;final String texture;final float su,sv,ou,ov,cutoff;final int cull,blendSrc,blendDst;final boolean transparent,zWrite,alphaClip;MaterialInfo(Color c,String t,float[] uv,int x,boolean a,int src,int dst,boolean zw,boolean clip,float cut){color=c;texture=t;su=uv[0];sv=uv[1];ou=uv[2];ov=uv[3];cull=x;transparent=a;blendSrc=src;blendDst=dst;zWrite=zw;alphaClip=clip;cutoff=cut;}}
     private static final class Sampler{final int filter,u,v,aniso;Sampler(int f,int a,int b,int n){filter=f;u=a;v=b;aniso=n;}}
     private static final class TextureEntry{final Texture texture;final long bytes;TextureEntry(Texture t,long b){texture=t;bytes=b;}}

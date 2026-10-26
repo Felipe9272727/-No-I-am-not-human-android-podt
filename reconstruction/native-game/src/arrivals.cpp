@@ -4,6 +4,22 @@
 
 namespace ninah {
 
+std::vector<PresetVisitSlot> preset_visits_for_day(const CharacterCatalog& catalog, std::int32_t day) {
+    if (day < 0) throw std::invalid_argument("preset visit day cannot be negative");
+    std::vector<PresetVisitSlot> result;
+    for (const auto& character : catalog.records()) {
+        if (!character.is_preset) continue;
+        for (const auto& visit : character.visits) {
+            if (visit.day == day)
+                result.push_back({character.type, visit.day, visit.guest_number});
+        }
+    }
+    std::stable_sort(result.begin(), result.end(), [](const auto& a, const auto& b) {
+        return a.guest_number < b.guest_number;
+    });
+    return result;
+}
+
 void VisitorScheduler::stage(std::int32_t character_id, std::int32_t order, GameEvent event) {
     if (prepared_) throw std::logic_error("cannot stage after visitor batch preparation");
     const auto& conditions = event.conditions();

@@ -32,6 +32,17 @@ bool active_object(const Json& state, const std::string& name) {
     if (object.at("name") == name) return object.at("active").get<bool>();
   return false;
 }
+Json assert_neighbour_visit_stays_closed(Json state) {
+  state = act({{"action", "campaign_tick"}, {"elapsed_ms", 2500}});
+  assert(state.at("campaign").at("night_events_complete") == true);
+  assert(state.at("campaign").at("door_waiting") == false);
+  const auto rejected = call({{"action", "open_door"}});
+  assert(!rejected.at("error").is_null());
+  assert(rejected.at("phase") == "playing");
+  assert(rejected.at("campaign").at("door_waiting") == false);
+  assert(rejected.at("dialogue").is_null());
+  return act({{"action", "state"}});
+}
 Json admit_neighbour(Json state, std::size_t entrance_branch) {
   state = act({{"action", "campaign_tick"}, {"elapsed_ms", 999}});
   assert(state.at("campaign").at("door_waiting") == false);
@@ -39,6 +50,8 @@ Json admit_neighbour(Json state, std::size_t entrance_branch) {
   assert(state.at("campaign").at("door_waiting") == true);
   state = act({{"action", "open_door"}});
   assert(state.at("view_mode") == "room" && state.at("room") == 5);
+  assert(state.at("portrait").at("character") == "Neighbour");
+  assert(state.at("portrait").at("emotion").is_number());
   assert(state.at("dialogue").at("line_id") == "line:entrance_neighbour_0_054308e");
   const auto first_line = state.at("dialogue");
   auto blocked_exit = call({{"action", "enter_world"}});
@@ -52,6 +65,12 @@ Json admit_neighbour(Json state, std::size_t entrance_branch) {
   assert(state.at("dialogue").at("type") == "options");
   state = act({{"action", "load"}});
   assert(state.at("dialogue") == first_line);
+  state = act({{"action", "campaign_tick"}, {"elapsed_ms", 2500}});
+  assert(state.at("campaign").at("door_waiting") == false);
+  const auto repeated_while_dialogue_open=call({{"action", "open_door"}});
+  assert(!repeated_while_dialogue_open.at("error").is_null());
+  assert(repeated_while_dialogue_open.at("dialogue") == first_line);
+  state = act({{"action", "state"}});
   state = act({{"action", "advance"}});
   const auto options = state.at("dialogue").at("options");
   assert(options.size() >= 2 && options.at(0).at("enabled") && options.at(1).at("enabled"));
@@ -77,7 +96,10 @@ Json admit_neighbour(Json state, std::size_t entrance_branch) {
   assert(state.at("campaign").at("neighbour_room") == 0);
   assert(state.at("campaign").at("inside_occupant_types").size() == 1);
   assert(state.at("campaign").at("inside_occupant_types").at(0) == 3);
+  assert(state.at("campaign").at("night_events_complete") == true);
+  assert(state.at("campaign").at("next_day_preset_visits").at(0).at("character") == "Daughter");
   assert(state.at("view_mode") == "world");
+  state = assert_neighbour_visit_stays_closed(state);
   state = act({{"action", "enter_room"}, {"room", 0}});
   assert(state.at("view_mode") == "room" && state.at("campaign").at("neighbour_can_talk") == true);
   assert(active_object(state, "Neighbour"));
@@ -118,18 +140,31 @@ Json finish_first_inside_talk(Json state, std::size_t asking_choice) {
     } else if (type == "stopped") break;
     else assert(false && "unexpected inside dialogue event");
   }
-  assert(state.at("phase") == "boundary");
-  assert(state.at("campaign").at("boundary").get<std::string>().find("talk_neighbour_1") != std::string::npos);
+  assert(state.at("phase") == "playing");
+  assert(state.at("view_mode") == "world");
+  assert(state.at("campaign").at("neighbour_talk_count") == 1);
+  assert(state.at("campaign").at("neighbour_can_talk") == false);
+  assert(state.at("campaign").at("night_events_complete") == true);
+  const auto& next_visits=state.at("campaign").at("next_day_preset_visits");
+  assert(next_visits.size() == 3);
+  assert(next_visits.at(0).at("character") == "Daughter");
+  assert(next_visits.at(0).at("guest_number") == 1);
+  assert(next_visits.at(1).at("character") == "Esenin");
+  assert(next_visits.at(2).at("character") == "Anxiety");
   assert(state.at("campaign").at("neighbour_phone_unlocked") == true);
-  const auto boundary_state = state;
+  const auto after_talk_state = state;
+  const auto blocked_repeat=call({{"action","actor_talk"},{"character","Neighbour"}});
+  assert(!blocked_repeat.at("error").is_null());
+  assert(blocked_repeat.at("campaign").at("neighbour_talk_count") == 1);
   state = act({{"action", "save"}});
   state = act({{"action", "menu"}});
   state = act({{"action", "load"}});
-  assert(state.at("phase") == "boundary");
-  assert(state.at("campaign") == boundary_state.at("campaign"));
+  assert(state.at("phase") == "playing");
+  state = assert_neighbour_visit_stays_closed(state);
+  assert(state.at("campaign") == after_talk_state.at("campaign"));
   assert(state.at("campaign").at("inside_occupant_types").size() == 1);
   assert(state.at("campaign").at("neighbour_phone_unlocked") == true);
-  assert(state.at("campaign").at("neighbour_phone_number") == boundary_state.at("campaign").at("neighbour_phone_number"));
+  assert(state.at("campaign").at("neighbour_phone_number") == after_talk_state.at("campaign").at("neighbour_phone_number"));
   assert(!active_object(state, "Neighbour"));
   return state;
 }
@@ -221,9 +256,8 @@ int main(int argc, char** argv) {
   assert(state.at("campaign").at("phone_number_count") == 15);
   assert(state.at("campaign").at("neighbour_phone_number").get<std::string>().size() == 6);
   assert(state.at("campaign").at("door_waiting") == false);
-  // Both authored entrance branches converge on LetIn Neighbour; the first
-  // in-house dialogue then exposes either Asking_1 or Asking_2 before the
-  // boundary. No day change is synthesized after those known nodes.
+  // The first preset visit and talk conclude into exploration. Day 1 preset
+  // slots are exposed as source data; no next-day initialization is synthesized.
   state = admit_neighbour(state, 0);
   state = act({{"action", "enter_room"}, {"room", 0}});
   assert(state.at("room") == 0 && active_object(state, "Neighbour"));

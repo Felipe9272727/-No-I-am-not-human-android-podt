@@ -30,6 +30,7 @@ MENU_EVIDENCE = ROOT / "reconstruction/reverse-bootstrap/menu_evidence.json"
 WORLD_SOURCE = ROOT / "reconstruction/reverse-world"
 MUSIC_SOURCE = ROOT / "reconstruction/reverse-music"
 UI_SOURCE = ROOT / "reconstruction/reverse-ui"
+ANIMATION_SOURCE = ROOT / "reconstruction/reverse-animations/animation_manifest.json"
 INTRO_NAME = "Intro_Final_2_NO_SUBTITLES.mp4"
 INTRO_SHA256 = "67d32bc7e28e5bbb528c7553650d8c594138031f358e249ec011db559b54b9d2"
 MENU_EXPORTS = {
@@ -239,7 +240,7 @@ def stage_third_party_notices(destination: Path) -> dict:
 def clean_owned_outputs(destination: Path) -> None:
     # These four generated outputs belong to this script. Other assets in the
     # app tree, if any, are preserved.
-    for name in ("narrative", "presentation", "sprites", "licenses", "intro", "menu", "world", "ui", "music"):
+    for name in ("narrative", "presentation", "sprites", "licenses", "intro", "menu", "world", "ui", "music", "animations"):
         path = destination / name
         if path.exists():
             shutil.rmtree(path)
@@ -247,6 +248,16 @@ def clean_owned_outputs(destination: Path) -> None:
     assets_json = destination / "assets.json"
     if assets_json.exists():
         assets_json.unlink()
+
+
+def stage_animation_assets(destination: Path) -> dict:
+    manifest = read_json(ANIMATION_SOURCE)
+    doors = manifest.get("door_triggers", [])
+    if len(doors) != 6 or {d["serialized_fields"]["linked_room_value"] for d in doors} != {0, 1, 2, 3, 4, 6}:
+        raise RuntimeError("Expected the six recovered interior DoorTrigger instances")
+    relative = "animations/animation_manifest.json"
+    minified_json(ANIMATION_SOURCE, destination / relative, manifest)
+    return {"manifest": relative, "door_count": len(doors)}
 
 
 def stage_music_assets(destination: Path) -> dict:
@@ -670,6 +681,7 @@ def prepare(destination: Path) -> dict:
         "world_manifest": "world/world_manifest.json",
         "world": world_summary,
         "music": music_summary,
+        "animations_manifest": stage_animation_assets(destination)["manifest"],
         "game_ui": ui_summary,
     }
     minified_json(PROGRAM, destination / "presentation/assets.json", manifest)
@@ -709,9 +721,19 @@ def main() -> None:
     )
     parser.add_argument("--music-only", action="store_true",
                         help="stage validated music into an existing asset tree without rebuilding other assets")
+    parser.add_argument("--animations-only", action="store_true",
+                        help="stage recovered door/animation metadata into an existing asset tree")
     args = parser.parse_args()
     destination = args.output_dir.resolve()
-    if args.music_only:
+    if args.music_only and args.animations_only:
+        parser.error("select only one staging subset")
+    if args.animations_only:
+        result = stage_animation_assets(destination)
+        presentation = destination / "presentation/assets.json"
+        metadata = read_json(presentation)
+        metadata["animations_manifest"] = result["manifest"]
+        minified_json(presentation, presentation, metadata)
+    elif args.music_only:
         result = stage_music_assets(destination)
         presentation = destination / "presentation/assets.json"
         if presentation.is_file():

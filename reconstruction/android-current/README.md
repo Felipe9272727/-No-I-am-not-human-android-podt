@@ -35,7 +35,7 @@ Build from the source root:
 python3 tools/android-current/build_apk.py
 ```
 
-The intended output is `deliverables/NINAH-Port-Fluidez.apk`. The build report
+The intended output is `deliverables/NINAH-Port-Animacoes.apk`. The build report
 records the actual output, signatures, native libraries, assets and validation
 limits. No original EXE, DLL or installer is executed or included. The preserved
 source reports are static reverse engineering evidence, not a certification
@@ -119,3 +119,39 @@ changes only when its target or navigation revision changes. Menu/intro/boundary
 use a sleeping GL loop with state wakeups; animated scene phases remain live.
 Compiled APK/host tests do not establish hardware UI correctness or FPS gains
 on the phone. These changes require the next Xiaomi test.
+
+## v0.8 graphics, doors and opening progress
+
+The reproducible white ceiling at source pose (-4,1.584,-10), yaw0/pitch-75,
+comes from the source ceiling/material, not a missing PNG. The renderer now
+uses sRGB/Linear conversion, the recovered active Night profile's Neutral
+curve and URP smooth finite-range attenuation. Spot cone data is supported;
+very wide spots retain a point-light approximation. This is still partial URP
+material/lighting reproduction: shadows, bloom and the full post stack remain
+unfinished. The ceiling regression and all GLES checks are host tests, not a
+measurement on an Android GPU.
+
+Six internal doors now rotate around their recovered hinges before entering
+the room close-up. Source opening duration is1s with OutCubic easing; closing
+is0.5s with InSine. Input is held during the transition; lifecycle/pause stops
+the motion, cancellation restores the original transform, and returning from
+the close-up closes the door. Collision geometry remains at rest while this
+short presentation transition holds movement. The Android handoff before the
+2D view is an adaptation; the exact Unity coroutine/view handoff is unproven.
+The front entrance is separate: its FallingDoor clip does not establish a
+first-visitor opening swing and is not substituted with an invented hinge.
+
+Source sprite playback distinguishes PlayOnce (hide on completion), Cycle,
+and FixLastFrame. Visible autoplay UI sequences and reached portrait/sign
+clips use the recovered frames and FPS. App lifecycle and pause clocks are
+adapted to Android. Cataloguing all source clips does not make every NPC or
+event reachable in this campaign slice.
+
+Completing the first visitor and room conversation returns to house exploration.
+Completed visits cannot ring again after campaign ticks or in-memory reloads.
+The next-day preset schedule is exposed as data; day1 initialization and its
+visits are still unimplemented. See native-game/README_campaign_slice.md.
+
+For a fresh media staging, run the animation exporter against the preserved
+static Data folder with --stage-extras, then prepare_assets.py --animations-only.
+The final APK validates the packaged door metadata against the tracked manifest.

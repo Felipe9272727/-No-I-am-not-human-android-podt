@@ -1,27 +1,28 @@
+HOST_RENDER_MEAN_MS=1.68109469
 RENDERER_DIAGNOSTIC=Unlit GLES fallback active after shader compile failure.
 Renderer failure at compile/draw GLES world scene; switching to unlit fallback
 GL vendor=Mesa, renderer=llvmpipe (LLVM 20.1.2, 256 bits), version=OpenGL ES 2.0 Mesa 25.2.8-0ubuntu0.24.04.2, maxTextureSize=16384, depthBits=24
 
 com.badlogic.gdx.utils.GdxRuntimeException: shader compilation injected failure
-	at WorldPreviewGLES.lambda$1(WorldPreviewGLES.java:154)
+	at WorldPreviewGLES.lambda$1(WorldPreviewGLES.java:166)
 	at jdk.proxy1/jdk.proxy1.$Proxy3.glCompileShader(Unknown Source)
 	at com.badlogic.gdx.graphics.glutils.ShaderProgram.loadShader(ShaderProgram.java:209)
 	at com.badlogic.gdx.graphics.glutils.ShaderProgram.compileShaders(ShaderProgram.java:184)
 	at com.badlogic.gdx.graphics.glutils.ShaderProgram.<init>(ShaderProgram.java:167)
 	at com.badlogic.gdx.graphics.g3d.shaders.DefaultShader.<init>(DefaultShader.java:527)
-	at com.badlogic.gdx.graphics.g3d.shaders.DefaultShader.<init>(DefaultShader.java:521)
-	at com.badlogic.gdx.graphics.g3d.shaders.DefaultShader.<init>(DefaultShader.java:517)
-	at com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider.createShader(DefaultShaderProvider.java:45)
+	at org.reconstruction.current.WorldRenderer$SourceDefaultShader.<init>(WorldRenderer.java:432)
+	at org.reconstruction.current.WorldRenderer$SourceShaderProvider.createShader(WorldRenderer.java:352)
 	at com.badlogic.gdx.graphics.g3d.utils.BaseShaderProvider.getShader(BaseShaderProvider.java:34)
 	at com.badlogic.gdx.graphics.g3d.ModelBatch.render(ModelBatch.java:265)
-	at org.reconstruction.current.WorldRenderer.drawRenderables(WorldRenderer.java:116)
-	at org.reconstruction.current.WorldRenderer.render(WorldRenderer.java:115)
-	at org.reconstruction.current.RoomEngine.render(RoomEngine.java:121)
-	at WorldPreviewGLES.main(WorldPreviewGLES.java:160)
+	at org.reconstruction.current.WorldRenderer.drawRenderables(WorldRenderer.java:237)
+	at org.reconstruction.current.WorldRenderer.render(WorldRenderer.java:220)
+	at org.reconstruction.current.RoomEngine.render(RoomEngine.java:122)
+	at WorldPreviewGLES.main(WorldPreviewGLES.java:174)
 
 
 GL vendor=Mesa, renderer=llvmpipe (LLVM 20.1.2, 256 bits), version=OpenGL ES 2.0 Mesa 25.2.8-0ubuntu0.24.04.2, maxTextureSize=16384, depthBits=24
-World meshes=94, render items=114, mesh colliders=24, texture cache=25165824 bytes, visible textures=6
+World meshes=91, render items=111, mesh colliders=24, texture cache=46137344 bytes, visible textures=11
+Measuring renderer…
 GL_RENDERER=llvmpipe (LLVM 20.1.2, 256 bits)
 GL_VERSION=OpenGL ES 2.0 Mesa 25.2.8-0ubuntu0.24.04.2
 WORLD_PREVIEW_POSE={"position":[-3.985,1.584,-6.998],"pitch":0,"yaw":0}

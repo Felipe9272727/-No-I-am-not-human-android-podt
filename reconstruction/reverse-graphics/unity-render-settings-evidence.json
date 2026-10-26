@@ -1,0 +1,258 @@
+{
+  "source": "restore-v08/unity-data (UnityPy 1.25.4; static serialized asset inspection only)",
+  "engine_version": "6000.3.10f1",
+  "urp_package_revision": "37e0d4fc2503 (from embedded IL2CPP metadata package path; compatible with the Unity 6000.3 / URP 17.3 line)",
+  "confidence_scope": "The numeric Volume values below are statically decoded from their serialized MonoBehaviour payloads using their Unity URP component field order. This is project/render configuration evidence, not proof every scene executed the default profile at runtime.",
+  "player_settings": {
+    "asset": "globalgamemanagers",
+    "field": "PlayerSettings.m_ActiveColorSpace",
+    "value": 1,
+    "interpretation": "Unity Linear color space",
+    "read_note": "UnityPy check_read=false used because PlayerSettings typetree is truncated by four bytes"
+  },
+  "display": {
+    "boot_config": "hdr-display-enabled=0",
+    "player_settings": {
+      "allowHDRDisplaySupport": false,
+      "useHDRDisplay": false
+    }
+  },
+  "quality": {
+    "asset": "globalgamemanagers",
+    "current_quality_index": 2,
+    "current_quality_name": "High Fidelity",
+    "anti_aliasing": 4,
+    "shadows": 2,
+    "pixel_light_count": 2,
+    "pipeline_name": "URP-HighFidelity",
+    "pipeline_object_path_id": 3147,
+    "graphics_settings_use_hdr": true,
+    "lights_use_linear_intensity": true,
+    "lights_use_color_temperature": true
+  },
+  "main_room_scene": {
+    "asset": "level1",
+    "camera_hdr": true,
+    "camera_allow_msaa": true,
+    "render_settings_fog": false,
+    "volume": {
+      "game_object_path_id": 139,
+      "game_object_name": "[POSTPROCESS] Volume",
+      "game_object_active": true,
+      "component_object_path_id": 4032,
+      "component_class": "UnityEngine.Rendering.Volume",
+      "is_global": true,
+      "priority": 0.0,
+      "blend_distance": 0.0,
+      "weight": 1.0,
+      "shared_profile": {
+        "file_id": 3,
+        "path_id": 2722,
+        "asset": "sharedassets0.assets",
+        "name": "Night"
+      },
+      "profile_component_count": 6,
+      "profile_components": [
+        {
+          "object_path_id": 2739,
+          "name": "ColorCurves"
+        },
+        {
+          "object_path_id": 2733,
+          "name": "Bloom"
+        },
+        {
+          "object_path_id": 2730,
+          "name": "Tonemapping"
+        },
+        {
+          "object_path_id": 2592,
+          "name": "Vignette"
+        },
+        {
+          "object_path_id": 2728,
+          "name": "ChannelMixer"
+        },
+        {
+          "object_path_id": 2727,
+          "name": "LensDistortion"
+        }
+      ],
+      "tonemapping": {
+        "component_active": true,
+        "mode_override": true,
+        "mode": 1,
+        "mode_name": "Neutral",
+        "other_parameter_overrides": false,
+        "other_stored_values": {
+          "neutralHDRRangeReductionMode": 2,
+          "acesPreset": 3,
+          "hueShiftAmount": 0.0,
+          "detectPaperWhite": false,
+          "paperWhite": 300.0,
+          "detectBrightnessLimits": true,
+          "minNits": 0.005,
+          "maxNits": 1000.0
+        },
+        "raw_payload_mapping": "Nine serialized override/value pairs follow active at offsets 48..119. Only the first pair (mode) has override=true; the other stored values are not applied by this component."
+      },
+      "color_adjustments_component_present": false
+    }
+  },
+  "default_volume_profile": {
+    "asset": "globalgamemanagers.assets",
+    "object_path_id": 3143,
+    "object_name": "DefaultVolumeProfile",
+    "serialized_component_reference_count": 19,
+    "components": {
+      "Tonemapping": {
+        "object_path_id": 3155,
+        "active": true,
+        "values": {
+          "mode": 0,
+          "mode_name": "None",
+          "neutralHDRRangeReductionMode": 2,
+          "acesPreset": 3,
+          "hueShiftAmount": 0.0,
+          "detectPaperWhite": false,
+          "paperWhite": 300.0,
+          "detectBrightnessLimits": true,
+          "minNits": 0.005,
+          "maxNits": 1000.0
+        },
+        "raw_payload_mapping": "Nine serialized VolumeParameter override/value pairs after active flag, at raw offsets 48..119; field order checked against URP Tonemapping component serialization order.",
+        "interpretation": "The Tonemapping component is enabled, but its mode value is None (enum 0), so it applies no tone mapping."
+      },
+      "ColorAdjustments": {
+        "object_path_id": 3162,
+        "active": true,
+        "values": {
+          "postExposure": 0.0,
+          "postExposure_override": true,
+          "contrast": 0.0,
+          "colorFilter_rgba": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "hueShift": 0.0,
+          "saturation": 0.0
+        },
+        "raw_payload_mapping": "After the aligned m_Name string, active and ordered parameter override/value pairs decode postExposure at float 0.0 EV, contrast 0, white filter, hue shift 0, and saturation 0."
+      },
+      "other_component_names_confirmed": [
+        "Bloom",
+        "Vignette",
+        "LiftGammaGain"
+      ]
+    }
+  },
+  "source_cross_checks": [
+    "globalgamemanagers.assets MonoScript objects 1900, 1309, and 2644 identify Tonemapping, ColorAdjustments, and VolumeProfile from Unity.RenderPipelines.Universal.Runtime / Unity.RenderPipelines.Core.Runtime.",
+    "globalgamemanagers.assets MonoBehaviour 3143 enumerates 19 references to profile components including objects 3155 and 3162.",
+    "Unity URP API documents TonemappingMode.None as enum value 0 and describes it as no tonemapping.",
+    "Unity URP API documents ColorAdjustments.postExposure as the exposure adjustment before tonemapping.",
+    "level1 MonoBehaviour 4032 references global Volume Profile Night (sharedassets0.assets pathID 2722); that active global volume overrides the project default profile Tonemapping mode to Neutral.",
+    "Official Unity Graphics URP BRDF.hlsl initializes diffuse as albedo * oneMinusReflectivity, and DirectBRDF returns that diffuse term plus specular; no explicit 1/pi appears in the direct BRDF path.",
+    "Checkpoint cpp2il_cs DayNightControllerSOData defines VisualsByTimeOfDay[]; the serialized object 2699 contains Day->profile2721 and Night->profile2722.",
+    "Checkpoint cpp2il_cs EffectsViewProvider fields and level1 object 3835 bind the scene Volume 4032 to Day profile2721 and Night profile2722.",
+    "Recovered Assembly-CSharp code includes DayNightController.UpdateVisualThingForSelectedTimeOfDay and EffectsController.ChangeVolumeProfile, whose static body assigns Volume.profile."
+  ],
+  "implication_for_port": "The serialized scene begins with the Night global Volume, whose Tonemapping is active and set to Neutral. The day/night controller can switch that Volume to the Day profile; in that profile Tonemapping and ColorAdjustments components are both inactive, even though the disabled ColorAdjustments payload stores +3.48 EV. Neither effective profile indicates an applied positive exposure lift. The bright ceiling still warrants checking intermediate LDR clipping, point-light range/attenuation, and active scene ColorCurves/ChannelMixer data before adding output transforms.",
+  "static_only": true,
+  "neutral_tonemapping_implementation": {
+    "official_source": "https://github.com/Unity-Technologies/Graphics/blob/master/Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl",
+    "function": "NeutralTonemap",
+    "source_parameters": {
+      "a": 0.2,
+      "b": 0.29,
+      "c": 0.24,
+      "d": 0.272,
+      "e": 0.02,
+      "f": 0.3,
+      "whiteLevel": 5.3,
+      "whiteClip": 1.0
+    },
+    "source_formula": "NeutralCurve(x,a,b,c,d,e,f)=((x*(a*x+c*b)+d*e)/(x*(a*x+b)+d*f))-e/f; clamp input RGB to >=0; whiteScale=1/NeutralCurve(whiteLevel,...); output=NeutralCurve(input*whiteScale,...)*whiteScale/whiteClip.",
+    "version_note": "Official Unity Graphics current source. The binary project identifies Unity 6000.3.10f1 and URP package revision 37e0d4fc2503; exact matching source branch was not directly recovered, so implementation constants are corroborating reference, while the serialized active mode value comes from the supplied game data."
+  },
+  "time_of_day_profile_switching": {
+    "data_asset": "sharedassets0.assets",
+    "day_night_controller_data_object_path_id": 2699,
+    "serialized_profiles": [
+      {
+        "time_of_day": "Day",
+        "enum_value": 0,
+        "profile_path_id": 2721,
+        "profile_name": "Day",
+        "has_light": true,
+        "has_actions_count": true
+      },
+      {
+        "time_of_day": "Night",
+        "enum_value": 1,
+        "profile_path_id": 2722,
+        "profile_name": "Night",
+        "has_light": false,
+        "has_actions_count": false
+      }
+    ],
+    "scene_view_provider": {
+      "asset": "level1",
+      "object_path_id": 3835,
+      "script": "_Code.Infrastructure._NINAH__Effects.EffectsViewProvider",
+      "volume_component_path_id": 4032,
+      "camera_path_id": 2060,
+      "night_profile": 2722,
+      "day_profile": 2721
+    },
+    "runtime_code_evidence": [
+      "Recovered Assembly-CSharp DayNightController contains UpdateVisualThingForSelectedTimeOfDay and a predicate comparing VisualsByTimeOfDay.TimeOfDay to current time of day.",
+      "Recovered Assembly-CSharp EffectsController.ChangeVolumeProfile assigns the supplied VolumeProfile to the scene Volume.profile."
+    ],
+    "day_profile": {
+      "profile_components": [
+        "ColorCurves",
+        "Bloom",
+        "ShadowsMidtonesHighlights",
+        "SplitToning",
+        "Tonemapping",
+        "Vignette",
+        "ColorAdjustments",
+        "LensDistortion"
+      ],
+      "tonemapping": {
+        "active": false,
+        "mode_override": true,
+        "mode": 1,
+        "mode_name": "Neutral",
+        "effective": "disabled because component active=false"
+      },
+      "color_adjustments": {
+        "active": false,
+        "postExposure_override": true,
+        "postExposure_ev": 3.48,
+        "effective": "disabled because component active=false"
+      }
+    },
+    "night_profile": {
+      "profile_components": [
+        "ColorCurves",
+        "Bloom",
+        "Tonemapping",
+        "Vignette",
+        "ChannelMixer",
+        "LensDistortion"
+      ],
+      "tonemapping": {
+        "active": true,
+        "mode_override": true,
+        "mode": 1,
+        "mode_name": "Neutral"
+      },
+      "color_adjustments_component_present": false
+    },
+    "scene_start_profile": "Night (from level1 Volume 4032 sharedProfile serialized reference); gameplay can switch to Day via the recovered day/night controller."
+  }
+}

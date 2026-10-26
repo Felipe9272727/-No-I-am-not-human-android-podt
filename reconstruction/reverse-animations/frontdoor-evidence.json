@@ -1,0 +1,74 @@
+{
+  "scope": "Serialized evidence for the campaign entrance door in level1. This file is separate from animation_manifest.json; it records source evidence, not a claim that the clip is triggered by the first open_door interaction.",
+  "scene": {
+    "name": "level1",
+    "build_scene": "Assets/_Scenes/s1_GameScene.unity"
+  },
+  "door_object": {
+    "game_object_path_id": 295,
+    "name": "Входная дверь",
+    "transform_path_id": 1671,
+    "parent_transform_path_id": 1602,
+    "parent_name": "Коридор",
+    "mesh_filter_path_id": 2282,
+    "mesh_renderer_path_id": 2128,
+    "animator_path_id": 2507,
+    "controller": {
+      "file_id": 2,
+      "path_id": 381,
+      "asset": "sharedassets1.assets",
+      "name": "Входная дверь"
+    }
+  },
+  "serialized_animator": {
+    "apply_root_motion": false,
+    "controller_clip_path_ids": [
+      365
+    ],
+    "state": "FallingDoor",
+    "clip_looping": true,
+    "state_looping": true,
+    "transition_into_state_found": false
+  },
+  "clip": {
+    "path_id": 365,
+    "name": "FallingDoor",
+    "sample_rate_hz": 60,
+    "start_time_seconds": 0.0,
+    "stop_time_seconds": 0.2,
+    "loop_time": true,
+    "generic_root_transform": true,
+    "constant_clip_data": [
+      -90.0,
+      0.0,
+      0.0
+    ],
+    "value_array_delta_excerpt": [
+      -6.0319834,
+      -6.0100002
+    ],
+    "rotation_curve_count": 0,
+    "euler_curve_count": 0,
+    "position_curve_count": 0,
+    "scale_curve_count": 0,
+    "dense_clip_frame_count": 14,
+    "dense_clip_curve_count": 0,
+    "binding": {
+      "path": 0,
+      "type_id": 4,
+      "attributes": [
+        1,
+        4
+      ]
+    },
+    "interpretation": "Unity serializes a short looping clip named FallingDoor on the entrance door Animator. The serialized clip has no explicit rotation/position/scale curve arrays; root-transform data is present, but Animator.applyRootMotion is false. These fields do not establish a visible swing angle, pivot, or whether/when the clip is played."
+  },
+  "code_evidence": {
+    "entrance_room_view": "EntranceRoomView only exposes background Sprite swaps (BurnBackground/DestroyedBackground); no door animation method is declared.",
+    "room_view_base": "ARoomView has serialized _door, _brokenDoor, _doorTrigger references; BreakDoor disables linked actionable object and calls IRoomView.BreakDoor (view behavior), rather than demonstrating playback of FallingDoor.",
+    "entrance_room": "EntranceRoom has EnterInner and ShowFullSizeCharacter; no source-level direct Animator.Play/SetTrigger invocation was established in the audited methods.",
+    "peephole": "PeepholeTrigger is a camera/distortion and linked-room transition path to ERoom 5. Its DOTween values animate the peephole view effect; they are not evidence that the entrance door leaf animates.",
+    "door_trigger": "No level1 DoorTrigger with linkedRoom ERoom 5 was found; the six ordinary DoorTrigger records target interior rooms."
+  },
+  "conclusion": "The main entrance door has an authored Animator Controller and a FallingDoor clip. Available serialized evidence does not prove that the initial open_door action starts that state, and does not prove a hinge/pivot, authored swing angle, or non-looping completion. Do not map FallingDoor to a fabricated rotational transition without additional source evidence."
+}

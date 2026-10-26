@@ -1,7 +1,9 @@
+HOST_RENDER_MEAN_MS=2.56214061
 RENDERER_DIAGNOSTIC=ready
 
 GL vendor=Mesa, renderer=llvmpipe (LLVM 20.1.2, 256 bits), version=OpenGL ES 2.0 Mesa 25.2.8-0ubuntu0.24.04.2, maxTextureSize=16384, depthBits=24
-World meshes=94, render items=114, mesh colliders=24, texture cache=25165824 bytes, visible textures=6
+World meshes=91, render items=111, mesh colliders=24, texture cache=46137344 bytes, visible textures=11
+Measuring renderer…
 GL_RENDERER=llvmpipe (LLVM 20.1.2, 256 bits)
 GL_VERSION=OpenGL ES 2.0 Mesa 25.2.8-0ubuntu0.24.04.2
 WORLD_PREVIEW_POSE={"position":[-3.985,1.584,-6.998],"pitch":0,"yaw":0}

@@ -189,6 +189,7 @@ public final class RoomEngine extends ApplicationAdapter {
         try {
             JSONObject root = new JSONObject(serialized);
             if (worldRenderer != null) worldRenderer.setManifestPath(root.optString("world_manifest", ""));
+            if (worldRenderer != null) worldRenderer.setDoorManifestPath(root.optString("animations_manifest", ""));
             JSONObject images = root.optJSONObject("images");
             if (images != null) {
                 Iterator<String> keys = images.keys();
@@ -412,6 +413,10 @@ public final class RoomEngine extends ApplicationAdapter {
         return rendererStatus;
     }
     public int getFrameRate() { WorldRenderer world=worldRenderer; return world==null?0:world.getFrameRate(); }
+    public long beginDoorOpen(int room) { WorldRenderer world=worldRenderer;return world==null?0:world.beginDoorOpen(room); }
+    public boolean isDoorOpenComplete(long token) { WorldRenderer world=worldRenderer;return world!=null&&world.isDoorOpenComplete(token); }
+    public void cancelDoorMotion() { WorldRenderer world=worldRenderer;if(world!=null)world.cancelDoorMotion(); }
+    public void setPresentationPaused(boolean paused) { WorldRenderer world=worldRenderer;if(world!=null)world.setPresentationPaused(paused); }
 
     public String getRendererDiagnostic() {
         if (rendererStatus.startsWith("error:") && !rendererDiagnostic.isEmpty()) return rendererDiagnostic;

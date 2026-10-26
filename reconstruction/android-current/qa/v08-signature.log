@@ -1,0 +1,17 @@
+Verifies
+Verified using v1 scheme (JAR signing): true
+Verified using v2 scheme (APK Signature Scheme v2): true
+Verified using v3 scheme (APK Signature Scheme v3): true
+Verified using v3.1 scheme (APK Signature Scheme v3.1): false
+Verified using v4 scheme (APK Signature Scheme v4): false
+Verified for SourceStamp: false
+Number of signers: 1
+Signer #1 certificate DN: CN=No I'm Not a Human Port Inicio Preview, O=Reconstruction, C=XX
+Signer #1 certificate SHA-256 digest: f07ec9f06df46a41621203512a410bbbfce871a4300cb85a0bbe59461721176a
+Signer #1 certificate SHA-1 digest: 86e347f93be937112b1e80293b57047d0942c97c
+Signer #1 certificate MD5 digest: c7afb92fed485403bea79787b325b2bc
+Signer #1 key algorithm: RSA
+Signer #1 key size (bits): 2048
+Signer #1 public key SHA-256 digest: 30c5365d525c5b62aac6ebdbb0e1c2760c8de0919c1de6dd8c0384238f80a842
+Signer #1 public key SHA-1 digest: 3097861c8d559ec9ee4b8903323d059b5841a86b
+Signer #1 public key MD5 digest: 86006ed549c7ad81722371b8f1082ba3

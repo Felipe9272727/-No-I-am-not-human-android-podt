@@ -1,11 +1,12 @@
 // Current C++ gameplay host. Original Windows programs are never loaded.
 #include "ninah/dialogue_session.hpp"
+#include "ninah/arrivals.hpp"
 #include "ninah/scene_commands.hpp"
 #include "presentation_provider.hpp"
 #include "production_characters.hpp"
 #include "production_data.hpp"
 #include "production_phone.hpp"
-#include "../third_party/nlohmann/json.hpp"
+#include "../../native-game/third_party/nlohmann/json.hpp"
 
 #include <algorithm>
 #include <array>
@@ -102,7 +103,7 @@ class Context {
         throw std::logic_error("Não há comando de pulo confirmado para a introdução");
       } else if(name=="intro_video_finished") finish_intro_video();
       else if(name=="campaign_tick") {
-        if(phase_=="playing"&&!door_opened_) {
+        if(phase_=="playing"&&!door_opened_&&!night_events_complete()) {
           const auto t=a.at("elapsed_ms").get<std::int64_t>();
           if(t<0) throw std::invalid_argument("Tempo de campanha inválido");
           campaign_elapsed_ms_=std::max(campaign_elapsed_ms_,t);
@@ -180,15 +181,23 @@ class Context {
     if(phase_=="playing"||phase_=="boundary") {
       const bool neighbour_inside=contains(occupants_.characters.inside,3);
       const auto* neighbour_data=characters_.find(3);
-      Json c={{"day",energy_.day},{"time","night"},{"energy",energy_.remaining},
+      Json c={{"day",energy_.day},{"time","night"},{"time_of_day","night"},{"energy",energy_.remaining},
+        {"night_events_complete",night_events_complete()},
         {"door_waiting",door_waiting_},{"visitor",door_waiting_?"Neighbour":""},
         {"visitor_type",door_waiting_?3:0},{"fridge_active",fridge_active_},
         {"neighbour_inside",neighbour_inside},
-        {"neighbour_can_talk",phase_=="playing"&&view_mode_=="room"&&neighbour_inside&&neighbour_data&&room_==neighbour_data->room&&!session_},
+        {"neighbour_can_talk",phase_=="playing"&&view_mode_=="room"&&neighbour_inside&&neighbour_data&&room_==neighbour_data->room&&!session_&&!neighbour_talk_completed_},
+        {"neighbour_talk_count",neighbour_talk_completed_?1:0},
         {"neighbour_room",neighbour_data?neighbour_data->room:-1},
         {"view_mode",view_mode_},
         {"inside_occupant_types",occupants_.characters.inside},
         {"elapsed_ms",campaign_elapsed_ms_}};
+      c["next_day_preset_visits"]=Json::array();
+      for(const auto& slot:preset_visits_for_day(characters_,energy_.day+1)){
+        const auto* scheduled=characters_.find(slot.character_id);
+        if(scheduled)c["next_day_preset_visits"].push_back({{"character_type",slot.character_id},
+          {"character",scheduled->name},{"day",slot.day},{"guest_number",slot.guest_number}});
+      }
       c["phone_numbers_initialized"]=phones_initialized_;
       c["phone_number_count"]=phone_numbers_.entries.size();
       c["neighbour_phone_number"]=PhoneNumberService::get_number_by_subscriber(phone_numbers_,PhoneSubscriber::Neighbour);
@@ -197,7 +206,7 @@ class Context {
       if(phase_=="boundary") c["boundary"]=boundary_reason_;
       result["campaign"]=std::move(c);
     }
-    if(const auto p=presentation_->current_dialog_packet()) result["portrait"]={{"frames",frames(p->source_file,p->frames)},
+    if(const auto p=presentation_->current_dialog_packet()) result["portrait"]={{"character",p->character},{"emotion",p->emotion},{"frames",frames(p->source_file,p->frames)},
       {"fps",p->frames_per_second},{"cycling",p->cycling},{"position",vector(p->position)},{"scale",vector(p->scale)}};
     if(const auto& s=presentation_->active_sign()) result["sign"]={{"character",s->character},{"kind",static_cast<int>(s->sign)},
       {"sprite",asset(s->source_file,s->assets.sprite)},{"white",asset(s->source_file,s->assets.white)},
@@ -221,7 +230,8 @@ class Context {
     CharacterCatalog characters; PresentationState presentation; std::mt19937 rng;
     std::int32_t deficit_day; std::string character,dialogue,phase,boundary_return_phase,boundary_reason,active_node;
     std::int64_t intro_elapsed_ms,campaign_elapsed_ms; int room;
-    bool has_session,door_waiting,door_opened,fridge_active;
+    bool has_session,door_waiting,door_opened,fridge_active,neighbour_talk_completed;
+    std::int32_t completed_preset_visits;
     explicit Snapshot(const Context& c):energy(c.energy_),inventory(c.inventory_state_),occupants(c.occupants_),
       flags(c.flags_),phone_numbers(c.phone_numbers_),unlocked_phone_subscribers(c.unlocked_phone_subscribers_),
       phones_initialized(c.phones_initialized_),world_pose(c.world_pose_),view_mode(c.view_mode_),characters(c.characters_),presentation(*c.presentation_),rng(c.rng_),deficit_day(c.deficit_item_day_),
@@ -229,9 +239,14 @@ class Context {
       boundary_return_phase(c.boundary_return_phase_),boundary_reason(c.boundary_reason_),active_node(c.active_node_),
       intro_elapsed_ms(c.intro_elapsed_ms_),campaign_elapsed_ms(c.campaign_elapsed_ms_),room(c.room_),
       has_session(static_cast<bool>(c.session_)),door_waiting(c.door_waiting_),door_opened(c.door_opened_),
-      fridge_active(c.fridge_active_){}
+      fridge_active(c.fridge_active_),neighbour_talk_completed(c.neighbour_talk_completed_),
+      completed_preset_visits(c.completed_preset_visits_){}
   };
   static bool contains(const std::vector<std::int32_t>& v,std::int32_t id){return std::find(v.begin(),v.end(),id)!=v.end();}
+  bool night_events_complete()const{
+    return phase_=="playing" && static_cast<std::size_t>(completed_preset_visits_)>=
+      preset_visits_for_day(characters_,energy_.day).size();
+  }
   void set_world_pose(const Json& pose){
     const auto& p=pose.at("position");
     if(!p.is_array()||p.size()!=3)throw std::invalid_argument("world_pose.position must have three components");
@@ -356,6 +371,7 @@ class Context {
     flags_=Flags{};phone_numbers_=PhoneNumbers{};unlocked_phone_subscribers_.clear();phones_initialized_=false;
     rng_.seed(0x4e494e41u);deficit_item_day_=0;room_=5;character_.clear();phase_="intro";
     intro_elapsed_ms_=campaign_elapsed_ms_=0;door_waiting_=door_opened_=fridge_active_=false;
+    neighbour_talk_completed_=false;completed_preset_visits_=0;
     world_pose_=WorldPose{};world_pose_.revision=++world_revision_;view_mode_="world";
     boundary_reason_.clear();boundary_return_phase_.clear();presentation_=std::make_unique<PresentationState>(catalog_);rebuild_router();
     log("Novo jogo; estado original de dia 0 preparado e introdução aberta");
@@ -368,7 +384,8 @@ class Context {
     log("Vídeo concluído; sessão limitada iniciou na Entrada");
   }
   void open_door(){
-    if(phase_!="playing"||!door_waiting_||door_opened_)throw std::logic_error("Nenhum visitante está aguardando na porta");
+    if(phase_!="playing"||!door_waiting_||door_opened_||night_events_complete())
+      throw std::logic_error("Nenhum visitante pendente está aguardando na porta");
     door_waiting_=false;door_opened_=true;room_=5;view_mode_="room";set_dialog_character("Neighbour");
     session_=std::make_unique<DialogueSession>(program_,metadata_,functions_,commands_,characters_,option_callbacks(),
       [this](const std::string& text){return immediate_command(text);});
@@ -379,6 +396,8 @@ class Context {
     const auto type=characters_.parse_name(raw,true);
     if(type!=3||!contains(occupants_.characters.inside,type))
       throw std::logic_error("Esse personagem ainda não está dentro da casa");
+    if(neighbour_talk_completed_)
+      throw std::logic_error("Não há outro diálogo de Neighbour verificado depois de talk_neighbour_1");
     const auto* source=characters_.find(type);
     const auto* view=catalog_.find(source->name);
     const auto packet=presentation_->room_packet(source->name);
@@ -390,13 +409,15 @@ class Context {
     session_->start(active_node_);log("Primeiro diálogo dentro da casa iniciado: talk_neighbour_1");
   }
   void finish_current_dialogue(){
-    if(active_node_=="entrance_neighbour_0"&&contains(occupants_.characters.inside,3)){
+    if(active_node_=="entrance_neighbour_0"){
+      if(completed_preset_visits_<1)++completed_preset_visits_;
       session_.reset();active_node_.clear();character_.clear();view_mode_="world";
-      log("Neighbour entrou; a casa permanece explorável no cômodo mapeado");return;
+      door_opened_=false;
+      log(contains(occupants_.characters.inside,3)?"Visita da Neighbour concluída; a casa permanece explorável":"Visita da Neighbour concluída sem admissão; a casa permanece explorável");return;
     }
-    if(active_node_=="entrance_neighbour_0")
-      enter_boundary("A próxima visita após o diálogo de entrada ainda não foi integrada");
-    else {view_mode_="world";enter_boundary("A continuação após talk_neighbour_1 ainda não foi integrada");}
+    if(active_node_=="talk_neighbour_1")neighbour_talk_completed_=true;
+    session_.reset();active_node_.clear();character_.clear();view_mode_="world";
+    log("Conversa encerrada; exploração da casa retomada");
   }
   void enter_boundary(const std::string& text){phase_="boundary";boundary_return_phase_="playing";boundary_reason_=text;
     log("Limite da sequência inicial alcançado");}
@@ -410,6 +431,8 @@ class Context {
     energy_=saved_->energy;inventory_state_=saved_->inventory;occupants_=saved_->occupants;characters_=saved_->characters;
     phone_numbers_=saved_->phone_numbers;unlocked_phone_subscribers_=saved_->unlocked_phone_subscribers;
     phones_initialized_=saved_->phones_initialized;
+    neighbour_talk_completed_=saved_->neighbour_talk_completed;
+    completed_preset_visits_=saved_->completed_preset_visits;
     world_pose_=saved_->world_pose;view_mode_=saved_->view_mode;world_pose_.revision=++world_revision_;
     flags_=saved_->flags;rng_=saved_->rng;deficit_item_day_=saved_->deficit_day;character_=saved_->character;room_=saved_->room;
     phase_=saved_->phase;active_node_=saved_->active_node;boundary_return_phase_=saved_->boundary_return_phase;boundary_reason_=saved_->boundary_reason;
@@ -424,6 +447,8 @@ class Context {
   std::unique_ptr<PresentationState> presentation_; std::mt19937 rng_{0x4e494e41u};
   PhoneNumbers phone_numbers_; PhoneNumberService phone_service_; std::vector<std::int32_t> unlocked_phone_subscribers_;
   bool phones_initialized_=false;
+  bool neighbour_talk_completed_=false;
+  std::int32_t completed_preset_visits_=0;
   DeficitConsumableTargets deficit_targets_; std::int32_t deficit_item_day_=0;
   ConsumablesDeficitService deficit_service_; OccupantsRuntime people_;
   DialogueCommandDispatcher commands_; DialogueServices functions_; Flags flags_; StoryState story_;

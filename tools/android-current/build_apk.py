@@ -28,7 +28,7 @@ ASSET_DIR = ANDROID_APP / "assets"
 NATIVE_ROOT = ROOT / "reconstruction/native-game"
 BRIDGE_MANIFEST = NATIVE_ROOT / "bridge/Cargo.toml"
 BRIDGE_ROOT = NATIVE_ROOT / "bridge"
-DEFAULT_APK = ROOT / "deliverables/NINAH-Port-Fluidez.apk"
+DEFAULT_APK = ROOT / "deliverables/NINAH-Port-Animacoes.apk"
 REPORT = ANDROID_ROOT / "port3d_validation_report.json"
 PACKAGE_NAME = "org.reconstruction.port.preview"
 JNI_ACTIVITY = "org.reconstruction.current.MainActivity"
@@ -665,6 +665,15 @@ def collect_report(output: Path, build_tools: Path, source_modules: list[str],
         for name in all_pngs:
             validate_png_bytes(apk.read(name),name)
         music_tracks=validate_music_assets(apk,version_code)
+        door_animation_count = 0
+        if version_code >= 8:
+            animation = json.loads(apk.read("assets/animations/animation_manifest.json"))
+            source_animation = json.loads((ROOT / "reconstruction/reverse-animations/animation_manifest.json").read_text())
+            if animation != source_animation:
+                raise RuntimeError("Packaged door animation data differs from the recovered source manifest")
+            door_animation_count = len(animation.get("door_triggers", []))
+            if door_animation_count != 6:
+                raise RuntimeError("Missing recovered interior door animations")
         java_resources = validate_gdx_java_resources(apk)
         libraries = sorted(name for name in names if re.fullmatch(
             r"lib/[^/]+/(?:libninah_current|libgdx)\.so", name))
@@ -826,6 +835,7 @@ def collect_report(output: Path, build_tools: Path, source_modules: list[str],
         "min_sdk": int(MIN_API), "target_sdk": int(ANDROID_API),
         "android_ui_hardware_acceleration_requested":hardware_requested,
         "abis": ["arm64-v8a", "x86_64"], "native_libraries": libraries,
+        "source_interior_door_animation_count": door_animation_count,
         "elf_machines": elf_machines, "elf_load_segment_max_alignment_bytes": load_alignments,
         "native_zip_data_offset_mod_16384": zip_alignments,
         "unresolved_direct_android_dependencies": unresolved_dependencies,
@@ -875,8 +885,8 @@ def main() -> None:
     parser.add_argument("--skip-assets", action="store_true", help="reuse an existing staged asset tree")
     parser.add_argument("--reference-apk", type=Path,
                         help="reuse JNI libraries only from the exact hash-locked current APK")
-    parser.add_argument("--version-code", type=int, default=7)
-    parser.add_argument("--version-name", default="0.7-hardware-hud")
+    parser.add_argument("--version-code", type=int, default=8)
+    parser.add_argument("--version-name", default="0.8-graphics-doors")
     parser.add_argument("--rebuild-rust", action="store_true", help="force locked release builds for both Rust targets")
     args = parser.parse_args()
 
