@@ -1,5 +1,6 @@
 tools/android/
 tools/cargo/
+tools/python-deps/
 tools/rustup/
 tools/rustup-download/
 tools/android-current/libgdx/
@@ -7,6 +8,7 @@ tools/android-current/signing/
 library-helpers*/
 git-sync/
 restored/
+restore-v*/
 original-parts/
 source-inputs/
 malware-review/

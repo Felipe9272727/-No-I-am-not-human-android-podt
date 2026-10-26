@@ -298,7 +298,10 @@ public final class MainActivity extends AndroidApplication {
 
     private void dispatch(JSONObject action) {
         if (!initialized || nativeBusy) return;
-        if ("new_game".equals(action.optString("action"))) resetCampaignClock = true;
+        if ("new_game".equals(action.optString("action"))) {
+            resetCampaignClock = true;
+            if (canvas != null) canvas.resetAnimations();
+        }
         nativeBusy = true;
         boolean clockOnly = "campaign_tick".equals(action.optString("action"));
         if (!clockOnly) {
@@ -573,6 +576,7 @@ public final class MainActivity extends AndroidApplication {
 
     @Override protected void onPause() {
         activityResumed = false;
+        if (canvas != null) canvas.pauseAnimations();
         ui.removeCallbacks(campaignTicker); ui.removeCallbacks(introTicker); ui.removeCallbacks(interactionPoll); ui.removeCallbacks(rendererStatusTicker); rendererStatusPolling=false;
         if (roomEngine != null) roomEngine.setInputEnabled(false); resetWorldInput();
         lastPhase = "";
@@ -635,6 +639,7 @@ public final class MainActivity extends AndroidApplication {
         private final String[] roomLabels = {"Novo jogo", "Continuar", "Opções", "Coleção", "Sair"};
         private final Map<String, String> animationSignature = new HashMap<>();
         private final Map<String, Long> animationStart = new HashMap<>();
+        private final FrameSequence.Clock animationClock = new FrameSequence.Clock();
         private float scale;
         private boolean pauseOpen, settingsOpen;
         private Typeface textFontOverride;
@@ -649,6 +654,8 @@ public final class MainActivity extends AndroidApplication {
         boolean isToolsMode() { return toolsMode; }
         boolean isPauseOpen() { return pauseOpen; }
         boolean isSettingsOpen() { return settingsOpen; }
+        void pauseAnimations() { animationClock.setPaused(true, SystemClock.uptimeMillis()); }
+        void resetAnimations() { animationSignature.clear(); animationStart.clear(); }
         void clearPointersFromHost() { pointerRoles.clear(); pointerHits.clear(); }
 
         String getDrawingDiagnostic() {
@@ -657,6 +664,7 @@ public final class MainActivity extends AndroidApplication {
 
         @Override protected void onDraw(Canvas screen) {
             long started=System.nanoTime();hardwareCanvas=screen.isHardwareAccelerated();
+            animationClock.setPaused(!activityResumed || pauseOpen || settingsOpen, SystemClock.uptimeMillis());
             super.onDraw(screen);
             scale = Math.min(getWidth() / W, getHeight() / H);
             float ox = (getWidth() - W * scale) / 2f, oy = (getHeight() - H * scale) / 2f;
@@ -1178,7 +1186,8 @@ public final class MainActivity extends AndroidApplication {
 
         private void drawPortrait(Canvas c,JSONObject portrait) {
             if(portrait==null)return; JSONArray frames=portrait.optJSONArray("frames"); if(frames==null||frames.length()==0)return;
-            Bitmap image=bitmap(animated("portrait",frames,portrait.optInt("fps",1),portrait.optInt("cycling",2))); if(image==null)return;
+            String identity=portrait.optString("character",state.optString("character",""))+":"+portrait.optInt("emotion",-1);
+            Bitmap image=bitmap(animated("portrait",identity,frames,portrait.optInt("fps",1),portrait.optInt("cycling",2))); if(image==null)return;
             JSONArray position=portrait.optJSONArray("position"),poseScale=portrait.optJSONArray("scale");
             if(position==null||position.length()<2){JSONObject character=findDialogueComponent("Character");float[] b=uiBounds(character);if(b!=null)contain(c,image,b[0],b[1],b[2],b[3]);return;}
             float sx=poseScale==null?1f:Math.abs((float)poseScale.optDouble(0,1)),sy=poseScale==null?1f:Math.abs((float)poseScale.optDouble(1,1));
@@ -1195,7 +1204,7 @@ public final class MainActivity extends AndroidApplication {
             String[] names={"Olhos","Mãos","Dentes","Foto","Axila","Orelha"}; int kind=Math.max(0,Math.min(5,sign.optInt("kind",0)));
             text(c,sign.optString("character","")+" • "+names[kind],1380,205,22,Color.WHITE,true);
             button(c,"Fechar",1690,165,1840,225,0xFF71483D,12,()->act("stop_sign",null,null));
-            JSONArray frames=sign.optJSONArray("frames"); Bitmap img=frames!=null&&frames.length()>0?bitmap(animated("sign",frames,sign.optInt("fps",1),sign.optInt("cycling",2))):bitmap(sign.optString("sprite",""));
+            JSONArray frames=sign.optJSONArray("frames"); Bitmap img=frames!=null&&frames.length()>0?bitmap(animated("sign",sign.optString("character","")+":"+sign.optInt("kind",-1),frames,sign.optInt("fps",1),sign.optInt("cycling",2))):bitmap(sign.optString("sprite",""));
             if(img!=null)contain(c,img,1390,245,1830,640);
             Bitmap white=bitmap(sign.optString("white","")),iris=bitmap(sign.optString("iris",""));if(white!=null)contain(c,white,1400,250,1820,640);if(iris!=null)contain(c,iris,1510,330,1710,560);
             String[] raw={"Eye","Hands","Teeth","AuraPhoto","Armpit","Ear"};
@@ -1316,13 +1325,15 @@ public final class MainActivity extends AndroidApplication {
         private void scenario(String name){toolsMode=true;JSONObject a=new JSONObject();try{a.put("action","scenario");a.put("name",name);}catch(JSONException ignored){}dispatch(a);}
         private void act(String type,String key,Object value){JSONObject a=new JSONObject();try{a.put("action",type);if(key!=null)a.put(key,value);}catch(JSONException ignored){}dispatch(a);}
 
-        private String animated(String key,JSONArray frames,int fps,int cycling){
-            if(frames.length()==0)return "";String sig=frames.toString()+":"+fps+":"+cycling;
-            if(!sig.equals(animationSignature.get(key))){animationSignature.put(key,sig);animationStart.put(key,SystemClock.uptimeMillis());}
-            long start=animationStart.getOrDefault(key,SystemClock.uptimeMillis());int i=fps<=0?0:(int)((SystemClock.uptimeMillis()-start)*fps/1000L);
-            if(cycling==1)i%=frames.length();else i=Math.min(i,frames.length()-1);
-            if(frames.length()>1&&(cycling==1||i<frames.length()-1))postInvalidateDelayed(Math.max(50,1000/Math.max(1,fps)));
-            return frames.optString(i,"");
+        private String animated(String key,String identity,JSONArray frames,int fps,int cycling){
+            if(frames.length()==0)return "";String sig=identity+":"+frames.toString()+":"+fps+":"+cycling;
+            long now=animationClock.now(SystemClock.uptimeMillis());
+            if(!sig.equals(animationSignature.get(key))){animationSignature.put(key,sig);animationStart.put(key,now);}
+            long elapsed=Math.max(0L,now-animationStart.getOrDefault(key,now));
+            int i=FrameSequence.frameAt(frames.length(),fps,cycling,elapsed);
+            long delay=FrameSequence.nextFrameDelay(frames.length(),fps,cycling,elapsed);
+            if(!animationClock.isPaused() && delay>0)postInvalidateDelayed(delay);
+            return i<0?"":frames.optString(i,"");
         }
 
         private void button(Canvas c,String label,float l,float t,float r,float b,int color,int radius,Runnable action){
