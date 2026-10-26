@@ -1,0 +1,41 @@
+{
+  "host_gles2": true,
+  "android_execution": false,
+  "rooms": [
+    {
+      "room": 0,
+      "layers": 2,
+      "mean_absolute_rgb_error": 0.22400788483796297
+    },
+    {
+      "room": 1,
+      "layers": 3,
+      "mean_absolute_rgb_error": 0.22545753761574075
+    },
+    {
+      "room": 2,
+      "layers": 3,
+      "mean_absolute_rgb_error": 0.21613751446759258
+    },
+    {
+      "room": 3,
+      "layers": 3,
+      "mean_absolute_rgb_error": 0.27121744791666663
+    },
+    {
+      "room": 4,
+      "layers": 2,
+      "mean_absolute_rgb_error": 0.15113425925925925
+    },
+    {
+      "room": 5,
+      "layers": 2,
+      "mean_absolute_rgb_error": 0.11277777777777777
+    },
+    {
+      "room": 6,
+      "layers": 3,
+      "mean_absolute_rgb_error": 0.15546368634259258
+    }
+  ]
+}

@@ -11,3 +11,70 @@ Each room root is serialized inactive at scene load. Six room views reference Ca
 The earlier lost-manifest note cited 83 interactables. This extraction resolves 80 scene `UIButton` components, 79 assigned through room arrays, and nine narrative components (which point to buttons). It preserves that source evidence and does not add synthetic entries to force the historical total. Components without an unambiguous Sprite PPtr remain represented as unresolved/null rather than guessed.
 
 Source evidence includes Unity `level1` path IDs, `globalgamemanagers.assets` MonoScript IDs, shared asset file/path IDs for sprites, the checked-in enum and narrative records in `reconstruction/native-game/src/rooms.cpp`, and retained C# declarations under `reconstruction/logic/cpp2il_cs/DiffableCs/Assembly-CSharp`.
+
+## Android room layers
+
+`room_manifest.json` is the retained source copy of the recovered scene
+manifest. `tools/android-current/stage_room_layers.py` joins it with the
+recovered Android `presentation/ui/ui_manifest.json` and
+`presentation/assets.json` to produce compact runtime metadata at
+`presentation/room_layers.json`, plus `room_layers_audit.json` here. Run it
+from the repository root after restoring the UI manifest and staged image
+assets:
+
+```sh
+python tools/android-current/stage_room_layers.py
+python tools/android-current/stage_room_layers.py --check
+```
+
+Build code can also import `stage_room_layers.py` and call
+`stage(destination_assets_root) -> dict`; it reads the source room manifest
+here and the two manifests under the supplied assets root, writes the runtime
+document there, and returns that same runtime object.
+
+The runtime document has schema version 1. Room `id` is the serialized room
+enum (Kitchen 0, Office 1, BigRoom 2, Bathroom 3, Pantry 4, Entrance 5,
+Bedroom 6). Each `layers[]` record identifies its Unity Image component,
+asset path relative to the Android assets root, source-pixel rect in the
+1920x1080 reference canvas, depth-first hierarchy `draw_order`, serialized
+RGBA color, and Image `preserve_aspect`. `character_orders[]` maps the
+serialized character-view order and source hierarchy order for the renderer
+to merge with these layers. `excluded_layers[]` retains rejected Image
+components and their explicit reasons.
+
+The stager ignores only the selected room root's serialized
+`activeSelf=false` (the source room roots are activated when entered). Any
+other inactive node in an Image's ancestor chain excludes that Image. It
+excludes all `CharacterRoomObjectView` roots and descendants because those
+are provided by the native actor renderer. It also excludes images beneath
+`ObjectRoomObjectView` and `TestRoomObjectView`: their recovered declarations
+contain serialized state arrays with sprite/position/scale variation, so
+selecting one state would fabricate a runtime condition. Remaining layers
+must have a resolved source sprite, a staged asset path, `Image.type=Simple`,
+known transforms with identity rotation through every ancestor, and positive
+x/y scales. Axis-aligned positive scales are already represented by the
+recovered screen rect; rotations, flips, and unknown transforms are excluded
+explicitly. `room_manifest.json` retains each local quaternion directly from
+the recovered Unity `level1` Transform/RectTransform typetree; for example,
+Entrance's `EntryRoom` parent (transform 3344) has source quaternion
+`[0,0,0,1]`, position zero, and unit scale. Asset lookup first uses
+`presentation/assets.json` and falls back to the `ui_manifest` exported-image
+path whose filename retains the source asset ID. The stager does not infer
+interaction or day/night visibility.
+
+The coverage audit confirms seven source rooms, all 95 room Image components,
+35 resolved source Sprite references (33 distinct sprite keys), and an APK
+path for every resolved reference. Under this visibility policy the output
+currently contains 18 static layers and records 77 exclusions. Entrance
+retains both resolved active children (`Sky` and `Background`); its active
+`EntryRoom` parent is evaluated relative to the serialized-inactive Entrance
+root. No 2D Basement view exists in the seven source room views, so none is
+generated.
+
+Static behavior review: retained `ARoomView` declarations and recovered
+`ARoomView` disassembly were inspected. `EnableObjects` / `DisableObjects`
+iterate the room's `_uiButtons` and toggle each `UIButton.IsActive`; they do
+not select Image sprites. The `ObjectRoomObjectView` declarations show
+serialized state arrays and `_startState`, which is why those visual
+subtrees stay excluded instead of selecting a state. The original EXE/DLL was
+not executed.

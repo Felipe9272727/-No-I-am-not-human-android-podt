@@ -24,6 +24,14 @@ check(all(b["image_reference"]["path_id"] for b in m["ui_buttons"]), "a UIButton
 for r in rooms:
     check(r["room_root"]["active_self"] is False, f"unexpected serialized activeSelf for {r['room']} room root")
     check(r["view"]["linked_camera"]["camera"] is not None, f"missing linked Camera for {r['room']}")
+    for node in r["hierarchy"]:
+        rotation = node.get("local_rotation")
+        check(isinstance(rotation, dict) and all(axis in rotation for axis in ("x", "y", "z", "w")), f"missing local quaternion rotation for {r['room']} GameObject {node.get('game_object_path_id')}")
+        if isinstance(rotation, dict) and all(isinstance(rotation.get(axis), (int, float)) for axis in ("x", "y", "z", "w")):
+            norm = sum(float(rotation[axis]) ** 2 for axis in ("x", "y", "z", "w"))
+            check(math.isfinite(norm) and abs(norm - 1.0) < 0.001, f"non-unit/nonfinite local quaternion for {r['room']} GameObject {node.get('game_object_path_id')}")
+        scale = node.get("local_scale")
+        check(isinstance(scale, dict) and all(isinstance(scale.get(axis), (int, float)) and math.isfinite(float(scale[axis])) for axis in ("x", "y", "z")), f"missing/nonfinite local scale for {r['room']} GameObject {node.get('game_object_path_id')}")
 for n in m["narrative_interactables"]:
     check(n["enum_value"] in range(9), f"narrative enum out of range on component {n['component_path_id']}")
     check(n["button_reference"]["path_id"] in button_ids, f"narrative component {n['component_path_id']} points to unknown UIButton")

@@ -260,6 +260,20 @@ def stage_animation_assets(destination: Path) -> dict:
     return {"manifest": relative, "door_count": len(doors)}
 
 
+def stage_room_assets(destination: Path) -> dict:
+    relative = "presentation/room_layers.json"
+    subprocess.run([
+        sys.executable, str(ROOT / "tools/android-current/stage_room_layers.py"),
+        "--assets-root", str(destination),
+        "--assets-manifest", str(destination / "presentation/assets.json"),
+        "--ui-manifest", str(destination / "presentation/ui/ui_manifest.json"),
+        "--output", str(destination / relative),
+    ], check=True)
+    composition = read_json(destination / relative)
+    return {"manifest": relative, "rooms": len(composition["rooms"]),
+            "layers": sum(len(room["layers"]) for room in composition["rooms"])}
+
+
 def stage_music_assets(destination: Path) -> dict:
     source_manifest=MUSIC_SOURCE / "music_manifest.json"
     manifest=read_json(source_manifest)
@@ -685,6 +699,9 @@ def prepare(destination: Path) -> dict:
         "game_ui": ui_summary,
     }
     minified_json(PROGRAM, destination / "presentation/assets.json", manifest)
+    rooms_summary = stage_room_assets(destination)
+    manifest["room_layers_manifest"] = rooms_summary["manifest"]
+    minified_json(PROGRAM, destination / "presentation/assets.json", manifest)
     licenses = stage_third_party_notices(destination)
 
     return {
@@ -695,6 +712,7 @@ def prepare(destination: Path) -> dict:
         "image_mappings": len(image_map),
         "room_backgrounds": len(backgrounds),
         "room_character_layouts": len(room_layout),
+        "room_static_layers": rooms_summary["layers"],
         "intro_video_bytes": intro_source.stat().st_size,
         "intro_video_sha256": intro_sha256,
         "menu_image_count": len(menu_images),
@@ -723,11 +741,19 @@ def main() -> None:
                         help="stage validated music into an existing asset tree without rebuilding other assets")
     parser.add_argument("--animations-only", action="store_true",
                         help="stage recovered door/animation metadata into an existing asset tree")
+    parser.add_argument("--rooms-only", action="store_true",
+                        help="stage original room composition layers into an existing asset tree")
     args = parser.parse_args()
     destination = args.output_dir.resolve()
-    if args.music_only and args.animations_only:
+    if sum((args.music_only, args.animations_only, args.rooms_only)) > 1:
         parser.error("select only one staging subset")
-    if args.animations_only:
+    if args.rooms_only:
+        result = stage_room_assets(destination)
+        presentation = destination / "presentation/assets.json"
+        metadata = read_json(presentation)
+        metadata["room_layers_manifest"] = result["manifest"]
+        minified_json(presentation, presentation, metadata)
+    elif args.animations_only:
         result = stage_animation_assets(destination)
         presentation = destination / "presentation/assets.json"
         metadata = read_json(presentation)

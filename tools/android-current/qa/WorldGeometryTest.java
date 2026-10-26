@@ -28,6 +28,7 @@ public final class WorldGeometryTest {
         verifyRendererParity(manifest);
         verifyMaterialSettings(renderer,manifest);
         call(renderer,"parseColliders",new Class[]{JSONArray.class,JSONArray.class},manifest.optJSONArray("colliders"),manifest.optJSONArray("meshes"));
+        verifyObbCollisionAndSupport(manifest);
         call(renderer,"parseTargets",new Class[]{JSONArray.class,JSONArray.class},manifest.optJSONArray("interaction_targets"),manifest.optJSONArray("named_door_targets"));
 
         JSONArray doors=new JSONArray();int[] colliderIds={2425,2449,2452,2453,2460,2439},rooms={0,1,2,3,4,6};
@@ -65,6 +66,43 @@ public final class WorldGeometryTest {
         for(int i=0;i<100;i++)move.invoke(renderer,0f,1f,.05f);
         Vector3 held=getPlayer(renderer);if(held.dst(stop)>.02f)throw new AssertionError("Movement kept crossing the doorway after contact: "+held);
         System.out.println("WorldGeometryTest: PASS (7 source ray targets, room actions, mesh/OBB collision)");
+    }
+    private static void verifyObbCollisionAndSupport(JSONObject manifest)throws Exception{
+        WorldRenderer isolated=new WorldRenderer("");float[] m=new Matrix4().val;m[0]=46.00448f;m[5]=0f;m[6]=-4.290301f;m[9]=2.194689f;m[10]=0f;
+        Method make=WorldRenderer.class.getDeclaredMethod("makeBox",float[].class,float.class,float.class,float.class,float.class,float.class,float.class);make.setAccessible(true);
+        Object box=make.invoke(isolated,m,0f,0f,0f,.0118425f,.1012477f,.0207781f);
+        @SuppressWarnings("unchecked") List<Object> boxes=(List<Object>)get(isolated,"boxColliders");boxes.add(box);
+        Matrix4 world=(Matrix4)get(box,"world");Vector3 c=new Vector3(0,0,0).mul(world);float eye=c.y+.825f;
+        Method collision=WorldRenderer.class.getDeclaredMethod("collides",float.class,float.class,float.class);collision.setAccessible(true);
+        for(float sign:new float[]{-1,1}){
+            boolean near=(Boolean)collision.invoke(isolated,c.x+sign*(.0118425f*46.00448f+.1f),eye,c.z);
+            boolean far=(Boolean)collision.invoke(isolated,c.x+sign*(.0118425f*46.00448f+.5f),eye,c.z);
+            if(!near)throw new AssertionError("OBB should block a 0.1 m side contact");
+            if(far)throw new AssertionError("OBB produced a false block 0.5 m beyond its thin face");
+        }
+        Method support=WorldRenderer.class.getDeclaredMethod("boxSupportY",Class.forName("org.reconstruction.current.WorldRenderer$BoxCollider"),float.class,float.class);support.setAccessible(true);float top=(Float)support.invoke(isolated,box,c.x,c.z);
+        if(!Float.isFinite(top))throw new AssertionError("Tilted box top face was not accepted as a support surface");
+        Method floor=WorldRenderer.class.getDeclaredMethod("floorY",float.class,float.class,float.class);floor.setAccessible(true);float halfZ=.1012477f*4.290301f;
+        for(float sign:new float[]{-1,1}){float approached=(Float)floor.invoke(isolated,c.x,c.z+sign*(halfZ+.1f),top-.1f);if(Math.abs(approached-top)>.001f)throw new AssertionError("Hatch support failed while approaching from side "+sign+" y="+approached+" top="+top);float departed=(Float)floor.invoke(isolated,c.x,c.z-sign*(halfZ+.1f),top-.1f);if(Math.abs(departed-top)>.001f)throw new AssertionError("Hatch support failed while crossing toward opposite side "+sign);}
+        if(!Float.isNaN((Float)floor.invoke(isolated,c.x,c.z,top-.33f)))throw new AssertionError("A surface more than the 0.32 m step-up limit was accepted");
+        if(!Float.isNaN((Float)floor.invoke(isolated,c.x,c.z+halfZ+.5f,top-.1f)))throw new AssertionError("A hatch face 0.5 m outside its edge supplied support");
+        float[] ceilingMatrix=new Matrix4().val;ceilingMatrix[13]=top+1.3f;Object ceiling=make.invoke(isolated,ceilingMatrix,0f,0f,0f,1f,.05f,1f);boxes.add(ceiling);
+        if(!(Boolean)collision.invoke(isolated,c.x,top+1.75f,c.z))throw new AssertionError("Headroom collider above the hatch was bypassed");
+        JSONObject hatch=null;JSONArray sourceColliders=manifest.optJSONArray("colliders");for(int i=0;i<sourceColliders.length();i++){JSONObject candidate=sourceColliders.optJSONObject(i);if(candidate!=null&&candidate.optInt("path_id",-1)==2407){hatch=candidate;break;}}if(hatch==null)throw new AssertionError("Source hatch collider 2407 missing");JSONArray hatchRows=hatch.optJSONArray("world_matrix_row_major"),size=hatch.optJSONArray("size"),center=hatch.optJSONArray("center");float[] sourceMatrix=new Matrix4().val;for(int r=0;r<4;r++)for(int col=0;col<4;col++){float value=(float)hatchRows.optJSONArray(r).optDouble(col,0);if((r==2)^(col==2))value=-value;sourceMatrix[col*4+r]=value;}Object sourceBox=make.invoke(isolated,sourceMatrix,(float)center.optDouble(0,0),(float)center.optDouble(1,0),(float)center.optDouble(2,0),(float)size.optDouble(0,0)*.5f,(float)size.optDouble(1,0)*.5f,(float)size.optDouble(2,0)*.5f);Vector3 sourceCenter=new Vector3((float)center.optDouble(0,0),(float)center.optDouble(1,0),-(float)center.optDouble(2,0)).mul(new Matrix4(sourceMatrix));if(!Float.isFinite((Float)support.invoke(isolated,sourceBox,sourceCenter.x,sourceCenter.z)))throw new AssertionError("Source hatch collider 2407 has no upward OBB support face");
+        verifyHatchWalk(sourceBox,sourceCenter,top,.1012477f*4.290301f);
+        JSONArray colliders=manifest.optJSONArray("colliders");int orthogonal=0;for(int i=0;i<colliders.length();i++){JSONObject src=colliders.optJSONObject(i);if(src==null||!"BoxCollider".equals(src.optString("type"))||!src.optBoolean("active_in_hierarchy",false)||!src.optBoolean("enabled",false))continue;JSONArray rows=src.optJSONArray("world_matrix_row_major");if(rows==null)continue;float[][] a=new float[3][3];for(int r=0;r<3;r++)for(int col=0;col<3;col++)a[r][col]=(float)rows.optJSONArray(r).optDouble(col,0)*(r==2?-1:1);for(int u=0;u<3;u++)for(int v=u+1;v<3;v++){double dot=0,lu=0,lv=0;for(int k=0;k<3;k++){dot+=a[k][u]*a[k][v];lu+=a[k][u]*a[k][u];lv+=a[k][v]*a[k][v];}if(Math.abs(dot/Math.sqrt(lu*lv))>1e-5)throw new AssertionError("Active BoxCollider axes are not orthogonal: "+src.optInt("path_id"));}orthogonal++;}
+        if(orthogonal==0)throw new AssertionError("No active BoxCollider fixtures found");System.out.println("WORLD_OBB_COLLISION activeOrthogonal="+orthogonal+" thinFaceContact=PASS falseBlock=PASS tiltedSupportBothWays=PASS stepWindow=PASS headroom=PASS");
+    }
+
+    private static void verifyHatchWalk(Object sourceBox,Vector3 center,float top,float halfZ)throws Exception{
+        for(float side:new float[]{-1,1}){WorldRenderer walk=new WorldRenderer("");@SuppressWarnings("unchecked") List<Object> boxes=(List<Object>)get(walk,"boxColliders");boxes.add(sourceBox);
+            float floor=top-.035f,extent=3f;float[] xyz={center.x-extent,floor,center.z-extent,center.x+extent,floor,center.z-extent,center.x+extent,floor,center.z+extent,center.x-extent,floor,center.z-extent,center.x+extent,floor,center.z+extent,center.x-extent,floor,center.z+extent};
+            Class<?> boundsType=Class.forName("org.reconstruction.current.WorldRenderer$Bounds");java.lang.reflect.Constructor<?> bc=boundsType.getDeclaredConstructor(float.class,float.class,float.class,float.class,float.class,float.class);bc.setAccessible(true);Object bounds=bc.newInstance(center.x-extent,floor,center.z-extent,center.x+extent,floor,center.z+extent);
+            Class<?> triangleType=Class.forName("org.reconstruction.current.WorldRenderer$TriangleCollider");java.lang.reflect.Constructor<?> tc=triangleType.getDeclaredConstructor(float[].class,boundsType);tc.setAccessible(true);@SuppressWarnings("unchecked") List<Object> triangles=(List<Object>)get(walk,"meshColliders");triangles.add(tc.newInstance(xyz,bounds));
+            set(walk,"player",new Vector3(center.x,floor+1.65f,center.z+side*(halfZ+1f)));Method tryMove=WorldRenderer.class.getDeclaredMethod("tryMove",float.class,float.class);tryMove.setAccessible(true);for(int i=0,steps=(int)Math.ceil(2f*(halfZ+1f)/.05f);i<steps;i++)tryMove.invoke(walk,0f,-side*.05f);
+            Vector3 end=getPlayer(walk);float expectedZ=center.z-side*(halfZ+1f);if(Math.abs(end.z-expectedZ)>.12f)throw new AssertionError("Player failed to cross source hatch 2407 from side "+side+": "+end);
+            if(Math.abs((end.y-1.65f)-floor)>.01f)throw new AssertionError("Player did not descend to the mesh floor after crossing hatch from side "+side+": "+end);
+        }
     }
     private static void verifyRendererParity(JSONObject manifest)throws Exception{
         JSONArray renderers=manifest.optJSONArray("renderers");int active=0,negative=0;for(int i=0;i<renderers.length();i++){JSONObject r=renderers.optJSONObject(i);if(r==null||!r.optBoolean("active_in_hierarchy",false)||!r.optBoolean("enabled",true))continue;active++;JSONArray rows=r.optJSONArray("world_matrix_row_major");float[] m=new float[16];for(int y=0;y<4;y++)for(int x=0;x<4;x++)m[x*4+y]=(float)rows.optJSONArray(y).optDouble(x,0);if(WorldRenderer.determinant3x3(m)<0)negative++;}

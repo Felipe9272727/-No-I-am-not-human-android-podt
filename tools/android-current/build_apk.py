@@ -28,7 +28,7 @@ ASSET_DIR = ANDROID_APP / "assets"
 NATIVE_ROOT = ROOT / "reconstruction/native-game"
 BRIDGE_MANIFEST = NATIVE_ROOT / "bridge/Cargo.toml"
 BRIDGE_ROOT = NATIVE_ROOT / "bridge"
-DEFAULT_APK = ROOT / "deliverables/NINAH-Port-Animacoes.apk"
+DEFAULT_APK = ROOT / "deliverables/NINAH-Port-Comodos-Colisao.apk"
 REPORT = ANDROID_ROOT / "port3d_validation_report.json"
 PACKAGE_NAME = "org.reconstruction.port.preview"
 JNI_ACTIVITY = "org.reconstruction.current.MainActivity"
@@ -666,6 +666,7 @@ def collect_report(output: Path, build_tools: Path, source_modules: list[str],
             validate_png_bytes(apk.read(name),name)
         music_tracks=validate_music_assets(apk,version_code)
         door_animation_count = 0
+        room_layer_count = 0
         if version_code >= 8:
             animation = json.loads(apk.read("assets/animations/animation_manifest.json"))
             source_animation = json.loads((ROOT / "reconstruction/reverse-animations/animation_manifest.json").read_text())
@@ -674,6 +675,26 @@ def collect_report(output: Path, build_tools: Path, source_modules: list[str],
             door_animation_count = len(animation.get("door_triggers", []))
             if door_animation_count != 6:
                 raise RuntimeError("Missing recovered interior door animations")
+        if version_code >= 9:
+            presentation = json.loads(apk.read("assets/presentation/assets.json"))
+            relative = presentation.get("room_layers_manifest", "")
+            if relative != "presentation/room_layers.json":
+                raise RuntimeError("Missing authored room-layer manifest")
+            composition = json.loads(apk.read("assets/" + relative))
+            staged = json.loads((ASSET_DIR / relative).read_text())
+            if composition != staged or composition.get("schema_version") != 1:
+                raise RuntimeError("Packaged room layers differ from staged source data")
+            rooms = composition.get("rooms", [])
+            if len(rooms) != 7 or {r.get("id") for r in rooms} != set(range(7)):
+                raise RuntimeError("Expected all seven source room views")
+            for room in rooms:
+                layers = room.get("layers", [])
+                if not layers:
+                    raise RuntimeError("Authored room view has no static layers")
+                for layer in layers:
+                    if "assets/" + layer["asset"] not in names:
+                        raise RuntimeError("Missing authored room sprite: " + layer["asset"])
+                room_layer_count += len(layers)
         java_resources = validate_gdx_java_resources(apk)
         libraries = sorted(name for name in names if re.fullmatch(
             r"lib/[^/]+/(?:libninah_current|libgdx)\.so", name))
@@ -836,6 +857,7 @@ def collect_report(output: Path, build_tools: Path, source_modules: list[str],
         "android_ui_hardware_acceleration_requested":hardware_requested,
         "abis": ["arm64-v8a", "x86_64"], "native_libraries": libraries,
         "source_interior_door_animation_count": door_animation_count,
+        "authored_room_layer_count": room_layer_count,
         "elf_machines": elf_machines, "elf_load_segment_max_alignment_bytes": load_alignments,
         "native_zip_data_offset_mod_16384": zip_alignments,
         "unresolved_direct_android_dependencies": unresolved_dependencies,
@@ -885,8 +907,8 @@ def main() -> None:
     parser.add_argument("--skip-assets", action="store_true", help="reuse an existing staged asset tree")
     parser.add_argument("--reference-apk", type=Path,
                         help="reuse JNI libraries only from the exact hash-locked current APK")
-    parser.add_argument("--version-code", type=int, default=8)
-    parser.add_argument("--version-name", default="0.8-graphics-doors")
+    parser.add_argument("--version-code", type=int, default=9)
+    parser.add_argument("--version-name", default="0.9-rooms-collision")
     parser.add_argument("--rebuild-rust", action="store_true", help="force locked release builds for both Rust targets")
     args = parser.parse_args()
 

@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "source_size": [
+    1920,
+    1080
+  ],
+  "source_manifest": "reconstruction/reverse-rooms/room_manifest.json",
+  "ui_manifest": "presentation/ui/ui_manifest.json",
+  "assets_manifest": "presentation/assets.json",
+  "evidence": {
+    "room_root_active_self_ignored": true,
+    "other_active_self_required": true,
+    "character_roots_and_descendants_excluded": true,
+    "conditional_room_object_types_excluded": [
+      "_Code.Rooms.ObjectRoomObjectView",
+      "_Code.Rooms.TestRoomObjectView"
+    ],
+    "conditional_room_object_policy": "ObjectRoomObjectView and TestRoomObjectView own serialized state arrays with Sprite/position/scale variation; their image subtrees are omitted rather than choosing a runtime state.",
+    "layer_policy": "Only Image.type=Simple layers with available transforms, identity local rotations through all room ancestors, and positive x/y scale are emitted. Positive axis-aligned scale is represented by the recovered 1920x1080 screen rect; rotations/flips/unknown transforms are excluded explicitly.",
+    "hierarchy_transform_source": "local_position/local_rotation/local_scale were re-exported from recovered level1 Transform/RectTransform UnityPy typetrees; rect/color/preserve_aspect are read from the UI manifest.",
+    "sprite_keys_without_assets_manifest_mapping_use_ui_fallback": [
+      "sharedassets1.assets:537",
+      "sharedassets1.assets:574",
+      "sharedassets1.assets:576",
+      "sharedassets1.assets:577",
+      "sharedassets1.assets:586",
+      "sharedassets1.assets:593",
+      "sharedassets1.assets:595",
+      "sharedassets1.assets:598",
+      "sharedassets1.assets:600",
+      "sharedassets1.assets:607",
+      "sharedassets1.assets:612",
+      "sharedassets1.assets:617",
+      "sharedassets1.assets:618",
+      "sharedassets1.assets:621",
+      "sharedassets1.assets:622",
+      "sharedassets1.assets:623",
+      "sharedassets1.assets:632",
+      "sharedassets1.assets:639",
+      "sharedassets1.assets:640",
+      "sharedassets1.assets:643",
+      "sharedassets1.assets:644"
+    ]
+  },
+  "asset_resolution": {
+    "presentation/assets.json": 13,
+    "ui_manifest": 22
+  },
+  "resolved_sprite_asset_refs_missing_from_staged_assets": 0,
+  "totals": {
+    "rooms": 7,
+    "source_image_components": 95,
+    "resolved_sprite_references": 35,
+    "unique_resolved_sprite_keys": 33,
+    "visible_layers": 18,
+    "excluded_layers": 77,
+    "character_orders": 61
+  },
+  "rooms": [
+    {
+      "id": 0,
+      "name": "Kitchen",
+      "source_image_components": 17,
+      "resolved_sprite_references": 5,
+      "visible_layers": 2,
+      "excluded_layers": 15,
+      "exclusion_reasons": {
+        "character_view_or_descendant": 12,
+        "conditional_room_object_state:_Code.Rooms.ObjectRoomObjectView": 3
+      },
+      "character_orders": 12
+    },
+    {
+      "id": 1,
+      "name": "Office",
+      "source_image_components": 24,
+      "resolved_sprite_references": 5,
+      "visible_layers": 3,
+      "excluded_layers": 21,
+      "exclusion_reasons": {
+        "character_view_or_descendant": 19,
+        "conditional_room_object_state:_Code.Rooms.ObjectRoomObjectView": 2
+      },
+      "character_orders": 19
+    },
+    {
+      "id": 2,
+      "name": "BigRoom",
+      "source_image_components": 19,
+      "resolved_sprite_references": 6,
+      "visible_layers": 3,
+      "excluded_layers": 16,
+      "exclusion_reasons": {
+        "character_view_or_descendant": 15,
+        "conditional_room_object_state:_Code.Rooms.ObjectRoomObjectView": 1
+      },
+      "character_orders": 15
+    },
+    {
+      "id": 3,
+      "name": "Bathroom",
+      "source_image_components": 12,
+      "resolved_sprite_references": 5,
+      "visible_layers": 3,
+      "excluded_layers": 9,
+      "exclusion_reasons": {
+        "character_view_or_descendant": 7,
+        "conditional_room_object_state:_Code.Rooms.ObjectRoomObjectView": 2
+      },
+      "character_orders": 7
+    },
+    {
+      "id": 4,
+      "name": "Pantry",
+      "source_image_components": 8,
+      "resolved_sprite_references": 2,
+      "visible_layers": 2,
+      "excluded_layers": 6,
+      "exclusion_reasons": {
+        "character_view_or_descendant": 6
+      },
+      "character_orders": 6
+    },
+    {
+      "id": 5,
+      "name": "Entrance",
+      "source_image_components": 3,
+      "resolved_sprite_references": 2,
+      "visible_layers": 2,
+      "excluded_layers": 1,
+      "exclusion_reasons": {
+        "sprite_unresolved_in_source": 1
+      },
+      "character_orders": 0
+    },
+    {
+      "id": 6,
+      "name": "Bedroom",
+      "source_image_components": 12,
+      "resolved_sprite_references": 10,
+      "visible_layers": 3,
+      "excluded_layers": 9,
+      "exclusion_reasons": {
+        "character_view_or_descendant": 3,
+        "conditional_room_object_state:_Code.Rooms.ObjectRoomObjectView": 5,
+        "inactive_self_or_ancestor": 1
+      },
+      "character_orders": 2
+    }
+  ]
+}

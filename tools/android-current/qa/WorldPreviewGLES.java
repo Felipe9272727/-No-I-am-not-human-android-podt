@@ -156,6 +156,15 @@ public final class WorldPreviewGLES {
             ambientOnly.set(com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute.createAmbientLight(.114f,.125f,.133f,1f));ef.set(wr,ambientOnly);
         }
         engine.resize(WIDTH, HEIGHT);
+        if (args.length > 3 && "room-compositions".equals(args[3])) {
+            renderRoomCompositions(engine, output);
+            engine.dispose();
+            EGL10.eglMakeCurrent(egl[0], EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
+            EGL10.eglDestroyContext(egl[0], egl[2]);
+            EGL10.eglDestroySurface(egl[0], egl[1]);
+            EGL10.eglTerminate(egl[0]);
+            return;
+        }
         Gdx.gl.glViewport(0, 0, WIDTH, HEIGHT);
         Gdx.gl.glClearColor(.05f, .05f, .06f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
@@ -204,6 +213,22 @@ public final class WorldPreviewGLES {
         EGL10.eglDestroyContext(egl[0], egl[2]);
         EGL10.eglDestroySurface(egl[0], egl[1]);
         EGL10.eglTerminate(egl[0]);
+    }
+
+    private static void renderRoomCompositions(RoomEngine engine, Path output) throws Exception {
+        Path directory = output.getParent();
+        Files.createDirectories(directory);
+        for (int room = 0; room < 7; room++) {
+            engine.setState(new JSONObject().put("phase", "playing").put("view_mode", "room").put("room", room));
+            engine.render();
+            if (engine.getRendererStatus().startsWith("error:")) throw new IllegalStateException(engine.getRendererDiagnostic());
+            int error = Gdx.gl.glGetError();
+            if (error != GL20.GL_NO_ERROR) throw new IllegalStateException("Room GLES error: " + error);
+            Pixmap pixmap = ScreenUtils.getFrameBufferPixmap(0, 0, WIDTH, HEIGHT);
+            PixmapIO.writePNG(new com.badlogic.gdx.files.FileHandle(directory.resolve("room-" + room + ".png").toFile()), pixmap, -1, true);
+            pixmap.dispose();
+        }
+        System.out.println("ROOM_COMPOSITIONS=7; original static layers, empty campaign roster");
     }
 
     /** Optional CPU ray probe reports the first source mesh/material at screen center. */

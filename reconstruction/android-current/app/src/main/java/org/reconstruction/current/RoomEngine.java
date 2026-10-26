@@ -50,6 +50,7 @@ public final class RoomEngine extends ApplicationAdapter {
     private String viewMode = "world";
     private boolean inBatch;
     private JSONArray roomObjects = new JSONArray();
+    private RoomComposition composition = RoomComposition.parse(null);
     private volatile String rendererStatus = "loading: waiting for GL surface";
     private volatile String rendererStage = "create room renderer";
     private volatile String rendererDiagnostic = "";
@@ -130,8 +131,8 @@ public final class RoomEngine extends ApplicationAdapter {
             batch.setProjectionMatrix(camera.combined);
             batch.begin();
             inBatch = true;
-            drawBackground();
-            drawActors();
+            Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
+            drawRoom();
             batch.end();
             inBatch = false;
             disposeTransientTextures();
@@ -185,9 +186,14 @@ public final class RoomEngine extends ApplicationAdapter {
         roomBackgrounds.clear();
         roomLayouts.clear();
         roomLayoutsByRoom.clear();
+        composition = RoomComposition.parse(null);
         missingAssets.clear();
         try {
             JSONObject root = new JSONObject(serialized);
+            String layersPath = root.optString("room_layers_manifest", "");
+            if (!layersPath.isEmpty() && !layersPath.startsWith("/") && !layersPath.contains("..")) {
+                composition = RoomComposition.parse(new JSONObject(Gdx.files.internal(layersPath).readString("UTF-8")));
+            }
             if (worldRenderer != null) worldRenderer.setManifestPath(root.optString("world_manifest", ""));
             if (worldRenderer != null) worldRenderer.setDoorManifestPath(root.optString("animations_manifest", ""));
             JSONObject images = root.optJSONObject("images");
@@ -276,7 +282,36 @@ public final class RoomEngine extends ApplicationAdapter {
         }
     }
 
-    private void drawActors() {
+    private void drawRoom() {
+        RoomComposition.Scene scene = composition.room(room);
+        List<RoomActor> actors = roomActors(scene);
+        if (scene == null) {
+            drawBackground();
+            for (RoomActor actor : actors) drawActor(actor);
+            return;
+        }
+        int nextActor = 0;
+        for (RoomComposition.Layer layer : scene.layers) {
+            while (nextActor < actors.size() && actors.get(nextActor).order < layer.order)
+                drawActor(actors.get(nextActor++));
+            drawLayer(layer);
+        }
+        while (nextActor < actors.size()) drawActor(actors.get(nextActor++));
+    }
+
+    private void drawLayer(RoomComposition.Layer layer) {
+        Texture sprite = texture(layer.asset);
+        if (sprite == null || layer.a <= 0f) return;
+        float scale = roomScale();
+        float x = layer.x * scale, y = (SOURCE_HEIGHT - layer.top - layer.height) * scale;
+        float width = layer.width * scale, height = layer.height * scale;
+        batch.setColor(layer.r, layer.g, layer.b, layer.a);
+        if (layer.preserveAspect) drawContain(sprite, x, y, width, height, 0f);
+        else batch.draw(sprite, x, y, width, height);
+        batch.setColor(1f, 1f, 1f, 1f);
+    }
+
+    private List<RoomActor> roomActors(RoomComposition.Scene scene) {
         List<RoomActor> actors = new ArrayList<>();
         for (int i = 0; i < roomObjects.length(); i++) {
             JSONObject object = roomObjects.optJSONObject(i);
@@ -285,7 +320,8 @@ public final class RoomEngine extends ApplicationAdapter {
             Map<String, JSONObject> roomLayout = roomLayoutsByRoom.get(room);
             JSONObject layout = roomLayout == null ? null : roomLayout.get(name);
             if (layout == null) layout = roomLayouts.get(name);
-            actors.add(new RoomActor(object, layout, layout == null ? i : layout.optInt("order", i), i));
+            int sourceOrder = layout == null ? i : layout.optInt("order", i);
+            actors.add(new RoomActor(object, layout, scene == null ? sourceOrder : scene.actorOrder(sourceOrder), i));
         }
         Collections.sort(actors, new Comparator<RoomActor>() {
             @Override public int compare(RoomActor a, RoomActor b) {
@@ -293,7 +329,7 @@ public final class RoomEngine extends ApplicationAdapter {
                 return order != 0 ? order : Integer.compare(a.originalIndex, b.originalIndex);
             }
         });
-        for (RoomActor actor : actors) drawActor(actor);
+        return actors;
     }
 
     private void drawActor(RoomActor actor) {

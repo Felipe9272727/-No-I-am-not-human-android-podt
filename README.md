@@ -12,6 +12,8 @@ A versão 0.6 corrige paredes/teto descartados ao virar a câmera e acrescenta o
 
 A versão 0.7 remove a camada de software que forçava a interface a ser rasterizada pela CPU. Movimentos apenas de câmera deixam de redesenhar o HUD, as interações reaproveitam resultados e o GL descansa sob menu/intro. O diagnóstico mostra a aceleração real do Canvas e o custo de desenho do HUD. O usuário ainda precisa testar o desempenho dessa versão no Xiaomi.
 
+A versão 0.8 recupera o tratamento de cor da cena noturna, anima seis portas internas a partir dos valores originais e permite voltar à exploração após a primeira conversa. A versão 0.9 corrige barreiras exageradas de caixas com escalas diferentes entre eixos e o apoio no alçapão. Recupera 18 camadas de cenário nas sete vistas internas originais, com posição, transparência e ordem de desenho da cena. Personagens e objetos condicionais continuam dependendo do estado do jogo; essa mudança não acrescenta novos dias ou libera áreas ainda sem progressão. Os testes de geometria e de desenho GLES2 passaram no host; o APK ainda precisa de teste no aparelho.
+
 ## Controles no celular
 
 - Durante o vídeo: **DEBUG: pular intro** entra na casa sem esperar 72 segundos.
