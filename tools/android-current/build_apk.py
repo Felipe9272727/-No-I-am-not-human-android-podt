@@ -30,7 +30,7 @@ ASSET_DIR = ANDROID_APP / "assets"
 NATIVE_ROOT = ROOT / "reconstruction/native-game"
 BRIDGE_MANIFEST = NATIVE_ROOT / "bridge/Cargo.toml"
 BRIDGE_ROOT = NATIVE_ROOT / "bridge"
-DEFAULT_APK = ROOT / "deliverables/NINAH-Port-Cena-Original.apk"
+DEFAULT_APK = ROOT / "deliverables/NINAH-Port-Casa-v013.apk"
 REPORT = ANDROID_ROOT / "port3d_validation_report.json"
 PACKAGE_NAME = "org.reconstruction.port.preview"
 JNI_ACTIVITY = "org.reconstruction.current.MainActivity"
@@ -442,8 +442,12 @@ def compile_resources(build_tools: Path, android_jar: Path, work: Path,
     world_manifest=json.loads((ASSET_DIR / "world/world_manifest.json").read_text())
     if world_manifest.get("android_mesh_optimization"):
         assets_for_packaging=work / "packaged-assets"
+        referenced_models={Path(row.get("android_asset", "")).name for row in world_manifest.get("meshes", [])
+                           if row.get("android_asset", "").startswith("world/models/")}
         def omit_source_meshes(directory,names):
-            return {"models"} if Path(directory)==ASSET_DIR / "world" else set()
+            if Path(directory)==ASSET_DIR / "world" and not referenced_models:return {"models"}
+            if Path(directory)==ASSET_DIR / "world/models":return set(names)-referenced_models
+            return set()
         def link_asset(source,target):
             try: os.link(source,target)
             except OSError: shutil.copyfile(source,target)
@@ -593,7 +597,14 @@ def sign_apk(build_tools: Path, aligned: Path, output: Path) -> None:
 def package_apk(build_tools: Path, base_apk: Path,
                 native_libs: dict[str, Path], gdx_native_libs: dict[str, Path],
                 dex: Path, work: Path, output: Path, engine_jars: list[Path]) -> None:
-    with zipfile.ZipFile(base_apk, "a", compression=zipfile.ZIP_DEFLATED) as apk:
+    unsigned=work/"unsigned.apk"
+    # Keep aapt2's resource archive immutable. Repack into one closed ZIP rather
+    # than appending a second central directory to the resource APK.
+    with zipfile.ZipFile(base_apk) as resources,zipfile.ZipFile(unsigned,"w",compression=zipfile.ZIP_DEFLATED) as apk:
+        if "AndroidManifest.xml" not in resources.namelist():
+            raise RuntimeError("aapt2 resource archive is missing AndroidManifest.xml")
+        for member in resources.infolist():
+            apk.writestr(member,resources.read(member))
         for name, content in sorted(gdx_java_resources(engine_jars).items()):
             if name in apk.namelist():
                 raise RuntimeError(f"base APK already contains Java resource: {name}")
@@ -604,8 +615,21 @@ def package_apk(build_tools: Path, base_apk: Path,
         for abi, library in gdx_native_libs.items():
             apk.write(library, f"lib/{abi}/libgdx.so", compress_type=zipfile.ZIP_STORED)
     aligned = work / "aligned.apk"
-    run([build_tools / "zipalign", "-f", "-P", "16", "4", base_apk, aligned], cwd=ROOT)
-    sign_apk(build_tools,aligned,output)
+    for path in (unsigned,):
+        with path.open("rb") as stream:os.fsync(stream.fileno())
+        with zipfile.ZipFile(path) as archive:
+            if "AndroidManifest.xml" not in archive.namelist() or archive.testzip() is not None:
+                raise RuntimeError("Unsigned APK is incomplete or failed CRC validation")
+    run([build_tools / "zipalign", "-f", "-P", "16", "4", unsigned, aligned], cwd=ROOT)
+    with aligned.open("rb") as stream:os.fsync(stream.fileno())
+    with zipfile.ZipFile(aligned) as archive:
+        if "AndroidManifest.xml" not in archive.namelist() or archive.testzip() is not None:
+            raise RuntimeError("Aligned APK is incomplete or failed CRC validation")
+    signed=work/"signed.apk"
+    sign_apk(build_tools,aligned,signed)
+    with signed.open("rb") as stream:os.fsync(stream.fileno())
+    output.parent.mkdir(parents=True,exist_ok=True)
+    signed.replace(output)
     run([build_tools / "zipalign", "-c", "-P", "16", "-v", "4", output], cwd=ROOT)
 
 
@@ -729,6 +753,9 @@ def collect_report(output: Path, build_tools: Path, source_modules: list[str],
         ]
         if version_code >= 11:
             required_assets.append("assets/world/cat3d_manifest.json")
+        if version_code >= 13:
+            required_assets.extend(["assets/presentation/ui/tv_source_manifest.json",
+                                    "assets/presentation/room_layers.json"])
         missing = [name for name in required_assets if name not in names]
         if missing:
             raise RuntimeError(f"APK is missing required assets: {missing}")
@@ -742,8 +769,14 @@ def collect_report(output: Path, build_tools: Path, source_modules: list[str],
         world_manifest = json.loads(apk.read("assets/world/world_manifest.json"))
         world_meshes = world_manifest.get("meshes", [])
         world_textures = world_manifest.get("textures", [])
-        if len(world_meshes) != 100 or len(world_textures) != 42:
+        skinned_mesh_indices={row["mesh_index"] for row in world_manifest.get("skinned_renderers",[])
+                              if isinstance(row.get("mesh_index"),int)}
+        if any(index<0 or index>=len(world_meshes) for index in skinned_mesh_indices):
+            raise RuntimeError("World skinned renderer references a missing mesh")
+        if len(world_meshes)-len(skinned_mesh_indices) != 100 or len(world_textures) != 42:
             raise RuntimeError(f"world assets incomplete: {len(world_meshes)} meshes, {len(world_textures)} textures")
+        if version_code>=13 and (len(world_manifest.get("skinned_renderers",[]))!=6 or len(skinned_mesh_indices)!=1):
+            raise RuntimeError("Version 13+ requires all six source skinned-renderer records and the active source pose")
         world_texture_bytes = 0
         mesh_source_vertices=mesh_android_vertices=mesh_android_bytes=0
         for row in world_meshes:
@@ -762,7 +795,8 @@ def collect_report(output: Path, build_tools: Path, source_modules: list[str],
         if version_code>=6:
             if not world_manifest.get("android_mesh_optimization"):
                 raise RuntimeError("Version 6+ requires lossless mesh optimization")
-            if any(name.startswith("assets/world/models/") for name in names):
+            referenced_world_meshes={f"assets/{row['android_asset']}" for row in world_meshes}
+            if any(name.startswith("assets/world/models/") and name not in referenced_world_meshes for name in names):
                 raise RuntimeError("Unreferenced source meshes should not be packaged alongside optimized copies")
             if "assets/licenses/meshoptimizer-LICENSE-MIT.txt" not in names:
                 raise RuntimeError("Meshoptimizer license missing")
@@ -1009,8 +1043,8 @@ def main() -> None:
     parser.add_argument("--skip-assets", action="store_true", help="reuse an existing staged asset tree")
     parser.add_argument("--reference-apk", type=Path,
                         help="reuse JNI libraries only from the exact hash-locked current APK")
-    parser.add_argument("--version-code", type=int, default=12)
-    parser.add_argument("--version-name", default="0.12-scene-fidelity")
+    parser.add_argument("--version-code", type=int, default=13)
+    parser.add_argument("--version-name", default="0.13-house-fidelity")
     parser.add_argument("--rebuild-rust", action="store_true", help="force locked release builds for both Rust targets")
     args = parser.parse_args()
 

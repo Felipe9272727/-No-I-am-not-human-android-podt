@@ -3,6 +3,7 @@
 import argparse,json,math,hashlib,re,struct
 from pathlib import Path
 import UnityPy
+import numpy as np
 ROOT=Path(__file__).resolve().parents[2]
 DEFAULT=ROOT/'malware-review/No.Im.not.a.Human.v1.3.18/No.Im.not.a.Human.v1.3.18/NoImNotAHuman_Data'
 OUT=ROOT/'reconstruction/reverse-world'
@@ -101,6 +102,69 @@ def main():
   if mf is None:continue
   mi=mesh_export(mf.m_Mesh);tid=next((x for x in comps if x in trans),None);mats=[material(x) for x in d.m_Materials];g=gos.get(gid)
   renderers.append({'renderer_path_id':o.path_id,'gameobject_path_id':gid,'name':g.m_Name if g else '', 'layer':g.m_Layer if g else None,'tag':g.m_Tag if g else None,'active_in_hierarchy':active(gid),'transform_path_id':tid,'mesh_index':mi,'material_indices':mats,'enabled':bool(d.m_Enabled),'world_matrix_row_major':worldmat(tid) if tid in trans else None})
+ # Unity stores the visible miner as a SkinnedMeshRenderer. Bake the serialized
+ # bone transforms and bind poses into renderer-local vertices so the Android
+ # renderer can draw this exact authored pose without pretending to evaluate
+ # its Animator. Inactive skinned renderers remain represented but are gated
+ # by the same source active/enabled flags as ordinary renderers.
+ skinned_renderers=[]
+ from UnityPy.helpers.MeshHelper import MeshHandler
+ def matrix4(value):
+  return np.array([[float(getattr(value,f'e{row}{col}')) for col in range(4)] for row in range(4)],dtype=np.float64)
+ def local4(t):
+  p=vec(t.m_LocalPosition);q=vec(t.m_LocalRotation);s=vec(t.m_LocalScale);x,y,z,w=q
+  m=np.eye(4,dtype=np.float64)
+  m[:3,:3]=np.array([[1-2*(y*y+z*z),2*(x*y-z*w),2*(x*z+y*w)],
+                     [2*(x*y+z*w),1-2*(x*x+z*z),2*(y*z-x*w)],
+                     [2*(x*z-y*w),2*(y*z+x*w),1-2*(x*x+y*y)]])@np.diag(s)
+  m[:3,3]=p[:3]
+  return m
+ skinned=[]
+ for o in objects:
+  if o.type.name!='SkinnedMeshRenderer':continue
+  d=read(o)
+  if not d or not d.m_Mesh:continue
+  gid=int(d.m_GameObject.m_PathID);g=gos.get(gid);tid=next((x for x in compbygo.get(gid,[]) if x in trans),None)
+  if tid is None:errors.append({'kind':'skinned_renderer','ref':int(o.path_id),'error':'missing renderer transform'});continue
+  renderer_row={'renderer_path_id':int(o.path_id),'gameobject_path_id':gid,'name':g.m_Name if g else '', 'layer':g.m_Layer if g else None,'tag':g.m_Tag if g else None,'active_in_hierarchy':active(gid),'transform_path_id':tid,'mesh_index':None,'material_indices':[],'enabled':bool(d.m_Enabled),'world_matrix_row_major':worldmat(tid),'pose_mode':'source_mesh_not_baked_inactive'}
+  if not renderer_row['active_in_hierarchy'] or not renderer_row['enabled']:
+   skinned_renderers.append(renderer_row);continue
+  try:
+   source_mesh=d.m_Mesh.read();handler=MeshHandler(source_mesh);handler.process()
+   verts=np.asarray(handler.m_Vertices,dtype=np.float64);normals=np.asarray(handler.m_Normals,dtype=np.float64);uvs=np.asarray(handler.m_UV0,dtype=np.float64)
+   weights=np.asarray(handler.m_BoneWeights,dtype=np.float64);bone_indices=np.asarray(handler.m_BoneIndices,dtype=np.int64)
+   if len(verts)==0 or len(normals)!=len(verts) or len(uvs)!=len(verts) or len(weights)!=len(verts) or len(bone_indices)!=len(verts):raise ValueError('incomplete skinned vertex attributes')
+   if len(d.m_Bones)!=len(source_mesh.m_BindPose):raise ValueError('bone and bind-pose counts differ')
+   renderer_world=np.asarray(worldmat(tid),dtype=np.float64);renderer_inverse=np.linalg.inv(renderer_world)
+   bone_matrices=[]
+   for bone,bindpose in zip(d.m_Bones,source_mesh.m_BindPose):
+    bid=int(bone.m_PathID)
+    if bid not in trans:raise ValueError(f'missing bone transform {bid}')
+    bone_matrices.append(renderer_inverse@np.asarray(worldmat(bid),dtype=np.float64)@matrix4(bindpose))
+   if not np.allclose(weights.sum(axis=1),1.0,atol=1e-4):raise ValueError('skin weights do not sum to one')
+   if np.any(bone_indices<0) or np.any(bone_indices>=len(bone_matrices)):raise ValueError('skin weights refer to invalid bone')
+   baked_pos=np.zeros((len(verts),3),dtype=np.float64);baked_norm=np.zeros((len(verts),3),dtype=np.float64)
+   for vi,(v,n,ws,bs) in enumerate(zip(verts,normals,weights,bone_indices)):
+    for weight,bone_idx in zip(ws,bs):
+     if weight<=0:continue
+     bm=bone_matrices[int(bone_idx)];baked_pos[vi]+=weight*(bm@np.r_[v[:3],1.0])[:3];baked_norm[vi]+=weight*(bm[:3,:3]@n[:3])
+    length=np.linalg.norm(baked_norm[vi])
+    if length:baked_norm[vi]/=length
+   triangles=handler.get_triangles();flat_indices=[];subs=[]
+   for group in triangles:
+    start=len(flat_indices)
+    for tri in group:
+     if len(tri)==3:flat_indices.extend(int(i) for i in tri)
+    subs.append({'index_start':start,'index_count':len(flat_indices)-start,'topology':'triangles'})
+   if not flat_indices:raise ValueError('skinned mesh has no triangles')
+   raw=bytearray()
+   for p,n,uv in zip(baked_pos,baked_norm,uvs):raw.extend(struct.pack('<8f',*p,*n,*uv[:2]))
+   for ix in flat_indices:raw.extend(struct.pack('<I',ix))
+   source_ref=ref(d.m_Mesh);fn=f"skinned_{re.sub(r'[^A-Za-z0-9_-]+','_',getattr(d.m_Mesh.assetsfile,'name',''))}_f{source_ref['file_id']}_p{source_ref['path_id']}_renderer{o.path_id}.bin"
+   (out/'models'/fn).write_bytes(raw);bounds={'min':[float(baked_pos[:,i].min()) for i in range(3)],'max':[float(baked_pos[:,i].max()) for i in range(3)]}
+   mesh_index=len(meshes);meshes.append({'source_ref':{'source_file':getattr(d.m_Mesh.assetsfile,'name',''),'file_id':source_ref['file_id'],'path_id':source_ref['path_id']},'name':getattr(source_mesh,'m_Name','')+' [serialized skin pose]','mesh_asset':'models/'+fn,'vertex_count':len(baked_pos),'index_count':len(flat_indices),'vertex_stride_bytes':32,'vertex_layout':['position_f32x3','normal_f32x3','uv0_f32x2'],'index_type':'uint32_le','submeshes':subs,'local_bounds':bounds,'sha256':hashlib.sha256(raw).hexdigest(),'skinned_pose_bake':{'renderer_path_id':int(o.path_id),'source_bones':len(d.m_Bones),'source_bindposes':len(source_mesh.m_BindPose),'pose_source':'serialized Unity bone transforms; Animator not evaluated'}})
+   renderer_row.update({'mesh_index':mesh_index,'material_indices':[material(x) for x in d.m_Materials],'pose_mode':'serialized_bone_pose_baked_without_animator'});skinned_renderers.append(renderer_row)
+  except Exception as e:errors.append({'kind':'skinned_renderer','ref':int(o.path_id),'error':str(e)})
  colliders=[]
  for o in objects:
   if o.type.name not in ('BoxCollider','MeshCollider','CapsuleCollider','SphereCollider'):continue
@@ -139,6 +203,7 @@ def main():
  for c in colliders:
   if c['name'] in ('RaycastTrigger','RaycastTarget') and not any(c['path_id'] in x['collider_path_ids'] for x in interaction_targets):
    interaction_targets.append({'kind':'raycast_target','id':c['gameobject_path_id'],'label':c['name'],'transform_path_id':c['transform_path_id'],'world_matrix_row_major':c['world_matrix_row_major'],'collider_path_ids':[c['path_id']],'trigger_collider_path_ids':[c['path_id']] if c['is_trigger'] else [],'colliders':[{'path_id':c['path_id'],'name':c['name'],'is_trigger':c['is_trigger']}]})
- manifest={'schema_version':1,'provenance':{'scene_file':'level1','tool':'UnityPy 1.25.4 static parser','executed_original_binaries':False},'coordinate_system':{'source':'Unity left-handed, Y-up, metres','export':'Unconverted Unity source coordinates','uv_origin':'Unity UV convention (0,0 bottom-left)','matrix':'row-major 4x4 column-vector transform; local TRS composed parent-first','triangle_winding':'Unity MeshHandler source triangles/winding preserved; renderer must reflect coordinates and winding together when converting handedness','binary':'interleaved LE float32 position3 normal3 uv0_2 (32 bytes), then LE uint32 indices; expanded face corners'},'counts':{'gameobjects':len(gos),'transforms':len(trans),'mesh_renderers':len(renderers),'renderers_active':sum(r['active_in_hierarchy'] for r in renderers),'renderers_active_within_40m_main_camera':sum(r['active_in_hierarchy'] and r['main_camera_bounds_center_distance'] is not None and r['main_camera_bounds_center_distance']<=40 for r in renderers),'mesh_filters':sum(o.type.name=='MeshFilter' for o in objects),'unique_meshes':len(meshes),'materials':len(materials),'textures':len(textures),'colliders':len(colliders),'cameras':len(cameras),'lights':len(lights),'mesh_errors':sum(e['kind']=='mesh' for e in errors)},'meshes':meshes,'materials':materials,'textures':textures,'renderers':renderers,'transforms':transforms,'colliders':colliders,'cameras':cameras,'lights':lights,'render_settings':settings,'rigidbodies':rigidbodies,'spawn_candidates':[t for t in transforms if t['name'] in ('StartPoint','SaveStartPoint','BasementStartPoint')],'player_instance':next((t for t in transforms if t['name']=='PlayerInstance'),None),'named_door_targets':doors,'interaction_targets':interaction_targets,'exclusions':['SkinnedMeshRenderer and VFX/ParticleSystem are dynamic and not flattened.','Static data does not determine runtime initial spawn or door activation.'],'errors':errors}
+ scene_path=a.data if a.data.is_file() else a.data/'level1'
+ manifest={'schema_version':1,'provenance':{'scene_file':'level1','source_scene_sha256':hashlib.sha256(scene_path.read_bytes()).hexdigest(),'tool':'UnityPy 1.25.4 static parser','executed_original_binaries':False},'coordinate_system':{'source':'Unity left-handed, Y-up, metres','export':'Unconverted Unity source coordinates','uv_origin':'Unity UV convention (0,0 bottom-left)','matrix':'row-major 4x4 column-vector transform; local TRS composed parent-first','triangle_winding':'Unity MeshHandler source triangles/winding preserved; renderer must reflect coordinates and winding together when converting handedness','binary':'interleaved LE float32 position3 normal3 uv0_2 (32 bytes), then LE uint32 indices; expanded face corners'},'counts':{'gameobjects':len(gos),'transforms':len(trans),'mesh_renderers':len(renderers),'renderers_active':sum(r['active_in_hierarchy'] for r in renderers),'skinned_mesh_renderers':len(skinned_renderers),'skinned_renderers_active':sum(r['active_in_hierarchy'] and r['enabled'] for r in skinned_renderers),'renderers_active_within_40m_main_camera':sum(r['active_in_hierarchy'] and r['main_camera_bounds_center_distance'] is not None and r['main_camera_bounds_center_distance']<=40 for r in renderers),'mesh_filters':sum(o.type.name=='MeshFilter' for o in objects),'unique_meshes':len(meshes),'materials':len(materials),'textures':len(textures),'colliders':len(colliders),'cameras':len(cameras),'lights':len(lights),'mesh_errors':sum(e['kind'] in ('mesh','skinned_renderer') for e in errors)},'meshes':meshes,'materials':materials,'textures':textures,'renderers':renderers,'skinned_renderers':skinned_renderers,'transforms':transforms,'colliders':colliders,'cameras':cameras,'lights':lights,'render_settings':settings,'rigidbodies':rigidbodies,'spawn_candidates':[t for t in transforms if t['name'] in ('StartPoint','SaveStartPoint','BasementStartPoint')],'player_instance':next((t for t in transforms if t['name']=='PlayerInstance'),None),'named_door_targets':doors,'interaction_targets':interaction_targets,'exclusions':['ParticleSystemRenderer and VFXRenderer are dynamic and not flattened.','Skinned meshes are baked at serialized bone transforms; Animator playback is not evaluated.','Static data does not determine runtime initial spawn or door activation.'],'errors':errors}
  (out/'world_manifest.json').write_text(json.dumps(manifest,indent=2,ensure_ascii=False)+'\n');print(json.dumps(manifest['counts'],indent=2));print('Main Camera',maincam);print('texture_MB',sum((out/t['asset']).stat().st_size for t in textures)/1e6,'mesh_MB',sum((out/m['mesh_asset']).stat().st_size for m in meshes)/1e6)
 if __name__=='__main__':main()

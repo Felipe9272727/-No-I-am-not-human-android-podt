@@ -22,6 +22,61 @@ VIEW_CLASSES = {"KitchenView", "OfficeView", "BigRoomView", "BathroomView", "Pan
 NARRATIVE_CLASS = "_Code.Rooms.NarrativeRoomObject"
 BUTTON_CLASS = "_Code.Rooms.UIButton"
 IMAGE_CLASS = "UnityEngine.UI.Image"
+OBJECT_VIEW_CLASSES = {
+    "_Code.Rooms.ObjectRoomObjectView": ("EObjectsRoomObject", {-1: "None", 0: "Bed", 1: "TV", 2: "Fridge"}),
+    "_Code.Rooms.TestRoomObjectView": ("ERoomTestObjectStates", {0: "Glasses1", 1: "Glasses2", 2: "Sanya"}),
+}
+OBJECT_STATE_ARRAY_OFFSET = 56
+OBJECT_STATE_DATA_OFFSET = 60
+OBJECT_STATE_RECORD_SIZE = 36
+
+
+def decode_object_view_states(raw: bytes, type_name: str) -> dict:
+    """Decode the serialized state table using RoomObjectState<T>'s field order."""
+    if type_name not in OBJECT_VIEW_CLASSES:
+        raise ValueError(f"unsupported object-view class {type_name}")
+    if len(raw) < OBJECT_STATE_DATA_OFFSET + 4:
+        raise ValueError(f"object-view payload too short: {len(raw)} bytes")
+    enum_type, enum_names = OBJECT_VIEW_CLASSES[type_name]
+    count = struct.unpack_from("<i", raw, OBJECT_STATE_ARRAY_OFFSET)[0]
+    if count < 0 or count > 10000:
+        raise ValueError(f"invalid object-view state count {count}")
+    start_state_offset = OBJECT_STATE_DATA_OFFSET + count * OBJECT_STATE_RECORD_SIZE
+    consumed = start_state_offset + 4
+    if consumed != len(raw):
+        raise ValueError(f"{type_name} schema consumed {consumed}, raw size {len(raw)}")
+    states = []
+    for index in range(count):
+        offset = OBJECT_STATE_DATA_OFFSET + index * OBJECT_STATE_RECORD_SIZE
+        enum_value = struct.unpack_from("<i", raw, offset)[0]
+        file_id, path_id = struct.unpack_from("<iq", raw, offset + 4)
+        px, py = struct.unpack_from("<ff", raw, offset + 16)
+        sx, sy = struct.unpack_from("<ff", raw, offset + 24)
+        cannot_interact = raw[offset + 32]
+        if cannot_interact not in (0, 1):
+            raise ValueError(f"invalid CannotInteract value {cannot_interact} in state {index}")
+        states.append({
+            "array_index": index,
+            "raw_offset": offset,
+            "enum_value": enum_value,
+            "enum_name": enum_names.get(enum_value),
+            "sprite_reference": {"file_id": int(file_id), "path_id": int(path_id)},
+            "position_shift": [clean_float(px), clean_float(py)],
+            "scale_shift": [clean_float(sx), clean_float(sy)],
+            "cannot_interact": bool(cannot_interact),
+        })
+    start_value = struct.unpack_from("<i", raw, start_state_offset)[0]
+    return {
+        "state_type": enum_type,
+        "array_count_offset": OBJECT_STATE_ARRAY_OFFSET,
+        "states_data_offset": OBJECT_STATE_DATA_OFFSET,
+        "state_record_size": OBJECT_STATE_RECORD_SIZE,
+        "states": states,
+        "start_state_offset": start_state_offset,
+        "start_state_value": start_value,
+        "start_state_name": enum_names.get(start_value),
+        "bytes_consumed": consumed,
+    }
 
 
 def read_ptr(data: bytes, pos: int):
@@ -252,7 +307,20 @@ def main():
         if p > len(raw):
             raise ValueError(f"base ARoomView fields exceed serialized size for {mid}: {p}>{len(raw)}")
         arr = lambda refs: [{"file_id": int(fid), "path_id": int(pid), "component_type": mono.get(pid, {}).get("type"), "game_object_path_id": comp_to_go.get(pid), "game_object_name": go_name(comp_to_go.get(pid))} for fid, pid in refs]
-        view = {"component_path_id": int(mid), "class": mono[mid]["type"], "game_object_path_id": mono[mid]["game_object_path_id"], "camera_distance": clean_float(camera_distance), "dialog_camera_distance": clean_float(dialog_camera_distance), "character_views": arr(character_refs), "object_views": arr(object_refs), "narrative_objects": arr(narrative_refs), "whispers_audio_source": ptr_json(whisper, "level1"), "linked_camera": {**ptr_json(camera, "level1"), "game_object_name": go_name(camera[1]) if camera[0] == 0 else None, "camera": cameras.get(camera[1]) if camera[0] == 0 else None}, "ui_buttons": arr(button_refs), "door": ptr_json(door, "level1"), "broken_door": ptr_json(broken_door, "level1"), "door_trigger": ptr_json(door_trigger, "level1"), "serialized_base_fields_end_offset": p}
+        object_view_order = arr(object_refs)
+        for item in object_view_order:
+            if item["component_type"] in OBJECT_VIEW_CLASSES:
+                object_view_raw = mono[item["path_id"]]["raw"]
+                table = decode_object_view_states(object_view_raw, item["component_type"])
+                for state in table["states"]:
+                    ptr = state["sprite_reference"]
+                    state["sprite_reference"] = ptr_json((ptr["file_id"], ptr["path_id"]), "level1")
+                table["component_raw_size"] = len(object_view_raw)
+                view_obj = {"button_reference": mono_ptr("level1", item["path_id"], 32),
+                            "image_reference": mono_ptr("level1", item["path_id"], 44),
+                            "state_table": table}
+                item.update(view_obj)
+        view = {"component_path_id": int(mid), "class": mono[mid]["type"], "game_object_path_id": mono[mid]["game_object_path_id"], "camera_distance": clean_float(camera_distance), "dialog_camera_distance": clean_float(dialog_camera_distance), "character_views": arr(character_refs), "object_views": object_view_order, "narrative_objects": arr(narrative_refs), "whispers_audio_source": ptr_json(whisper, "level1"), "linked_camera": {**ptr_json(camera, "level1"), "game_object_name": go_name(camera[1]) if camera[0] == 0 else None, "camera": cameras.get(camera[1]) if camera[0] == 0 else None}, "ui_buttons": arr(button_refs), "door": ptr_json(door, "level1"), "broken_door": ptr_json(broken_door, "level1"), "door_trigger": ptr_json(door_trigger, "level1"), "serialized_base_fields_end_offset": p}
         return view, p
 
     # Export hierarchy under room-view GameObjects, keeping every local transform.

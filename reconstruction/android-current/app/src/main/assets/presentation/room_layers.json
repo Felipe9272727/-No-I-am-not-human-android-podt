@@ -25,6 +25,27 @@
           "preserve_aspect": true
         },
         {
+          "image_component_path_id": 5146,
+          "name": "Fridge",
+          "asset": "ui/exported_images/sharedassets1_612_Kitchen_obj1.png",
+          "rect": [
+            1334.0,
+            115.0,
+            632.0,
+            980.0
+          ],
+          "draw_order": 4,
+          "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "preserve_aspect": true,
+          "source_state_component": 4813,
+          "source_state_enum": 2
+        },
+        {
           "image_component_path_id": 4826,
           "name": "Cupboards",
           "asset": "ui/exported_images/sharedassets1_586_Kitchen_shelf.png",
@@ -122,14 +143,6 @@
           "reason": "conditional_room_object_state:_Code.Rooms.ObjectRoomObjectView",
           "asset": "ui/exported_images/sharedassets1_574_Kitchen_beer_8.png",
           "draw_order": 3
-        },
-        {
-          "image_component_path_id": 5146,
-          "game_object_path_id": 999,
-          "name": "Fridge",
-          "reason": "conditional_room_object_state:_Code.Rooms.ObjectRoomObjectView",
-          "asset": "ui/exported_images/sharedassets1_612_Kitchen_obj1.png",
-          "draw_order": 4
         },
         {
           "image_component_path_id": 4356,

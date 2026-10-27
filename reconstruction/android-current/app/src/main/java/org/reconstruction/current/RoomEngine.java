@@ -48,11 +48,13 @@ public final class RoomEngine extends ApplicationAdapter {
     private int viewportX, viewportY, viewportWidth, viewportHeight;
     private int room = -1;
     private boolean scenePhase;
+    private boolean playingPhase;
     private String viewMode = "world";
     private boolean inBatch;
     private JSONArray roomObjects = new JSONArray();
     private JSONObject layerConditions = new JSONObject();
     private RoomComposition composition = RoomComposition.parse(null);
+    private HouseSceneData houseScene = HouseSceneData.parse(null);
     private volatile String rendererStatus = "loading: waiting for GL surface";
     private volatile String rendererStage = "create room renderer";
     private volatile String rendererDiagnostic = "";
@@ -190,9 +192,13 @@ public final class RoomEngine extends ApplicationAdapter {
         roomLayouts.clear();
         roomLayoutsByRoom.clear();
         composition = RoomComposition.parse(null);
+        houseScene = HouseSceneData.parse(null);
         missingAssets.clear();
         try {
             JSONObject root = new JSONObject(serialized);
+            String housePath = root.optString("house_scene_manifest", "");
+            if (!housePath.isEmpty() && !housePath.startsWith("/") && !housePath.contains(".."))
+                houseScene = HouseSceneData.parse(new JSONObject(Gdx.files.internal(housePath).readString("UTF-8")));
             String layersPath = root.optString("room_layers_manifest", "");
             if (!layersPath.isEmpty() && !layersPath.startsWith("/") && !layersPath.contains("..")) {
                 composition = RoomComposition.parse(new JSONObject(Gdx.files.internal(layersPath).readString("UTF-8")));
@@ -257,6 +263,7 @@ public final class RoomEngine extends ApplicationAdapter {
         if (serialized.equals(appliedStateJson)) return;
         appliedStateJson = serialized;
         scenePhase = false;
+        playingPhase = false;
         room = -1;
         viewMode = "world";
         roomObjects = new JSONArray();
@@ -264,6 +271,7 @@ public final class RoomEngine extends ApplicationAdapter {
         try {
             JSONObject state = new JSONObject(serialized);
             String phase = state.optString("phase", "");
+            playingPhase = "playing".equals(phase);
             scenePhase = "playing".equals(phase) || "tools".equals(phase);
             room = state.optInt("room", -1);
             viewMode = state.optString("view_mode", "world");
@@ -326,7 +334,7 @@ public final class RoomEngine extends ApplicationAdapter {
         List<RoomActor> actors = new ArrayList<>();
         for (int i = 0; i < roomObjects.length(); i++) {
             JSONObject object = roomObjects.optJSONObject(i);
-            if (object == null || object.optInt("room", -1) != room || !object.optBoolean("active", false)) continue;
+            if (!houseScene.actorVisible(object, room, playingPhase)) continue;
             String name = object.optString("name", "");
             Map<String, JSONObject> roomLayout = roomLayoutsByRoom.get(room);
             JSONObject layout = roomLayout == null ? null : roomLayout.get(name);
@@ -351,11 +359,12 @@ public final class RoomEngine extends ApplicationAdapter {
         float[] pivot = vector2(actor.layout == null ? null : actor.layout.optJSONArray("pivot"), 0.5f, 0.5f);
         float[] position = vector3(object.optJSONArray("position"), 0f, 0f, 0f);
         float[] poseScale = vector3(object.optJSONArray("scale"), 1f, 1f, 1f);
+        float[] parentOffset = vector2(actor.layout == null ? null : actor.layout.optJSONArray("parent_offset"),0f,0f);
         float canvasScale = roomScale();
         float width = Math.max(1f, size[0] * Math.abs(poseScale[0]) * canvasScale);
         float height = Math.max(1f, size[1] * Math.abs(poseScale[1]) * canvasScale);
-        float centerX = (SOURCE_WIDTH * 0.5f + position[0]) * canvasScale;
-        float centerY = (SOURCE_HEIGHT * 0.5f + position[1]) * canvasScale;
+        float centerX = (SOURCE_WIDTH * 0.5f + parentOffset[0] + position[0]) * canvasScale;
+        float centerY = (SOURCE_HEIGHT * 0.5f + parentOffset[1] + position[1]) * canvasScale;
         float left = centerX - width * clamp01(pivot[0]);
         float bottom = centerY - height * clamp01(pivot[1]);
         drawContain(sprite, left, bottom, width, height, finiteOr(position[2], 0f) * canvasScale);

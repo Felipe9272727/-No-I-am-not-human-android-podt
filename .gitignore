@@ -75,3 +75,10 @@ reconstruction/android-current/qa/rooms-v11/
 reconstruction/android-current/qa/rooms-v12/
 
 reconstruction/android-current/qa/fidelity-v12/
+
+tools/cache/
+reconstruction/android-current/qa/rooms-v13/
+reconstruction/android-current/qa/house-v13/
+reconstruction/reverse-world/*.bin
+
+reconstruction/android-current/qa/v13-*.log

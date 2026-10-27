@@ -456,7 +456,50 @@
             "path_id": 4813,
             "component_type": "_Code.Rooms.ObjectRoomObjectView",
             "game_object_path_id": 999,
-            "game_object_name": "Fridge"
+            "game_object_name": "Fridge",
+            "button_reference": {
+              "file_id": 0,
+              "path_id": 5182,
+              "file": "level1"
+            },
+            "image_reference": {
+              "file_id": 0,
+              "path_id": 5146,
+              "file": "level1"
+            },
+            "state_table": {
+              "state_type": "EObjectsRoomObject",
+              "array_count_offset": 56,
+              "states_data_offset": 60,
+              "state_record_size": 36,
+              "states": [
+                {
+                  "array_index": 0,
+                  "raw_offset": 60,
+                  "enum_value": 2,
+                  "enum_name": "Fridge",
+                  "sprite_reference": {
+                    "file_id": 2,
+                    "path_id": 612,
+                    "file": "sharedassets1.assets"
+                  },
+                  "position_shift": [
+                    690.0,
+                    -65.0
+                  ],
+                  "scale_shift": [
+                    2.0,
+                    2.0
+                  ],
+                  "cannot_interact": false
+                }
+              ],
+              "start_state_offset": 96,
+              "start_state_value": 2,
+              "start_state_name": "Fridge",
+              "bytes_consumed": 100,
+              "component_raw_size": 100
+            }
           }
         ],
         "narrative_objects": [
@@ -2813,14 +2856,100 @@
             "path_id": 4865,
             "component_type": "_Code.Rooms.ObjectRoomObjectView",
             "game_object_path_id": 885,
-            "game_object_name": "Baby"
+            "game_object_name": "Baby",
+            "button_reference": {
+              "file_id": 0,
+              "path_id": 5067,
+              "file": "level1"
+            },
+            "image_reference": {
+              "file_id": 0,
+              "path_id": 5117,
+              "file": "level1"
+            },
+            "state_table": {
+              "state_type": "EObjectsRoomObject",
+              "array_count_offset": 56,
+              "states_data_offset": 60,
+              "state_record_size": 36,
+              "states": [
+                {
+                  "array_index": 0,
+                  "raw_offset": 60,
+                  "enum_value": -1,
+                  "enum_name": "None",
+                  "sprite_reference": {
+                    "file_id": 2,
+                    "path_id": 595,
+                    "file": "sharedassets1.assets"
+                  },
+                  "position_shift": [
+                    70.0,
+                    466.0
+                  ],
+                  "scale_shift": [
+                    2.25,
+                    2.25
+                  ],
+                  "cannot_interact": false
+                }
+              ],
+              "start_state_offset": 96,
+              "start_state_value": -1,
+              "start_state_name": "None",
+              "bytes_consumed": 100,
+              "component_raw_size": 100
+            }
           },
           {
             "file_id": 0,
             "path_id": 4938,
             "component_type": "_Code.Rooms.ObjectRoomObjectView",
             "game_object_path_id": 875,
-            "game_object_name": "CultistsSheets"
+            "game_object_name": "CultistsSheets",
+            "button_reference": {
+              "file_id": 0,
+              "path_id": 0,
+              "file": null
+            },
+            "image_reference": {
+              "file_id": 0,
+              "path_id": 4326,
+              "file": "level1"
+            },
+            "state_table": {
+              "state_type": "EObjectsRoomObject",
+              "array_count_offset": 56,
+              "states_data_offset": 60,
+              "state_record_size": 36,
+              "states": [
+                {
+                  "array_index": 0,
+                  "raw_offset": 60,
+                  "enum_value": -1,
+                  "enum_name": "None",
+                  "sprite_reference": {
+                    "file_id": 2,
+                    "path_id": 617,
+                    "file": "sharedassets1.assets"
+                  },
+                  "position_shift": [
+                    -177.600006,
+                    -152.399994
+                  ],
+                  "scale_shift": [
+                    1.0,
+                    1.0
+                  ],
+                  "cannot_interact": false
+                }
+              ],
+              "start_state_offset": 96,
+              "start_state_value": -1,
+              "start_state_name": "None",
+              "bytes_consumed": 100,
+              "component_raw_size": 100
+            }
           }
         ],
         "narrative_objects": [
@@ -5993,7 +6122,50 @@
             "path_id": 4583,
             "component_type": "_Code.Rooms.ObjectRoomObjectView",
             "game_object_path_id": 553,
-            "game_object_name": "Apple"
+            "game_object_name": "Apple",
+            "button_reference": {
+              "file_id": 0,
+              "path_id": 4779,
+              "file": "level1"
+            },
+            "image_reference": {
+              "file_id": 0,
+              "path_id": 4366,
+              "file": "level1"
+            },
+            "state_table": {
+              "state_type": "EObjectsRoomObject",
+              "array_count_offset": 56,
+              "states_data_offset": 60,
+              "state_record_size": 36,
+              "states": [
+                {
+                  "array_index": 0,
+                  "raw_offset": 60,
+                  "enum_value": -1,
+                  "enum_name": "None",
+                  "sprite_reference": {
+                    "file_id": 2,
+                    "path_id": 632,
+                    "file": "sharedassets1.assets"
+                  },
+                  "position_shift": [
+                    -336.5,
+                    174.0
+                  ],
+                  "scale_shift": [
+                    1.0,
+                    1.0
+                  ],
+                  "cannot_interact": false
+                }
+              ],
+              "start_state_offset": 96,
+              "start_state_value": -1,
+              "start_state_name": "None",
+              "bytes_consumed": 100,
+              "component_raw_size": 100
+            }
           }
         ],
         "narrative_objects": [
@@ -8590,14 +8762,100 @@
             "path_id": 4689,
             "component_type": "_Code.Rooms.ObjectRoomObjectView",
             "game_object_path_id": 679,
-            "game_object_name": "Baby"
+            "game_object_name": "Baby",
+            "button_reference": {
+              "file_id": 0,
+              "path_id": 4995,
+              "file": "level1"
+            },
+            "image_reference": {
+              "file_id": 0,
+              "path_id": 5246,
+              "file": "level1"
+            },
+            "state_table": {
+              "state_type": "EObjectsRoomObject",
+              "array_count_offset": 56,
+              "states_data_offset": 60,
+              "state_record_size": 36,
+              "states": [
+                {
+                  "array_index": 0,
+                  "raw_offset": 60,
+                  "enum_value": -1,
+                  "enum_name": "None",
+                  "sprite_reference": {
+                    "file_id": 2,
+                    "path_id": 618,
+                    "file": "sharedassets1.assets"
+                  },
+                  "position_shift": [
+                    263.0,
+                    -292.0
+                  ],
+                  "scale_shift": [
+                    2.25,
+                    2.25
+                  ],
+                  "cannot_interact": false
+                }
+              ],
+              "start_state_offset": 96,
+              "start_state_value": -1,
+              "start_state_name": "None",
+              "bytes_consumed": 100,
+              "component_raw_size": 100
+            }
           },
           {
             "file_id": 0,
             "path_id": 4559,
             "component_type": "_Code.Rooms.ObjectRoomObjectView",
             "game_object_path_id": 613,
-            "game_object_name": "Husband"
+            "game_object_name": "Husband",
+            "button_reference": {
+              "file_id": 0,
+              "path_id": 0,
+              "file": null
+            },
+            "image_reference": {
+              "file_id": 0,
+              "path_id": 4537,
+              "file": "level1"
+            },
+            "state_table": {
+              "state_type": "EObjectsRoomObject",
+              "array_count_offset": 56,
+              "states_data_offset": 60,
+              "state_record_size": 36,
+              "states": [
+                {
+                  "array_index": 0,
+                  "raw_offset": 60,
+                  "enum_value": -1,
+                  "enum_name": "None",
+                  "sprite_reference": {
+                    "file_id": 3,
+                    "path_id": 1615,
+                    "file": "sharedassets0.assets"
+                  },
+                  "position_shift": [
+                    256.0,
+                    -90.0
+                  ],
+                  "scale_shift": [
+                    1.0,
+                    1.0
+                  ],
+                  "cannot_interact": false
+                }
+              ],
+              "start_state_offset": 96,
+              "start_state_value": -1,
+              "start_state_name": "None",
+              "bytes_consumed": 100,
+              "component_raw_size": 100
+            }
           }
         ],
         "narrative_objects": [
@@ -12090,28 +12348,200 @@
             "path_id": 4801,
             "component_type": "_Code.Rooms.ObjectRoomObjectView",
             "game_object_path_id": 398,
-            "game_object_name": "Bed"
+            "game_object_name": "Bed",
+            "button_reference": {
+              "file_id": 0,
+              "path_id": 4488,
+              "file": "level1"
+            },
+            "image_reference": {
+              "file_id": 0,
+              "path_id": 4843,
+              "file": "level1"
+            },
+            "state_table": {
+              "state_type": "EObjectsRoomObject",
+              "array_count_offset": 56,
+              "states_data_offset": 60,
+              "state_record_size": 36,
+              "states": [
+                {
+                  "array_index": 0,
+                  "raw_offset": 60,
+                  "enum_value": 0,
+                  "enum_name": "Bed",
+                  "sprite_reference": {
+                    "file_id": 2,
+                    "path_id": 640,
+                    "file": "sharedassets1.assets"
+                  },
+                  "position_shift": [
+                    132.0,
+                    -323.0
+                  ],
+                  "scale_shift": [
+                    2.1,
+                    2.1
+                  ],
+                  "cannot_interact": false
+                }
+              ],
+              "start_state_offset": 96,
+              "start_state_value": 0,
+              "start_state_name": "Bed",
+              "bytes_consumed": 100,
+              "component_raw_size": 100
+            }
           },
           {
             "file_id": 0,
             "path_id": 5045,
             "component_type": "_Code.Rooms.ObjectRoomObjectView",
             "game_object_path_id": 412,
-            "game_object_name": "Curtain"
+            "game_object_name": "Curtain",
+            "button_reference": {
+              "file_id": 0,
+              "path_id": 4882,
+              "file": "level1"
+            },
+            "image_reference": {
+              "file_id": 0,
+              "path_id": 4989,
+              "file": "level1"
+            },
+            "state_table": {
+              "state_type": "EObjectsRoomObject",
+              "array_count_offset": 56,
+              "states_data_offset": 60,
+              "state_record_size": 36,
+              "states": [
+                {
+                  "array_index": 0,
+                  "raw_offset": 60,
+                  "enum_value": -1,
+                  "enum_name": "None",
+                  "sprite_reference": {
+                    "file_id": 2,
+                    "path_id": 537,
+                    "file": "sharedassets1.assets"
+                  },
+                  "position_shift": [
+                    -96.300003,
+                    83.0
+                  ],
+                  "scale_shift": [
+                    1.0,
+                    1.0
+                  ],
+                  "cannot_interact": false
+                }
+              ],
+              "start_state_offset": 96,
+              "start_state_value": -1,
+              "start_state_name": "None",
+              "bytes_consumed": 100,
+              "component_raw_size": 100
+            }
           },
           {
             "file_id": 0,
             "path_id": 4515,
             "component_type": "_Code.Rooms.ObjectRoomObjectView",
             "game_object_path_id": 851,
-            "game_object_name": "Clock"
+            "game_object_name": "Clock",
+            "button_reference": {
+              "file_id": 0,
+              "path_id": 5036,
+              "file": "level1"
+            },
+            "image_reference": {
+              "file_id": 0,
+              "path_id": 4696,
+              "file": "level1"
+            },
+            "state_table": {
+              "state_type": "EObjectsRoomObject",
+              "array_count_offset": 56,
+              "states_data_offset": 60,
+              "state_record_size": 36,
+              "states": [
+                {
+                  "array_index": 0,
+                  "raw_offset": 60,
+                  "enum_value": -1,
+                  "enum_name": "None",
+                  "sprite_reference": {
+                    "file_id": 2,
+                    "path_id": 622,
+                    "file": "sharedassets1.assets"
+                  },
+                  "position_shift": [
+                    558.0,
+                    210.0
+                  ],
+                  "scale_shift": [
+                    1.0,
+                    1.0
+                  ],
+                  "cannot_interact": false
+                }
+              ],
+              "start_state_offset": 96,
+              "start_state_value": -1,
+              "start_state_name": "None",
+              "bytes_consumed": 100,
+              "component_raw_size": 100
+            }
           },
           {
             "file_id": 0,
             "path_id": 4658,
             "component_type": "_Code.Rooms.ObjectRoomObjectView",
             "game_object_path_id": 640,
-            "game_object_name": "Mushroomlist"
+            "game_object_name": "Mushroomlist",
+            "button_reference": {
+              "file_id": 0,
+              "path_id": 4555,
+              "file": "level1"
+            },
+            "image_reference": {
+              "file_id": 0,
+              "path_id": 4737,
+              "file": "level1"
+            },
+            "state_table": {
+              "state_type": "EObjectsRoomObject",
+              "array_count_offset": 56,
+              "states_data_offset": 60,
+              "state_record_size": 36,
+              "states": [
+                {
+                  "array_index": 0,
+                  "raw_offset": 60,
+                  "enum_value": -1,
+                  "enum_name": "None",
+                  "sprite_reference": {
+                    "file_id": 2,
+                    "path_id": 623,
+                    "file": "sharedassets1.assets"
+                  },
+                  "position_shift": [
+                    170.0,
+                    18.200001
+                  ],
+                  "scale_shift": [
+                    1.0,
+                    1.0
+                  ],
+                  "cannot_interact": false
+                }
+              ],
+              "start_state_offset": 96,
+              "start_state_value": -1,
+              "start_state_name": "None",
+              "bytes_consumed": 100,
+              "component_raw_size": 100
+            }
           }
         ],
         "narrative_objects": [

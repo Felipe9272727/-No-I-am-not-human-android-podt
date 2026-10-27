@@ -365,6 +365,7 @@ def make_output(
     }
     runtime = {"schema_version": 1, "rooms": output_rooms}
     add_verified_bed(runtime, audit, room_manifest, ui_components, assets_manifest, assets_root)
+    add_verified_fridge(runtime, audit, room_manifest, ui_components, ui_transforms, assets_manifest, assets_root)
     return runtime, audit
 
 
@@ -419,6 +420,90 @@ def add_verified_bed(runtime, audit, room_manifest, ui_components, assets_manife
     audited_room["exclusion_reasons"][reason] -= 1
     audit["evidence"]["verified_bed_state"] = {"source": str(evidence_path.relative_to(Path(__file__).resolve().parents[2])),
         "component_path_id": 4801, "activation": "bounded Android host bed_visible flag", "raw_object_sha256": record["raw_object_sha256"]}
+
+
+def add_verified_fridge(runtime, audit, room_manifest, ui_components, ui_transforms, assets_manifest, assets_root):
+    """Stage Kitchen's serialized, active default fridge state as an always-visible prop."""
+    room = next(r for r in room_manifest["rooms"] if r["room"] == "Kitchen")
+    object_view = next((v for v in room["view"]["object_views"] if v.get("game_object_name") == "Fridge"), None)
+    if not object_view or object_view.get("component_type") != "_Code.Rooms.ObjectRoomObjectView":
+        raise ValueError("Kitchen Fridge ObjectRoomObjectView is missing from room manifest")
+    table = object_view.get("state_table", {})
+    states = table.get("states", [])
+    selected = [s for s in states if s.get("enum_value") == table.get("start_state_value")]
+    if table.get("state_type") != "EObjectsRoomObject" or table.get("start_state_name") != "Fridge" or len(selected) != 1:
+        raise ValueError("Kitchen Fridge requires one exact EObjectsRoomObject.Fridge start-state record")
+    state = selected[0]
+    go_id = object_view.get("game_object_path_id")
+    nodes = {n["game_object_path_id"]: n for n in room["hierarchy"]}
+    node = nodes.get(go_id)
+    if go_id != 999 or not node or not node.get("active_self", False):
+        raise ValueError("Kitchen Fridge source GameObject is not the expected active object")
+    image_id = object_view.get("image_reference", {}).get("path_id")
+    if image_id != 5146:
+        raise ValueError("Kitchen Fridge image component changed; review source state mapping")
+    image_source = next((i for i in room["image_components"] if i["component_path_id"] == image_id), None)
+    image = ui_components.get(image_id)
+    if not image_source or image is None or image.get("class") != IMAGE_TYPE:
+        raise ValueError("Kitchen Fridge Image is missing from room/UI source manifests")
+    sprite_ref = state.get("sprite_reference", {})
+    if sprite_ref.get("file") != "sharedassets1.assets" or sprite_ref.get("path_id") != 612:
+        raise ValueError("Kitchen Fridge start-state Sprite is not source Kitchen_obj1")
+    sprite = (image_source.get("sprite") or {}).get("sprite") or {}
+    if sprite.get("file") != sprite_ref["file"] or sprite.get("path_id") != sprite_ref["path_id"]:
+        raise ValueError("Kitchen Fridge Image sprite differs from its selected source state")
+    if not image.get("enabled", False) or (image.get("image") or {}).get("type") != "Simple":
+        raise ValueError("Kitchen Fridge Image is disabled or unsupported")
+    asset, _ = image_asset(image_source, image, assets_manifest, assets_root)
+    if asset is None:
+        raise ValueError("Kitchen Fridge sprite is absent from staged assets")
+
+    transform = image.get("rect_transform") or {}
+    if transform.get("anchor_min") != {"x": 0.5, "y": 0.5} or transform.get("anchor_max") != {"x": 0.5, "y": 0.5}:
+        raise ValueError("Kitchen Fridge anchor layout needs a different transform adapter")
+    ancestors, _ = hierarchy_ancestry(room["hierarchy"])
+    node_chain = ancestors[go_id] + [go_id]
+    for ancestor in node_chain:
+        if ancestor != room["room_root"]["game_object_path_id"] and not nodes[ancestor].get("active_self", False):
+            raise ValueError(f"Kitchen Fridge has inactive source ancestor {ancestor}")
+    transform_issue = unsupported_transform_reason(node_chain, nodes, ui_transforms)
+    if transform_issue:
+        raise ValueError(f"Kitchen Fridge cannot be represented as an axis-aligned source layer: {transform_issue}")
+    shift = state.get("position_shift")
+    scale = state.get("scale_shift")
+    if not isinstance(shift, list) or len(shift) != 2 or not isinstance(scale, list) or len(scale) != 2 or min(scale) <= 0:
+        raise ValueError("Kitchen Fridge start-state transform is invalid")
+    base_rect = transform.get("screen_rect_1920x1080")
+    if not isinstance(base_rect, list) or len(base_rect) != 4:
+        raise ValueError("Kitchen Fridge source RectTransform has no screen rect")
+    left, top, width, height = base_rect
+    pivot = transform["pivot"]
+    px, py = shift
+    sx, sy = scale
+    dx = px - transform["anchored_position"]["x"]
+    dy = py - transform["anchored_position"]["y"]
+    rect = [left + dx - (width * sx - width) * pivot["x"],
+            top - dy - (height * sy - height) * (1 - pivot["y"]), width * sx, height * sy]
+    order = next(i for i, n in enumerate(room["hierarchy"]) if n["game_object_path_id"] == go_id)
+    target = next(r for r in runtime["rooms"] if r["id"] == 0)
+    target["layers"].append({"image_component_path_id": image_id, "name": "Fridge", "asset": asset,
+        "rect": [round(v, 6) for v in rect], "draw_order": order,
+        "color": image["image"]["color_rgba"], "preserve_aspect": image["image"]["preserve_aspect"],
+        "source_state_component": object_view["path_id"], "source_state_enum": state["enum_value"]})
+    target["layers"].sort(key=lambda layer: layer["draw_order"])
+    target["excluded_layers"] = [r for r in target["excluded_layers"] if r["image_component_path_id"] != image_id]
+    audit["totals"]["visible_layers"] += 1
+    audit["totals"]["excluded_layers"] -= 1
+    audited_room = next(r for r in audit["rooms"] if r["id"] == 0)
+    audited_room["visible_layers"] += 1
+    audited_room["excluded_layers"] -= 1
+    reason = "conditional_room_object_state:_Code.Rooms.ObjectRoomObjectView"
+    audited_room["exclusion_reasons"][reason] -= 1
+    audit["evidence"]["verified_default_fridge_state"] = {
+        "source_manifest_component_path_id": object_view["path_id"], "game_object_path_id": go_id,
+        "active_self": True, "state_enum": state["enum_name"], "state_value": state["enum_value"],
+        "sprite": sprite_ref, "visibility": "always visible from active source GameObject and Awake start-state selection",
+        "interaction": "KitchenView.SetFridgeActivity toggles UIButton.IsActive only"}
 
 
 def write_json(path: Path, data: Any) -> None:

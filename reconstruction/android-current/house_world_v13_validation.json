@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "build": "v13 house baseline validation",
+  "source": {
+    "scene": "level1",
+    "sha256": "400e6cfb07bf47df1d0b2ad3446a101870acf3905d5bfa5b68058d2364845dfd",
+    "raw_audit": {
+      "transforms_checked": 1348,
+      "mesh_renderers_checked": 153,
+      "skinned_mesh_renderers_checked": 6,
+      "active_enabled_mesh_renderers": 109,
+      "active_enabled_skinned_renderers": 1,
+      "matrix_local_trs_max_absolute_error": 0.0
+    }
+  },
+  "staging": {
+    "base_v12_mesh_count": 100,
+    "staged_mesh_count": 101,
+    "base_mesh_hashes_valid": true,
+    "base_mesh_renderer_rows_retained": 153,
+    "mutation": "append-only new mesh index 100 plus separate skinned_renderers metadata; static renderers array not edited by staging script",
+    "static_renderer_rows_unchanged_by_staging_script": true,
+    "preservation_basis": "Staging code appends a mesh row and writes separate skinned_renderers metadata; it does not rewrite the existing renderers array or its first 100 mesh rows.",
+    "base_mesh_rows_modified_by_staging_script": 0,
+    "static_renderer_rows_modified_by_staging_script": 0
+  },
+  "miner": {
+    "renderer_path_id": 2558,
+    "name": "Шахтер.001",
+    "gameobject_path_id": 606,
+    "active_in_hierarchy": true,
+    "enabled": true,
+    "source_world_position": [
+      -7.581480500605604,
+      -7.861128777206416,
+      3.855708900172897
+    ],
+    "source_mesh_path_id": 310,
+    "source_bones": 65,
+    "source_bindposes": 65,
+    "pose": "serialized Unity bone transforms; Animator not evaluated",
+    "mesh_index": 100,
+    "vertex_count": 1514,
+    "index_count": 6465,
+    "triangle_count": 2155,
+    "mesh_bytes": 74308,
+    "mesh_sha256": "3402bac9d33a20b863c18e1335329056b19d7af866309fde678fd8df16760fd1",
+    "all_vertex_attributes_finite": true,
+    "indices_in_range": true,
+    "normals_unit_length_min": 0.9999999611522769,
+    "normals_unit_length_max": 1.000000038170657,
+    "material_index": 35,
+    "material_source_ref": {
+      "source_file": "level1",
+      "file_id": 2,
+      "path_id": 5
+    },
+    "texture_index": 28,
+    "texture_source_ref": {
+      "source_file": "sharedassets1.assets",
+      "file_id": 0,
+      "path_id": 120
+    },
+    "texture_sha256": "1753876979ade2a22cbcac32cf5daa90a0cbb487e3c1148e09ea0ab02a6ed3c9"
+  },
+  "host_graphics_capture": {
+    "renderer": "Mesa llvmpipe",
+    "api": "OpenGL ES 2.0",
+    "camera_source_pose": {
+      "position": [
+        -7.8,
+        -7.0,
+        6.0
+      ],
+      "yaw_degrees": 167,
+      "pitch_degrees": 10
+    },
+    "before": {
+      "render_items": 111,
+      "triangles": 29755,
+      "sha256": "3d9c2ea427ab270421e5cd90a2eb0bf818561b954a1161c079410ad9e265036e"
+    },
+    "after": {
+      "render_items": 112,
+      "triangles": 31910,
+      "sha256": "58a7a5b693603684d7afb58d8896237f26837b60b57f3d8c5ecbe03922a600fd"
+    },
+    "changed_pixels": 61850,
+    "pixels_total": 921600,
+    "renderer_diagnostic": "ready",
+    "gles_errors": 0,
+    "android_device_execution": false
+  },
+  "limits": [
+    "This validates a static serialized bone pose, not Animator playback or the character animation state.",
+    "The capture ran on a Mesa host renderer; it does not measure Android phone performance."
+  ],
+  "files": {
+    "skinned_baseline_metadata_sha256": "74b67f25b6959b40825d8886ae6bc6dc5da9e5d2b49a1f245e06ccb04e8de983",
+    "staging_script_sha256": "ee7edd9abd20757fc365dd7b8f8c92647995b3aa90f74bfd6ba10c6ddc1f8255",
+    "world_exporter_sha256": "f518a88f6ab359d0cbb2cb478cea04ceb7bf558ad37926e657f076e62cb4ca78",
+    "world_renderer_java_sha256": "3b6a69c2e6741620a2697ebc36e5198a29745a7fd7f7fdac843faca6c6f66cdd",
+    "staged_world_manifest_sha256": "ae3e9c62456589da36841293194270e2e2bdb6dcf363ba926e3990d170f3b413"
+  }
+}

@@ -120,3 +120,13 @@ Private Android disk saves are installed-app data, not bundled in the APK. Manua
 Native rules are identical to v0.11; this release reused JNI only while the exact v0.11 APK and all 53 native input hashes matched the previous lock. Future rebuilds must use the current APK hash in LATEST_BUILD.json or compile native code again. Source world parity can be independently checked with `PYTHONPATH=tools/python-deps python tools/reverse-world/audit_world_parity.py --data /path/to/unity-data`. Without raw data the tool explicitly reports that raw-source verification is skipped.
 
 The current signer requires both `port-debug.keystore` and `signing.json` from the existing private key archive in `tools/android-current/signing/`. It never generates a replacement key or supplies embedded fallback passwords. Signing uses environment references for the tool invocation and checks the public certificate fingerprint. The private configuration stays ignored by Git.
+
+## v0.13 house reconstruction
+
+The current artifact is `NINAH-Port-Casa-v013.apk` (0.13-house-fidelity). Restore all assets from it for `--skip-assets`; the new `presentation/ui/tv_source_manifest.json` supplies fixed-room-actor and dialogue rules. `presentation/assets.json` includes `house_scene_manifest` and source parent offsets for all 61 actor layouts.
+
+The room export now includes raw object-state tables. Fridge state 2 is always drawn; interaction activity does not hide its sprite. The TV remains a room fixture rather than an admitted visitor. Source dialogue X=385/-575 is applied to the serialized line/options geometry separately, with the options panel copying the base panel position. Portraits precede dialogue panels according to raw Transform child order.
+
+The world manifest retains its original 100 mesh entries and adds one baked source skinned pose at index 100. Metadata for all six SkinnedMeshRenderers is retained, with only source-active renderer 2558 baked. To regenerate, export the original Unity data and run `tools/android-current/stage_skinned_world.py --source-export /path/to/export/world_manifest.json`; the sidecar JSON is tracked, while mesh bytes stay in the APK/private data. The source materials/textures already exist in the base staging and are checked by ID/hash. No Animator clip is evaluated.
+
+Builder packaging now keeps only referenced source model files, preserves the aapt2 resource ZIP, and creates/validates a separate unsigned archive before alignment and signing. The final signed artifact is installed atomically. Native sources are unchanged from v0.11/v0.12; future reference builds must use the exact current LATEST_BUILD hash and unchanged 53-input fingerprint.

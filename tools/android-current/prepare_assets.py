@@ -15,6 +15,7 @@ import zipfile
 from pathlib import Path
 
 from PIL import Image
+from stage_skinned_world import stage_skinned_world
 
 ROOT = Path(__file__).resolve().parents[2]
 CHARACTER_EXPORTS = ROOT / "reconstruction/reverse-characters/exported_character_assets"
@@ -311,8 +312,8 @@ def stage_world_assets(destination: Path) -> dict:
         raise RuntimeError(f"world export has errors: {manifest['errors'][:3]}")
     meshes = manifest.get("meshes", [])
     textures = manifest.get("textures", [])
-    if len(meshes) != 100 or len(textures) != 42:
-        raise RuntimeError(f"expected 100 world meshes and 42 textures, got {len(meshes)} and {len(textures)}")
+    if len(meshes) not in (100, 101) or len(textures) != 42:
+        raise RuntimeError(f"expected the 100-mesh v12 base, optionally plus one source skinned pose, and 42 textures; got {len(meshes)} and {len(textures)}")
     world_out = destination / "world"
     if world_out.exists():
         shutil.rmtree(world_out)
@@ -400,9 +401,13 @@ def stage_world_assets(destination: Path) -> dict:
         minified_json(cat_manifest_path, world_out / "cat3d_manifest.json", cat)
     subprocess.run([sys.executable, str(ROOT / "tools/mesh-opt/optimize_world.py"),
                     "--assets-root", str(destination), "--apply"], check=True, cwd=ROOT)
+    staged_skinned = stage_skinned_world(destination)
     optimized=read_json(world_out / "world_manifest.json")
     return {**manifest["android_staging"], "mesh_optimization":optimized["android_mesh_optimization"],
-            "optimized_mesh_bytes":sum((destination / row["android_asset"]).stat().st_size for row in optimized["meshes"])}
+            "mesh_count":len(optimized["meshes"]),
+            "skinned_renderers_active":staged_skinned.get("active_skinned_renderers",1),
+            "optimized_mesh_bytes":sum((destination / row["android_asset"]).stat().st_size for row in optimized["meshes"]),
+            "skinned_world":staged_skinned}
 
 
 def sha256_file(path: Path) -> str:
@@ -475,8 +480,14 @@ def stage_ui_assets(destination: Path) -> dict:
     if signs.get("schema_version")!=1 or len(signs.get("signs",[]))!=6:
         raise RuntimeError("Expected six source-authored examination layouts")
     minified_json(signs_source,destination/"presentation/ui/sign_layout.json",signs)
+    house_source=UI_SOURCE/"tv_source_manifest.json"
+    house=read_json(house_source)
+    if house.get("schema_version")!=1 or not house.get("runtime",{}).get("fixed_room_actors"):
+        raise RuntimeError("Expected source-backed house fixture and TV dialogue rules")
+    minified_json(house_source,destination/"presentation/ui/tv_source_manifest.json",house)
     return {"manifest": "presentation/ui/ui_manifest.json", "sprites": len(image_rows), "fonts": len(font_rows),
             "sign_manifest":"presentation/ui/sign_layout.json",
+            "house_manifest":"presentation/ui/tv_source_manifest.json",
             "source_sha256": sha256_file(source_manifest)}
 
 
@@ -608,6 +619,7 @@ def prepare(destination: Path) -> dict:
 
     room_layout: dict[str, dict] = {}
     room_layout_by_room: dict[str, dict] = {}
+    ui_components_by_id={row["path_id"]:row for row in read_json(destination/"presentation/ui/ui_manifest.json")["components"]}
     for row in render_manifest.get("room_character_instances", []):
         room_name = row.get("room")
         if room_name not in ROOM_IDS:
@@ -619,6 +631,12 @@ def prepare(destination: Path) -> dict:
         size = transform["size_delta"]
         pivot = transform["pivot"]
         character_name = row["character"]["name"]
+        image_component=ui_components_by_id.get(row["image_reference"]["path_id"])
+        source_rect=(image_component or {}).get("rect_transform",{}).get("screen_rect_1920x1080")
+        if not source_rect or len(source_rect)!=4:
+            raise RuntimeError(f"Source room actor Image geometry missing: {character_name}")
+        parent_offset=[source_rect[0]+source_rect[2]*.5-reference_width*.5-anchored["x"],
+                       reference_height*.5-source_rect[1]-source_rect[3]*.5-anchored["y"]]
         if character_name in room_layout:
             raise RuntimeError(f"duplicate character name in scene layout: {character_name!r}")
         layout = {
@@ -629,6 +647,7 @@ def prepare(destination: Path) -> dict:
             "order": int(row["order_in_room"]),
             "scene_order": int(row["order_in_room"]),
             "anchored_position": [anchored["x"], anchored["y"]],
+            "parent_offset": parent_offset,
             "normalized_layout": {
                 # Unity's anchored position is the RectTransform pivot point;
                 # y is flipped to top-left image coordinates for Android.
@@ -726,6 +745,7 @@ def prepare(destination: Path) -> dict:
         "music": music_summary,
         "animations_manifest": stage_animation_assets(destination)["manifest"],
         "game_ui": ui_summary,
+        "house_scene_manifest": ui_summary["house_manifest"],
     }
     minified_json(PROGRAM, destination / "presentation/assets.json", manifest)
     rooms_summary = stage_room_assets(destination)

@@ -47,12 +47,13 @@ def main():
     cp=os.pathsep.join(str(p) for p in sorted(DEPS.glob('*.jar')) if not p.name.endswith('-sources.jar'))
     source=ROOT/'reconstruction/android-current/app/src/main/java/org/reconstruction/current'
     build=QA/'build-gles'
-    java=[source/'RoomEngine.java',source/'RoomComposition.java',source/'WorldRenderer.java',source/'TombstoneSummary.java',source/'RenderResolution.java',source/'FrameSequence.java',source/'DoorMotion.java',source/'SleepTransition.java',QA/'SleepTransitionTest.java',QA/'DoorMotionTest.java',QA/'FrameSequenceTest.java',QA/'RoomCompositionTest.java',
+    java=[source/'RoomEngine.java',source/'RoomComposition.java',source/'HouseSceneData.java',QA/'HouseSceneDataTest.java',source/'WorldRenderer.java',source/'TombstoneSummary.java',source/'RenderResolution.java',source/'FrameSequence.java',source/'DoorMotion.java',source/'SleepTransition.java',QA/'SleepTransitionTest.java',QA/'DoorMotionTest.java',QA/'FrameSequenceTest.java',QA/'RoomCompositionTest.java',
           source/'SaveFileStore.java',source/'NativeJson.java',QA/'SaveFileStoreTest.java',
           source/'SignLayout.java',QA/'SignLayoutMotionTest.java',QA/'SignLayoutSourceTest.java',
           QA/'WorldPreviewGLES.java',QA/'WorldMathTest.java',QA/'WorldGeometryTest.java',QA/'WorldVisibilityTest.java',QA/'WorldInteractionTest.java',QA/'RenderLoopPolicyTest.java',QA/'RenderResolutionTest.java',QA/'TombstoneSummaryTest.java']
     subprocess.run(['java','-jar',str(ROOT/'tools/android-current/java/ecj-3.38.0.jar'),'-17','-nowarn','-classpath',cp,'-d',str(build),*[str(p) for p in java]],check=True,cwd=ROOT)
     cp=str(build)+os.pathsep+cp
+    subprocess.run(['java','-cp',cp,'org.reconstruction.current.HouseSceneDataTest',str(ROOT/'reconstruction/android-current/app/src/main/assets')],check=True,cwd=ROOT)
     subprocess.run(['java','-cp',cp,'org.reconstruction.current.SaveFileStoreTest'],check=True,cwd=ROOT)
     subprocess.run(['java','-cp',cp,'org.reconstruction.current.SignLayoutMotionTest'],check=True,cwd=ROOT)
     subprocess.run(['java','-cp',cp,'org.reconstruction.current.SignLayoutSourceTest',

@@ -76,6 +76,8 @@ public final class MainActivity extends AndroidApplication {
     private final Map<String, Typeface> uiFonts = new HashMap<>();
     private JSONObject uiManifest = new JSONObject();
     private SignLayout signLayout;
+    private HouseSceneData houseScene = HouseSceneData.parse(null);
+    private JSONObject roomLayerManifest = new JSONObject();
     private final Map<Integer,JSONObject> uiImagesById=new HashMap<>();
     private final Map<Integer,UiAnimation> uiAnimations = new HashMap<>();
     private final LruCache<String, Bitmap> bitmaps = new LruCache<String, Bitmap>(32 * 1024 * 1024) {
@@ -195,6 +197,11 @@ public final class MainActivity extends AndroidApplication {
                         uiImagesById.put(item.optInt("path_id",-1),item);
                 }
                 signLayout=SignLayout.parse(new JSONObject(readAssetText("presentation/ui/sign_layout.json")),uiManifest);
+                String housePath=assets.optString("house_scene_manifest", "");
+                if(!housePath.isEmpty())houseScene=HouseSceneData.parse(new JSONObject(readAssetText(housePath)));
+                houseScene.readPanelGeometry(uiManifest);
+                String roomLayerPath=assets.optString("room_layers_manifest", "");
+                if(!roomLayerPath.isEmpty())roomLayerManifest=new JSONObject(readAssetText(roomLayerPath));
                 loadUiAnimations(assets.optString("animations_manifest",""));
                 roomEngine.setAssets(assets);
                 loadTranslations();
@@ -1033,7 +1040,7 @@ public final class MainActivity extends AndroidApplication {
             if(settingsOpen){drawSettingsPanel(c);return;}
             if(pauseOpen){drawPausePanel(c);return;}
             JSONObject dialogue=state.optJSONObject("dialogue");
-            if(dialogue!=null){drawDialogue(c,dialogue);drawPortrait(c,state.optJSONObject("portrait"));return;}
+            if(dialogue!=null){drawPortrait(c,state.optJSONObject("portrait"));drawDialogue(c,dialogue);return;}
             drawHudComponents(c,"world",true,"SaveIcon");
             drawSourceKeyControl(c,"Ⅱ",1778,23,1882,112,()->{pauseOpen=true;reanchorCampaignClock();updateEngine();invalidate();});
             if(nearbyInteraction!=null&&!nativeBusy) {
@@ -1122,15 +1129,41 @@ public final class MainActivity extends AndroidApplication {
 
         private void drawRoomHud(Canvas c) {
             JSONObject dialogue=state.optJSONObject("dialogue");
-            if(dialogue!=null){drawDialogue(c,dialogue);drawPortrait(c,state.optJSONObject("portrait"));return;}
-            button(c,"Voltar ao mundo",1630,28,1870,105,0xCC242B32,12,()->act("enter_world",null,null));
+            if(settingsOpen){drawSettingsPanel(c);return;}
+            if(pauseOpen){drawPausePanel(c);return;}
+            if(dialogue!=null){drawPortrait(c,state.optJSONObject("portrait"));drawDialogue(c,dialogue);return;}
+            drawMobileSourceButton(c,"Voltar",45,28,290,105,0xCCFFFFFF,()->act("enter_world",null,null));
+            drawHudComponents(c,"world",true,"SaveIcon");
+            drawSourceKeyControl(c,"Ⅱ",1778,23,1882,112,()->{pauseOpen=true;reanchorCampaignClock();updateEngine();invalidate();});
             JSONObject campaign=state.optJSONObject("campaign");
-            if(state.optInt("room",-1)==6 && campaign!=null && campaign.optBoolean("can_sleep",false))
+            if(state.optInt("room",-1)==6 && campaign!=null && campaign.optBoolean("can_sleep",false)) {
+                addSourceLayerHit(4843,()->act("sleep",null,null));
                 drawMobileSourceButton(c,"Dormir",1570,135,1870,235,0xCCFFFFFF,()->act("sleep",null,null));
-            if(state.optInt("room",-1)==6 && campaign!=null && campaign.optBoolean("morning_tv_pending",false) && campaign.optBoolean("can_watch_morning_tv",false))
+            }
+            if(state.optInt("room",-1)==6 && campaign!=null && campaign.optBoolean("morning_tv_pending",false) && campaign.optBoolean("can_watch_morning_tv",false)) {
+                addRoomActorHit("TV",()->act("watch_morning_tv",null,null));
                 drawMobileSourceButton(c,"Assistir à TV",1510,260,1870,360,0xCCFFFFFF,()->act("watch_morning_tv",null,null));
-            if(campaign!=null&&campaign.optBoolean("neighbour_can_talk",false))
+            }
+            if(campaign!=null&&campaign.optBoolean("neighbour_can_talk",false)) {
+                addNeighbourHit(state.optInt("room",-1));
                 button(c,"Conversar com o Vizinho",1390,870,1810,970,0xEE874C34,14,this::actorTalkNeighbour);
+            }
+        }
+
+        private void addSourceLayerHit(int imageId,Runnable action) {
+            JSONArray rooms=roomLayerManifest.optJSONArray("rooms");if(rooms==null)return;
+            for(int i=0;i<rooms.length();i++) {
+                JSONObject room=rooms.optJSONObject(i);
+                if(room==null||room.optInt("id",-1)!=state.optInt("room",-1))continue;
+                JSONArray layers=room.optJSONArray("layers");if(layers==null)return;
+                for(int j=0;j<layers.length();j++) {
+                    JSONObject layer=layers.optJSONObject(j);
+                    if(layer==null||layer.optInt("image_component_path_id",-1)!=imageId)continue;
+                    JSONArray rect=layer.optJSONArray("rect");if(rect==null||rect.length()!=4)return;
+                    float left=(float)rect.optDouble(0),top=(float)rect.optDouble(1);
+                    hits.add(new Hit(new RectF(left,top,left+(float)rect.optDouble(2),top+(float)rect.optDouble(3)),action));return;
+                }
+            }
         }
 
         private void drawSleepTransition(Canvas c) {
@@ -1321,7 +1354,17 @@ public final class MainActivity extends AndroidApplication {
 
         private void drawDialogue(Canvas c,JSONObject d) {
             Typeface old=textFontOverride;textFontOverride=dialogueFont(d);
-            try { drawDialogueContent(c,d); } finally { textFontOverride=old; }
+            boolean options=d!=null&&"options".equals(d.optString("type", ""));
+            float offset=houseScene.dialogueOffset(state.optString("character", ""), options);
+            float offsetY=houseScene.dialogueOffsetY(options);
+            int firstHit=hits.size();
+            c.save();c.translate(offset,offsetY);
+            try { drawDialogueContent(c,d); }
+            finally {
+                c.restore();textFontOverride=old;
+                // Hit rectangles share the same source-to-screen translation as the artwork.
+                for(int i=firstHit;i<hits.size();i++)hits.get(i).rect.offset(offset,offsetY);
+            }
         }
 
         private Typeface dialogueFont(JSONObject d) {
@@ -1580,21 +1623,28 @@ public final class MainActivity extends AndroidApplication {
         }
 
         private void addNeighbourHit(int room) {
+            addRoomActorHit("Neighbour",this::actorTalkNeighbour);
+        }
+
+        private void addRoomActorHit(String name,Runnable action) {
+            int room=state.optInt("room",-1);
             JSONArray objects=state.optJSONArray("room_objects"); if(objects==null)return;
             for(int i=0;i<objects.length();i++) {
                 JSONObject actor=objects.optJSONObject(i);
-                if(actor==null||!actor.optBoolean("active",false)||actor.optInt("room",-1)!=room||!"Neighbour".equals(actor.optString("name","")))continue;
+                if(actor==null||!name.equals(actor.optString("name",""))||!houseScene.actorVisible(actor,room,"playing".equals(state.optString("phase",""))))continue;
                 Map<String,JSONObject> roomMap=roomLayoutsByRoom.get(room);
-                JSONObject layout=roomMap==null?null:roomMap.get("Neighbour");
-                if(layout==null)layout=roomLayouts.get("Neighbour");
+                JSONObject layout=roomMap==null?null:roomMap.get(name);
+                if(layout==null)layout=roomLayouts.get(name);
                 JSONArray size=layout==null?null:layout.optJSONArray("size"),pivot=layout==null?null:layout.optJSONArray("pivot");
                 JSONArray pos=actor.optJSONArray("position"),pose=actor.optJSONArray("scale");
+                JSONArray parent=layout==null?null:layout.optJSONArray("parent_offset");
                 float px=(float)(pos==null?0:pos.optDouble(0,0)), py=(float)(pos==null?0:pos.optDouble(1,0));
                 float sx=(float)(pose==null?1:pose.optDouble(0,1)), sy=(float)(pose==null?1:pose.optDouble(1,1));
                 float w=(float)(size==null?80:size.optDouble(0,80))*Math.abs(sx),h=(float)(size==null?130:size.optDouble(1,130))*Math.abs(sy);
                 float ax=(float)(pivot==null?.5:pivot.optDouble(0,.5)),ay=(float)(pivot==null?.5:pivot.optDouble(1,.5));
-                float left=960+px-w*ax,top=540-py-h*(1-ay); 
-                hits.add(new Hit(new RectF(left,top,left+w,top+h),this::actorTalkNeighbour));
+                float left=960+px+(float)(parent==null?0:parent.optDouble(0))-w*ax;
+                float top=540-py-(float)(parent==null?0:parent.optDouble(1))-h*(1-ay);
+                hits.add(new Hit(new RectF(left,top,left+w,top+h),action));
                 return;
             }
         }

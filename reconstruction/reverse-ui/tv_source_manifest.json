@@ -1,0 +1,393 @@
+{
+  "schema_version": 1,
+  "provenance": {
+    "method": "Static raw-byte assertions against supplied Unity CharacterSOData plus joins to retained UnityPy scene manifests; no original PE executed.",
+    "raw_source": "recovery/checkpoint/reconstruction/assets/gameplay_data/raw/sharedassets0_2666_TV.bin",
+    "raw_sha256": "1e0fd3e9f3a4de43342a2d7b68687f3cae2b4b72cb5c3b192b797ec1d0f89dc0",
+    "character_manifest": "recovery/checkpoint/reconstruction/reverse-characters/character_configs.json",
+    "room_manifest": "ninah-port/reconstruction/reverse-rooms/room_manifest.json",
+    "dialog_manifest": "recovery/checkpoint/reconstruction/reverse-scenes/scene_render_manifest.json",
+    "raw_scene": "recovery/unity-data/level1",
+    "raw_scene_sha256": "400e6cfb07bf47df1d0b2ad3446a101870acf3905d5bfa5b68058d2364845dfd",
+    "assembly_static_read": {
+      "archive": "recovery/original-v1.3.18.zip",
+      "entry": "No.Im.not.a.Human.v1.3.18/No.Im.not.a.Human.v1.3.18/GameAssembly.dll",
+      "assembly_sha256": "1b27addf3cfddfaa2cb9e592170fd427e29dca58a58736a7468041af9e22f7bb",
+      "pe_image_base": "0x180000000",
+      "sections": [
+        {
+          "name": ".text",
+          "virtual_address": 4096,
+          "virtual_size": 5936900,
+          "raw_pointer": 1024,
+          "raw_size": 5937152
+        },
+        {
+          "name": "il2cpp",
+          "virtual_address": 5943296,
+          "virtual_size": 52718812,
+          "raw_pointer": 5938176,
+          "raw_size": 52719104
+        },
+        {
+          "name": ".rdata",
+          "virtual_address": 58662912,
+          "virtual_size": 14710354,
+          "raw_pointer": 58657280,
+          "raw_size": 14710784
+        },
+        {
+          "name": ".data",
+          "virtual_address": 73375744,
+          "virtual_size": 6740176,
+          "raw_pointer": 73368064,
+          "raw_size": 3863040
+        },
+        {
+          "name": ".pdata",
+          "virtual_address": 80117760,
+          "virtual_size": 2950200,
+          "raw_pointer": 77231104,
+          "raw_size": 2950656
+        },
+        {
+          "name": "_RDATA",
+          "virtual_address": 83070976,
+          "virtual_size": 500,
+          "raw_pointer": 80181760,
+          "raw_size": 512
+        },
+        {
+          "name": ".reloc",
+          "virtual_address": 83075072,
+          "virtual_size": 1461656,
+          "raw_pointer": 80182272,
+          "raw_size": 1461760
+        }
+      ],
+      "no_execution": true
+    },
+    "assertions": [
+      "raw size 5656",
+      "raw level1 Transform child order asserted for portrait (GO 858), Line View (492), Options List View (1083), and Overlay (348)",
+      "FakeDialogRunner raw Transform[] count/PPtrs at bytes 192-244 resolve to DialogContent and sign containers",
+      "FullSize pose sprite PPtr (file 0,path 1740) at offset 48",
+      "pose position at 60 and scale at 68 equal normalized parsed values",
+      "Base emotion enum and 4 animation frame PPtrs/FPS agree with parsed raw registry",
+      "PE VA 0x1837F2D40 maps to f32 -575.0",
+      "DialogView default X immediate 0x43C08000 decodes to 385.0"
+    ]
+  },
+  "conclusion": {
+    "full_size_pose_is_original": true,
+    "dialogue_tv_portrait_is_original": true,
+    "reason": "TV is the Bedroom CharacterSOData participant. Its source Base emotion is a 4-frame animated presenter; DialogView.SetCharacterEmotion consumes CharacterSOData emotion data and authored DialogPosition/DialogScale.",
+    "source_pose": {
+      "name_value": 0,
+      "name": "FullSize",
+      "sprite": {
+        "file_id": 0,
+        "path_id": 1740,
+        "offset": 48
+      },
+      "position_shift": [
+        -518.5,
+        72.5
+      ],
+      "scale_shift": [
+        2.8350181579589844,
+        2.8350181579589844
+      ],
+      "cannot_interact": false,
+      "offset": 44
+    },
+    "dialog_position": [
+      362.0,
+      57.5
+    ],
+    "dialog_scale": 1.4499988555908203,
+    "base_emotion": {
+      "enum_value": -1966747463,
+      "name": "Base",
+      "fps": 8,
+      "frames": [
+        {
+          "file_id": 0,
+          "path_id": 2449,
+          "offset": 980
+        },
+        {
+          "file_id": 0,
+          "path_id": 2429,
+          "offset": 992
+        },
+        {
+          "file_id": 0,
+          "path_id": 1322,
+          "offset": 1004
+        },
+        {
+          "file_id": 0,
+          "path_id": 1534,
+          "offset": 1016
+        }
+      ]
+    },
+    "normal_room_transform": {
+      "anchored_position": {
+        "x": -225.5,
+        "y": 23.275999
+      },
+      "size_delta": {
+        "x": 84.551201,
+        "y": 74.888496
+      },
+      "anchor_min": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "anchor_max": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "dialog_view": {
+      "component_path_id": 4328,
+      "parent_canvas": {
+        "field": "parent_canvas",
+        "offset": 32,
+        "file_id": 0,
+        "path_id": 3101,
+        "class": "Canvas",
+        "game_object_path_id": 529,
+        "game_object_name": "Canvas"
+      },
+      "character_animated_image": {
+        "field": "character_animated_image",
+        "offset": 180,
+        "file_id": 0,
+        "path_id": 5234,
+        "class": "_Code.Utils.UI.ImageAnimating.AnimatedImage",
+        "game_object_path_id": 858,
+        "game_object_name": "Character"
+      },
+      "dialog_panel_base": {
+        "field": "dialog_panel_base",
+        "offset": 244,
+        "file_id": 0,
+        "path_id": 3567,
+        "class": "RectTransform",
+        "game_object_path_id": 1129,
+        "game_object_name": "DialogContent"
+      },
+      "dialog_panel_answers": {
+        "field": "dialog_panel_answers",
+        "offset": 256,
+        "file_id": 0,
+        "path_id": 3667,
+        "class": "RectTransform",
+        "game_object_path_id": 571,
+        "game_object_name": "DialogContent2"
+      },
+      "fake_dialog_runner_component_path_id": 4471,
+      "line_view_contents": [
+        {
+          "array_index": 0,
+          "serialized_byte_offset": 196,
+          "file_id": 0,
+          "transform_path_id": 3567,
+          "game_object_path_id": 1129,
+          "name": "DialogContent",
+          "anchored_position": {
+            "x": 383.0,
+            "y": 131.0
+          }
+        },
+        {
+          "array_index": 1,
+          "serialized_byte_offset": 208,
+          "file_id": 0,
+          "transform_path_id": 3391,
+          "game_object_path_id": 1187,
+          "name": "EyeContainer",
+          "anchored_position": {
+            "x": 354.25,
+            "y": 113.0
+          }
+        },
+        {
+          "array_index": 2,
+          "serialized_byte_offset": 220,
+          "file_id": 0,
+          "transform_path_id": 3442,
+          "game_object_path_id": 1098,
+          "name": "HandsContainer",
+          "anchored_position": {
+            "x": 354.25,
+            "y": 113.0
+          }
+        },
+        {
+          "array_index": 3,
+          "serialized_byte_offset": 232,
+          "file_id": 0,
+          "transform_path_id": 3736,
+          "game_object_path_id": 1206,
+          "name": "TeethContainer",
+          "anchored_position": {
+            "x": 354.25,
+            "y": 113.0
+          }
+        }
+      ]
+    },
+    "room_behavior": "Bedroom.WatchMorningTV obtains the TV from IRoomView.CharacterViews, calls StartTVDialog(tv,true), and disables interaction. BedroomView.SetTVActive toggles the TV UIButton.",
+    "video_audio": "TV GameObject has VideoPlayer component path 3773 and AudioSource 2501. Retained ISIL does not show WatchMorningTV wiring either component to the dialogue. The TV mask sprite resolves to sharedassets1.assets path 643 (tv_mask).",
+    "dialogue_draw_order": {
+      "source": "raw level1 Transform.m_Children order on Dialog Canvas GO 529",
+      "children": [
+        {
+          "sibling_index": 0,
+          "game_object_path_id": 542,
+          "name": "RaycastBlocker"
+        },
+        {
+          "sibling_index": 1,
+          "game_object_path_id": 1029,
+          "name": "BackgroundCharacters"
+        },
+        {
+          "sibling_index": 2,
+          "game_object_path_id": 858,
+          "name": "Character"
+        },
+        {
+          "sibling_index": 3,
+          "game_object_path_id": 492,
+          "name": "Line View"
+        },
+        {
+          "sibling_index": 4,
+          "game_object_path_id": 1083,
+          "name": "Options List View"
+        },
+        {
+          "sibling_index": 5,
+          "game_object_path_id": 1226,
+          "name": "DialogsContent"
+        },
+        {
+          "sibling_index": 6,
+          "game_object_path_id": 348,
+          "name": "Overlay"
+        },
+        {
+          "sibling_index": 7,
+          "game_object_path_id": 1017,
+          "name": "PositionsData"
+        }
+      ],
+      "portrait_before_text_and_options": true,
+      "implication": "Unity UI sibling draw order places the Character portrait behind Line View and Options List View; Overlay is later at sibling 6."
+    }
+  },
+  "runtime": {
+    "fixed_room_actors": [
+      {
+        "name": "TV",
+        "room": 6,
+        "component_path_id": 5161,
+        "game_object_path_id": 1337,
+        "authored_active_self": true,
+        "initial_pose": 0,
+        "initial_pose_name": "FullSize",
+        "room_image_component_path_id": 4593,
+        "source_sprite": {
+          "file": "sharedassets0.assets",
+          "path_id": 1740,
+          "name": "Livingroom2_obj2"
+        }
+      }
+    ],
+    "dialogue": {
+      "default_panel_x": 385,
+      "tv_panel_x": -575,
+      "view_data_x": -575,
+      "offset_from_default": -960,
+      "portrait_before_text": true,
+      "source_panel_positions": {
+        "dialog_panel_base": {
+          "anchored_position": {
+            "x": 383.0,
+            "y": 131.0
+          },
+          "local_position": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "size_delta": {
+            "x": 708.0,
+            "y": 360.0
+          }
+        },
+        "dialog_panel_answers": {
+          "anchored_position": {
+            "x": 0.0,
+            "y": 381.5198669433594
+          },
+          "local_position": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "size_delta": {
+            "x": 708.0,
+            "y": 360.0
+          }
+        },
+        "options_list_view": {
+          "anchored_position": {
+            "x": 385.0,
+            "y": 127.300048828125
+          },
+          "local_position": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "size_delta": {
+            "x": -1211.5999755859375,
+            "y": 323.54180908203125
+          }
+        }
+      },
+      "view_data_target_in_source": "DialogView.StartDialog applies DialogViewData.XPosition to each FakeDialogRunner._lineViewContents Transform.localPosition.x. Raw serialized array resolves to DialogContent, EyeContainer, HandsContainer, and TeethContainer. It then copies the moved DialogContent world position to DialogContent2/options. Thus the source TV offset moves dialogue content/options.",
+      "evidence": {
+        "tv_position": {
+          "method": "PE RVA mapped from Bedroom.StartTVDialog reference VA 0x1837F2D40",
+          "va": "0x1837F2D40",
+          "rva": "0x37f2d40",
+          "section": ".rdata",
+          "raw_file_offset": "0x37f1740",
+          "raw_bytes": "00c00fc4",
+          "f32": -575.0,
+          "assembly_entry": "No.Im.not.a.Human.v1.3.18/No.Im.not.a.Human.v1.3.18/GameAssembly.dll",
+          "assembly_sha256": "1b27addf3cfddfaa2cb9e592170fd427e29dca58a58736a7468041af9e22f7bb"
+        },
+        "usual_position": {
+          "source": "DialogView.StartDialog ISIL default DialogViewData XPosition immediate",
+          "bits": "0x43C08000",
+          "f32": 385.0,
+          "constant_source": "recovered Cpp2IL DialogView.cs USUAL_DIALOG_X_POSITION"
+        },
+        "tv_constant_source": "recovered Cpp2IL Bedroom.cs X_DIALOG_POSITION and Bedroom.StartTVDialog passes constructed DialogViewData into DialogManager.RunDialog"
+      },
+      "runtime_note": "Shift dialogue content, options and hit-testing by -960 for the authored TV dialogue fixture; source sibling order keeps the TV portrait behind text/options."
+    }
+  }
+}

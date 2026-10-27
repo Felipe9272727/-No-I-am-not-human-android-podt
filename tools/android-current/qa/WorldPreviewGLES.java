@@ -234,8 +234,15 @@ public final class WorldPreviewGLES {
         java.lang.reflect.Field catField=renderer.getClass().getDeclaredField("catPreviewItems");catField.setAccessible(true);
         java.util.List<?> base=(java.util.List<?>)baseField.get(renderer),cat=(java.util.List<?>)catField.get(renderer);
         int baseItemCount=base.size();
-        int staticManifestMeshes=new JSONObject(Files.readString(assets.resolve("world/world_manifest.json"))).getJSONArray("meshes").length();
-        if(staticManifestMeshes!=100)throw new AssertionError("base static mesh count changed: "+staticManifestMeshes);
+        JSONObject worldManifest=new JSONObject(Files.readString(assets.resolve("world/world_manifest.json")));
+        int staticManifestMeshes=worldManifest.getJSONArray("meshes").length();
+        org.json.JSONArray skinned=worldManifest.optJSONArray("skinned_renderers");
+        java.util.Set<Integer> bakedIndices=new java.util.HashSet<>();
+        if(skinned!=null)for(int i=0;i<skinned.length();i++) {
+            JSONObject row=skinned.getJSONObject(i);
+            if(!row.isNull("mesh_index")&&row.has("mesh_index"))bakedIndices.add(row.getInt("mesh_index"));
+        }
+        if(staticManifestMeshes-bakedIndices.size()!=100)throw new AssertionError("base static mesh count changed: "+staticManifestMeshes);
         if(cat.size()!=1)throw new AssertionError("expected one source cat mesh draw item, got "+cat.size());
         java.lang.reflect.Field countField=cat.get(0).getClass().getDeclaredField("count");countField.setAccessible(true);
         int renderedTriangles=countField.getInt(cat.get(0))/3;
@@ -273,7 +280,8 @@ public final class WorldPreviewGLES {
         Path directory = output.getParent();
         Files.createDirectories(directory);
         for (int room = 0; room < 7; room++) {
-            engine.setState(new JSONObject().put("phase", "playing").put("view_mode", "room").put("room", room));
+            engine.setState(new JSONObject().put("phase", "playing").put("view_mode", "room").put("room", room)
+                    .put("room_objects",sourceHouseActors(room)));
             engine.render();
             if (engine.getRendererStatus().startsWith("error:")) throw new IllegalStateException(engine.getRendererDiagnostic());
             int error = Gdx.gl.glGetError();
@@ -283,13 +291,28 @@ public final class WorldPreviewGLES {
             pixmap.dispose();
         }
         engine.setState(new JSONObject().put("phase", "playing").put("view_mode", "room").put("room", 6)
+                .put("room_objects",sourceHouseActors(6))
                 .put("campaign", new JSONObject().put("bed_visible", false)));
         engine.render();
         if (engine.getRendererStatus().startsWith("error:")) throw new IllegalStateException(engine.getRendererDiagnostic());
         Pixmap hiddenBed = ScreenUtils.getFrameBufferPixmap(0, 0, WIDTH, HEIGHT);
         writeRoomCapture(directory.resolve("room-6-bed-hidden.png"), hiddenBed);
         hiddenBed.dispose();
-        System.out.println("ROOM_COMPOSITIONS=7; original static layers, empty campaign roster");
+        System.out.println("ROOM_COMPOSITIONS=7; source fixtures and layers, empty visitor roster");
+    }
+
+    private static org.json.JSONArray sourceHouseActors(int room) throws Exception {
+        org.json.JSONArray actors=new org.json.JSONArray();
+        if(room!=6)return actors;
+        // Build the same semantic packet JNI emits, directly from the separately
+        // audited raw TV pose. Its inactive roster flag is the v12 regression.
+        JSONObject source=new JSONObject(Gdx.files.internal("presentation/ui/tv_source_manifest.json").readString("UTF-8"));
+        JSONObject pose=source.getJSONObject("conclusion").getJSONObject("source_pose");
+        actors.put(new JSONObject().put("name","TV").put("room",6).put("pose",pose.getString("name"))
+                .put("asset","sharedassets0.assets:"+pose.getJSONObject("sprite").getInt("path_id"))
+                .put("position",pose.getJSONArray("position_shift")).put("scale",pose.getJSONArray("scale_shift"))
+                .put("active",false).put("authored_active",true));
+        return actors;
     }
 
     private static void writeRoomCapture(Path path, Pixmap pixmap) throws Exception {

@@ -1,0 +1,318 @@
+{
+  "status": "built_and_verified",
+  "artifact": "deliverables/NINAH-Port-Casa-v013.apk",
+  "sha256": "5026442a45acfef4b51fdd5a7631131a6e5877cf5cbc9277c5b775b3dcbe7a39",
+  "bytes": 339431026,
+  "zip_crc_check": "passed",
+  "package_name": "org.reconstruction.port.preview",
+  "launch_activity": "org.reconstruction.current.MainActivity",
+  "version_code": 13,
+  "version_name": "0.13-house-fidelity",
+  "native_source_tree_sha256": "03def928e98eeec2799084a151364558412353188e5d7d9f3a6e099477420294",
+  "native_source_fingerprint_inputs": 53,
+  "min_sdk": 23,
+  "target_sdk": 35,
+  "android_ui_hardware_acceleration_requested": true,
+  "abis": [
+    "arm64-v8a",
+    "x86_64"
+  ],
+  "native_libraries": [
+    "lib/arm64-v8a/libgdx.so",
+    "lib/arm64-v8a/libninah_current.so",
+    "lib/x86_64/libgdx.so",
+    "lib/x86_64/libninah_current.so"
+  ],
+  "source_interior_door_animation_count": 6,
+  "authored_room_layer_count": 20,
+  "elf_machines": {
+    "arm64-v8a/libninah_current": 183,
+    "arm64-v8a/libgdx": 183,
+    "x86_64/libninah_current": 62,
+    "x86_64/libgdx": 62
+  },
+  "elf_load_segment_max_alignment_bytes": {
+    "arm64-v8a/libninah_current": 16384,
+    "arm64-v8a/libgdx": 16384,
+    "x86_64/libninah_current": 16384,
+    "x86_64/libgdx": 16384
+  },
+  "native_zip_data_offset_mod_16384": {
+    "lib/arm64-v8a/libninah_current.so": 0,
+    "lib/arm64-v8a/libgdx.so": 0,
+    "lib/x86_64/libninah_current.so": 0,
+    "lib/x86_64/libgdx.so": 0
+  },
+  "unresolved_direct_android_dependencies": [],
+  "intro_video": {
+    "asset": "assets/intro/Intro_Final_2_NO_SUBTITLES.mp4",
+    "bytes": 44542868,
+    "sha256": "67d32bc7e28e5bbb528c7553650d8c594138031f358e249ec011db559b54b9d2",
+    "zip_stored": true
+  },
+  "jni_exports": [
+    "Java_org_reconstruction_current_MainActivity_nativeCreate",
+    "Java_org_reconstruction_current_MainActivity_nativeAction"
+  ],
+  "native_game_cpp_modules": [
+    "arrivals.cpp",
+    "characters.cpp",
+    "command_input.cpp",
+    "core.cpp",
+    "courier.cpp",
+    "dialogue_commands.cpp",
+    "dialogue_services.cpp",
+    "dialogue_session.cpp",
+    "emotions.cpp",
+    "endings.cpp",
+    "inventory.cpp",
+    "occupants.cpp",
+    "options.cpp",
+    "phone.cpp",
+    "presentation.cpp",
+    "progression.cpp",
+    "rooms.cpp",
+    "scene_commands.cpp",
+    "story_state.cpp",
+    "current_game.cpp"
+  ],
+  "gdx_java_classpath_resources": [
+    {
+      "path": "com/badlogic/gdx/graphics/g3d/particles/particles.fragment.glsl",
+      "bytes": 820,
+      "sha256": "d2cee985fb2e6996f013fa1612f3e619aa5b5828078d3975e19ba1ce5c808ee5"
+    },
+    {
+      "path": "com/badlogic/gdx/graphics/g3d/particles/particles.vertex.glsl",
+      "bytes": 2886,
+      "sha256": "151a1a28ab44b73b4541699c00d0850877ff8c23ee51e1a9e86b6481989ef980"
+    },
+    {
+      "path": "com/badlogic/gdx/graphics/g3d/shaders/default.fragment.glsl",
+      "bytes": 5874,
+      "sha256": "8c0f0a026c17ea7b47000863c1a76be1fd8c765a9d56d952e47e7cf562082025"
+    },
+    {
+      "path": "com/badlogic/gdx/graphics/g3d/shaders/default.vertex.glsl",
+      "bytes": 9096,
+      "sha256": "56a055469602324040e3e5080892226fd82fe486037b3fcc4108f14e372c1713"
+    },
+    {
+      "path": "com/badlogic/gdx/graphics/g3d/shaders/depth.fragment.glsl",
+      "bytes": 869,
+      "sha256": "92a88f6073bc1cb0d0ad2018bb6debc06e5f8ca0e1347ac92490305b9aa67d62"
+    },
+    {
+      "path": "com/badlogic/gdx/graphics/g3d/shaders/depth.vertex.glsl",
+      "bytes": 2931,
+      "sha256": "7e178df48debf85e31ce83f83225708912c6bf551381123f8f08aa5a2104a238"
+    },
+    {
+      "path": "com/badlogic/gdx/utils/JsonReader.rl",
+      "bytes": 13045,
+      "sha256": "2fc6495db66fc765c18238472f63c35bb63f4606a3cd2f041e7411155935c49d"
+    },
+    {
+      "path": "com/badlogic/gdx/utils/JsonSkimmer.rl",
+      "bytes": 12418,
+      "sha256": "bb966125d9e80a3a40dc4f6c1bbc4e9e83dece42332753e4772b45667209dab8"
+    },
+    {
+      "path": "com/badlogic/gdx/utils/PatternParser.rl",
+      "bytes": 4468,
+      "sha256": "cbf7d12818bbc3e641bbe8e4b7151cbb428786d785477d9674b4fdb7aa546a56"
+    },
+    {
+      "path": "com/badlogic/gdx/utils/XmlReader.rl",
+      "bytes": 18761,
+      "sha256": "7f62831aadc414d9d36a8ddb21ed75e5d17afc916dbe64766d31640dd4bb16eb"
+    },
+    {
+      "path": "com/badlogic/gdx/utils/lsans-15.fnt",
+      "bytes": 17711,
+      "sha256": "c605dfc1115786ef4a7ff779f719d2a3bac08c30a2153addc00fd3821207c535"
+    },
+    {
+      "path": "com/badlogic/gdx/utils/lsans-15.png",
+      "bytes": 10270,
+      "sha256": "de786e458bffb8e519f432d87c3f8e2e2c94ff2ac75773afff8fbc374653e729"
+    }
+  ],
+  "assets": {
+    "source_sign_layouts": {
+      "views": 6,
+      "source_image_layers": 13,
+      "source_sibling_order": true,
+      "hands_mask_image": 4527,
+      "authored_content_moves": 2,
+      "eye_random_motion_implemented": false
+    },
+    "png_count": 1210,
+    "menu_png_count_including_native_alias": 15,
+    "character_sprite_texture_exports": 1200,
+    "supplemental_scene_sprites": 10,
+    "image_reference_mappings": 1210,
+    "exported_image_objects_mapped": 1210,
+    "bundled_license_files": 32,
+    "room_backgrounds": 7,
+    "room_character_layouts": 61,
+    "pt_br_localization_texts_by_line_key": 16358,
+    "pt_br_localization_texts_by_numeric_id": 32464,
+    "line_metadata_keys_validated": 15693,
+    "standalone_audio_assets_included": true,
+    "fully_decoded_png_count": 1449,
+    "music_tracks": [
+      {
+        "key": "main_menu",
+        "asset": "assets/music/main_menu.ogg",
+        "bytes": 967285,
+        "sha256": "a9d7e14c401db24fd666bfa6649fc2bef51ccfec244c91de49beaa86b8f0acc2",
+        "duration_seconds": 65.454558
+      },
+      {
+        "key": "ambience_house",
+        "asset": "assets/music/ambience_house.ogg",
+        "bytes": 537687,
+        "sha256": "76d034cc9bdd068a3fe5e7c6649f66cfb9df0698f26b21903adf8c73a92b57ab",
+        "duration_seconds": 38.0
+      },
+      {
+        "key": "day",
+        "asset": "assets/music/day.ogg",
+        "bytes": 2186554,
+        "sha256": "604c0375eaedac8bffb922bd5aba96cbba437eca5082d08986c18f0bf36abca1",
+        "duration_seconds": 182.857143
+      },
+      {
+        "key": "night1",
+        "asset": "assets/music/night1.ogg",
+        "bytes": 2935747,
+        "sha256": "170f29fc7e25f34dd3e5652c79dbbed52c8ca62b0aaad7684b2d212e9c70e3f7",
+        "duration_seconds": 244.142857
+      },
+      {
+        "key": "day_02",
+        "asset": "assets/music/day_02.ogg",
+        "bytes": 2570814,
+        "sha256": "ea92e655cabb0e965aa42353be72178fecff4b5cf5188f7335a1d0102defe872",
+        "duration_seconds": 183.829796
+      },
+      {
+        "key": "night_02_01",
+        "asset": "assets/music/night_02_01.ogg",
+        "bytes": 3314485,
+        "sha256": "ed65ea95718ff537d4211a96d9a52c175dd81c9ba2f75e5833535bc8668fd021",
+        "duration_seconds": 219.851247
+      },
+      {
+        "key": "night_02_02",
+        "asset": "assets/music/night_02_02.ogg",
+        "bytes": 3199270,
+        "sha256": "86025b21b39dfb4836c7c194d29df8118d716cdad4af3a2993e390fd21311e2e",
+        "duration_seconds": 247.101066
+      },
+      {
+        "key": "night3",
+        "asset": "assets/music/night3.ogg",
+        "bytes": 2805532,
+        "sha256": "de8cccd608f0a2ba9ecc5815b49a94daf5baf4c428799c5d7a465c9d4dbdfc17",
+        "duration_seconds": 274.0
+      },
+      {
+        "key": "burning_light",
+        "asset": "assets/music/burning_light.ogg",
+        "bytes": 1226775,
+        "sha256": "a995d5df26e8f186d4f45c9521f0eaab30d1565d62e9766f8f8fbe70af851ca8",
+        "duration_seconds": 88.275873
+      },
+      {
+        "key": "noise_1_loop",
+        "asset": "assets/music/noise_1_loop.ogg",
+        "bytes": 640768,
+        "sha256": "f13df2a6d86bf715c47714a28c881602c0286dc0e4f7f73c56af5e4ba1d95d7f",
+        "duration_seconds": 58.0
+      },
+      {
+        "key": "noise_2_loop",
+        "asset": "assets/music/noise_2_loop.ogg",
+        "bytes": 647858,
+        "sha256": "bc86c96fd46b9c76da2a522db8c2d28f176acf3eb83a2f9db618866b2ed9ee2b",
+        "duration_seconds": 58.0
+      },
+      {
+        "key": "noise_3_loop",
+        "asset": "assets/music/noise_3_loop.ogg",
+        "bytes": 686538,
+        "sha256": "b21cbc9682982e49e6151102be7060489ac4009081e55b0159aa25074d8cea83",
+        "duration_seconds": 58.0
+      },
+      {
+        "key": "noise_4_loop",
+        "asset": "assets/music/noise_4_loop.ogg",
+        "bytes": 711840,
+        "sha256": "fe6d4abbcf23d4921503ca675b376ecb978e83f63b2ad1a9fce385a63f00a839",
+        "duration_seconds": 58.0
+      },
+      {
+        "key": "gun_music",
+        "asset": "assets/music/gun_music.ogg",
+        "bytes": 1166218,
+        "sha256": "3b80f8c094a86b5c42867ed84dc9fbfb3723b7c8035f7d50f4191ea5070d062c",
+        "duration_seconds": 91.428571
+      }
+    ],
+    "intro_video_original_audio_channels": 2,
+    "world_meshes": 101,
+    "world_textures": 42,
+    "world_source_vertices": 374411,
+    "world_android_vertices": 100050,
+    "world_android_mesh_bytes": 4719048,
+    "world_mesh_hashes_validated": 101,
+    "world_texture_bytes": 38002998,
+    "world_texture_max_edge": 1024,
+    "cat_3d_preview": {
+      "vertices": 1112,
+      "triangles": 1519,
+      "mesh_bytes": 53812,
+      "texture_dimensions": [
+        512,
+        512
+      ],
+      "debug_only": true,
+      "default_visible": false
+    },
+    "original_game_ui_sprites": 119,
+    "original_game_ui_fonts": 5
+  },
+  "embedded_windows_executable_extensions": [],
+  "embedded_mz_magic_entries": [],
+  "permissions": [],
+  "original_game_or_native_library_executed": false,
+  "full_campaign_implemented": false,
+  "android_device_execution_tested": false,
+  "reused_native_from_apk": {
+    "reference_apk": "/workspace/scratch/ad0b61c5ef81/recovery/NINAH-Port-Cena-Original.apk",
+    "sha256": "0907b2326139a9c6e5cfc0f04bc1074d349f6a349527b632c6413642c11dc969",
+    "native_source_tree_sha256": "03def928e98eeec2799084a151364558412353188e5d7d9f3a6e099477420294",
+    "native_source_file_count": 53,
+    "libraries": {
+      "arm64-v8a": {
+        "member": "lib/arm64-v8a/libninah_current.so",
+        "bytes": 9798208,
+        "elf_machine": 183,
+        "max_load_segment_alignment_bytes": 16384
+      },
+      "x86_64": {
+        "member": "lib/x86_64/libninah_current.so",
+        "bytes": 9549656,
+        "elf_machine": 62,
+        "max_load_segment_alignment_bytes": 16384
+      }
+    }
+  },
+  "notes": [
+    "This preview opens the recovered intro and current reconstructed campaign renderer; it is not a complete campaign port.",
+    "The intro MP4 retains its soundtrack; original source music is packaged separately when listed in assets.music_tracks.",
+    "APK signing uses the stable local preview debug key for repeatable test installation."
+  ]
+}

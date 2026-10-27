@@ -25,3 +25,5 @@ activity remains org.reconstruction.current.MainActivity. Reuse the existing
 private test signing key for updates.
 
 Prioritize fidelity to the PC original. Use authored transforms, serialized sibling order, UI layers and recovered state transitions. Avoid substitute layouts and invented campaign behavior. Label debug previews and mobile adaptations explicitly. Validate converters against raw source data, not only their own generated manifests. Keep signing configuration private and out of source/logs.
+
+Current user priority: finish reconstructing the original house before adding campaign continuity. Audit and restore default fixtures, room interactions, window close-ups, original lighting, door/collision behavior and authored animation. Do not represent house completeness or official-port parity as achieved until those gaps are verified.

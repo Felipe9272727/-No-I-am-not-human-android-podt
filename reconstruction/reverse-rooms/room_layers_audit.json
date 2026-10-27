@@ -46,6 +46,20 @@
       "component_path_id": 4801,
       "activation": "bounded Android host bed_visible flag",
       "raw_object_sha256": "56efffbb30609a83b7f50b292cd2ca945298feef067ff11b4876093776753632"
+    },
+    "verified_default_fridge_state": {
+      "source_manifest_component_path_id": 4813,
+      "game_object_path_id": 999,
+      "active_self": true,
+      "state_enum": "Fridge",
+      "state_value": 2,
+      "sprite": {
+        "file_id": 2,
+        "path_id": 612,
+        "file": "sharedassets1.assets"
+      },
+      "visibility": "always visible from active source GameObject and Awake start-state selection",
+      "interaction": "KitchenView.SetFridgeActivity toggles UIButton.IsActive only"
     }
   },
   "asset_resolution": {
@@ -58,8 +72,8 @@
     "source_image_components": 95,
     "resolved_sprite_references": 35,
     "unique_resolved_sprite_keys": 33,
-    "visible_layers": 18,
-    "excluded_layers": 76,
+    "visible_layers": 19,
+    "excluded_layers": 75,
     "character_orders": 61,
     "conditional_layers": 1
   },
@@ -69,11 +83,11 @@
       "name": "Kitchen",
       "source_image_components": 17,
       "resolved_sprite_references": 5,
-      "visible_layers": 2,
-      "excluded_layers": 15,
+      "visible_layers": 3,
+      "excluded_layers": 14,
       "exclusion_reasons": {
         "character_view_or_descendant": 12,
-        "conditional_room_object_state:_Code.Rooms.ObjectRoomObjectView": 3
+        "conditional_room_object_state:_Code.Rooms.ObjectRoomObjectView": 2
       },
       "character_orders": 12
     },

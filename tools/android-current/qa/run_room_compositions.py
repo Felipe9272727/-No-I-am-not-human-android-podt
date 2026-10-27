@@ -21,7 +21,19 @@ def reference(room, flags=None):
     if flags is None:
         flags = {'bed_visible': True}
     canvas = Image.new('RGBA', (1280, 720), (0, 0, 0, 255))
-    for layer in sorted(room['layers'], key=lambda row: row['draw_order']):
+    layers=list(room['layers'])
+    if room['id']==6:
+        presentation=json.loads((ASSETS/'presentation/assets.json').read_text())
+        source=json.loads((ASSETS/'presentation/ui/tv_source_manifest.json').read_text())
+        pose=source['conclusion']['source_pose']; layout=presentation['room_layout_by_room']['6']['characters']['TV']
+        width=layout['size'][0]*pose['scale_shift'][0];height=layout['size'][1]*pose['scale_shift'][1]
+        parent=layout['parent_offset'];pivot=layout['pivot']
+        left=960+parent[0]+pose['position_shift'][0]-width*pivot[0]
+        top=540-parent[1]-pose['position_shift'][1]-height*(1-pivot[1])
+        order=next(x['draw_order'] for x in room['character_orders'] if x['game_object_path_id']==1337)
+        layers.append({'asset':presentation['images']['sharedassets0.assets:1740'],
+                       'rect':[left,top,width,height],'draw_order':order,'color':[1,1,1,1],'preserve_aspect':True})
+    for layer in sorted(layers, key=lambda row: row['draw_order']):
         if layer.get('condition') and not flags.get(layer['condition'], False):
             continue
         with Image.open(ASSETS / layer['asset']) as source:

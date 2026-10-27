@@ -189,3 +189,16 @@ The generic examination gallery was replaced by six source containers, 13 ordere
 The original-data layout validator, real staged JSON parsing, motion endpoints/midpoints/delays, existing Java/geometry/visibility/collision rules, GLES2 world/fallback and all seven source room compositions pass. Six PIL inspection references were visually reviewed; these are data previews, not Android Canvas execution. Shaders loaded exclusively from the final APK render 120 host GLES2 frames; both stable JNI ABIs are reused only after verifying the exact v0.11 APK hash and all 53 native input fingerprints. The unchanged C++/Rust rules retain v0.11 validation; no new campaign advancement is claimed. Final package/signature/asset/hash checks pass. Actual phone presentation, Canvas masks and FPS remain untested here.
 
 The publication review rejected the old signer source because its fallback credential was embedded in code. The signer now requires the existing ignored private signing.json, passes environment references to apksigner, omits the invocation details from the log, and verifies the public stable certificate. A signing smoke test on a temporary copy passed; the delivered APK bytes remain unchanged.
+
+## v0.13: original house fixtures and TV composition
+
+House reconstruction is the priority before further campaign implementation.
+
+- Kitchen Fridge: source ObjectRoomObjectView 4813, state 2, sprite sharedassets1:612; exact source position/scale and default activation, independently of UIButton.IsActive.
+- Bedroom TV: source-active fixed actor 5161; uses its existing FullSize source pose even without visitor membership. Its mask/video screen remain source-inactive.
+- Dialogue: source Character precedes Line View/Options. TV uses DialogViewData.XPosition=-575, default 385. Text/panels/hit rectangles follow the per-panel serialized geometry; options copy the moved base world position.
+- Actor rendering/hit tests include the source parent-canvas offsets for all 61 layouts. Bed and morning TV accept direct taps; pause/save are available inside rooms. No new campaign state or native rule was added.
+- World: all 153 MeshRenderers retained; all six source SkinnedMeshRenderer records audited. Active basement miner 2558 uses source bone/bindpose/weights; five inactive skins remain inactive. This is a static serialized pose, not animation playback.
+- Validation: raw source transform/renderer audit, room exporter/state tests, seven GLES2 room comparisons, TV fixture/dialogue geometry regression, existing graphics/collision/save Java regressions, APK classpath shaders and signing checks. Actual Android/Canvas behavior remains untested here.
+
+House gaps remain explicit in `reconstruction/reverse-rooms/HOUSE_COMPLETENESS.md`: window close-ups, furniture narrative interaction, remaining conditional props and original animation/lighting behavior. Full PC parity is not claimed.

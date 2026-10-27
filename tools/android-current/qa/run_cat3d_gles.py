@@ -29,7 +29,7 @@ def main() -> None:
         shutil.rmtree(build)
     build.mkdir(parents=True)
     java = [
-        source / "RoomEngine.java", source / "RoomComposition.java", source / "WorldRenderer.java",
+        source / "RoomEngine.java", source / "RoomComposition.java", source / "HouseSceneData.java", source / "WorldRenderer.java",
         source / "TombstoneSummary.java", source / "RenderResolution.java", source / "FrameSequence.java",
         source / "DoorMotion.java", source / "SleepTransition.java", QA / "SleepTransitionTest.java",
         QA / "DoorMotionTest.java", QA / "FrameSequenceTest.java", QA / "RoomCompositionTest.java",

@@ -6,10 +6,10 @@
   "source_gameobject_active_self": false,
   "disabled_capture": "/tmp/ninah-cat3d-preview-off.png",
   "pre_gl_setting_preserved": true,
-  "static_world_draw_items": 111,
+  "static_world_draw_items": 112,
   "debug_preview_enabled": true,
   "default_preview_enabled": false,
   "cat_triangles": 1519,
   "enabled_capture": "/tmp/ninah-cat3d-preview-on.png",
-  "static_world_manifest_meshes": 100
+  "static_world_manifest_meshes": 101
 }

@@ -1,0 +1,75 @@
+{
+  "version": "0.13-house-fidelity",
+  "apk_sha256": "5026442a45acfef4b51fdd5a7631131a6e5877cf5cbc9277c5b775b3dcbe7a39",
+  "apk_bytes": 339431026,
+  "original_archive_sha256": "f8e6a46efbd41452266790a1350bbec3cfd6027470282171b912df80b08489f1",
+  "native_sources_unchanged": true,
+  "native_fingerprint": "03def928e98eeec2799084a151364558412353188e5d7d9f3a6e099477420294",
+  "native_reference_apk": {
+    "reference_apk": "/workspace/scratch/ad0b61c5ef81/recovery/NINAH-Port-Cena-Original.apk",
+    "sha256": "0907b2326139a9c6e5cfc0f04bc1074d349f6a349527b632c6413642c11dc969",
+    "native_source_tree_sha256": "03def928e98eeec2799084a151364558412353188e5d7d9f3a6e099477420294",
+    "native_source_file_count": 53,
+    "libraries": {
+      "arm64-v8a": {
+        "member": "lib/arm64-v8a/libninah_current.so",
+        "bytes": 9798208,
+        "elf_machine": 183,
+        "max_load_segment_alignment_bytes": 16384
+      },
+      "x86_64": {
+        "member": "lib/x86_64/libninah_current.so",
+        "bytes": 9549656,
+        "elf_machine": 62,
+        "max_load_segment_alignment_bytes": 16384
+      }
+    }
+  },
+  "asset_bytes_match_final_staging": {
+    "presentation/assets.json": "8385637b76f8e0f57bcd5b81bd414c7c565621816644393fdd434d2de2381eb3",
+    "presentation/room_layers.json": "b6aa242af8bd59d2c369de58488c32cf491efeb3c18a27c4c5ab284183239a1d",
+    "presentation/ui/tv_source_manifest.json": "a9f1e3c5f726aa2d3466dd0f421a0daf73e6a99e06ebfe9cd72c9230ca479e79",
+    "world/world_manifest.json": "ae3e9c62456589da36841293194270e2e2bdb6dcf363ba926e3990d170f3b413",
+    "world/models/skinned_level1_f2_p310_renderer2558.bin": "3402bac9d33a20b863c18e1335329056b19d7af866309fde678fd8df16760fd1"
+  },
+  "source_room_views": 7,
+  "source_room_images": 95,
+  "static_layers": 19,
+  "conditional_bed_layers": 1,
+  "fixed_tv_actor": 1,
+  "room_actor_parent_offsets": 61,
+  "tv_portrait_order_verified_raw_unity": true,
+  "tv_dialog_view_x": -575,
+  "default_dialog_view_x": 385,
+  "dialogue_geometry_test": "HouseSceneDataTest passed: no visitor activation, source fixture activation, separate line/options panel translations and world Y alignment",
+  "source_fridge_state": {
+    "component": 4813,
+    "enum": 2,
+    "sprite": 612,
+    "position": [
+      690,
+      -65
+    ],
+    "scale": [
+      2,
+      2
+    ],
+    "visibility_independent_of_button": true
+  },
+  "native_campaign_progression_changed": false,
+  "host_gles2_suite_passed": true,
+  "room_comparison_report": "room_layers_v13_validation.json",
+  "skinned_renderer_report": "house_world_v13_validation.json",
+  "android_device_execution": false,
+  "android_canvas_execution": false,
+  "official_pc_parity_claimed": false,
+  "house_complete": false,
+  "remaining_house_gaps": [
+    "Window close-up views and their source transitions",
+    "Nine authored furniture narrative interactions",
+    "Remaining dynamic object/visibility states",
+    "Full original lighting/shadows and material pipeline",
+    "Source Animator playback and front-door swing",
+    "Device collision/input/Canvas and physical performance verification"
+  ]
+}

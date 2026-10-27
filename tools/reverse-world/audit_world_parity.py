@@ -42,7 +42,7 @@ def audit_raw(data_dir, manifest):
     scene = data_dir if data_dir.is_file() else data_dir / "level1"
     env = UnityPy.load(str(scene))
     objects = list(env.objects)
-    gameobjects, transforms, component_go, components_by_go, renderers = {}, {}, {}, {}, {}
+    gameobjects, transforms, component_go, components_by_go, renderers, skinned_renderers = {}, {}, {}, {}, {}, {}
     for obj in objects:
         try:
             parsed = obj.read()
@@ -57,6 +57,8 @@ def audit_raw(data_dir, manifest):
             component_go[int(obj.path_id)] = int(parsed.m_GameObject.m_PathID)
         elif kind == "MeshRenderer":
             renderers[int(obj.path_id)] = parsed
+        elif kind == "SkinnedMeshRenderer":
+            skinned_renderers[int(obj.path_id)] = parsed
 
     matrix_cache, active_cache = {}, {}
 
@@ -128,15 +130,39 @@ def audit_raw(data_dir, manifest):
                 for j in range(4):
                     max_error = max(max_error, abs(raw_world[i][j]-staged_world[i][j])); renderer_fields += 1
                     assert close(raw_world[i][j], staged_world[i][j]), f"MeshRenderer {rid} matrix [{i},{j}]"
+    staged_skinned = {int(r["renderer_path_id"]): r for r in manifest.get("skinned_renderers", [])}
+    assert set(staged_skinned) == set(skinned_renderers), "raw/staged SkinnedMeshRenderer PathID sets differ"
+    skinned_fields = 0
+    for rid, renderer in skinned_renderers.items():
+        staged = staged_skinned[rid]
+        goid = int(renderer.m_GameObject.m_PathID)
+        tid = next((cid for cid in components_by_go.get(goid, []) if cid in transforms), None)
+        assert staged["gameobject_path_id"] == goid, f"SkinnedMeshRenderer {rid} GameObject ref"
+        assert staged["transform_path_id"] == tid, f"SkinnedMeshRenderer {rid} Transform ref"
+        assert bool(staged["active_in_hierarchy"]) == active(goid), f"SkinnedMeshRenderer {rid} activeInHierarchy"
+        assert bool(staged["enabled"]) == bool(renderer.m_Enabled), f"SkinnedMeshRenderer {rid} enabled"
+        if active(goid) and bool(renderer.m_Enabled):
+            assert staged["mesh_index"] is not None, f"active SkinnedMeshRenderer {rid} lacks baked mesh"
+            assert staged["pose_mode"] == "serialized_bone_pose_baked_without_animator", f"SkinnedMeshRenderer {rid} pose provenance"
+            assert len(staged["material_indices"]) == len(renderer.m_Materials), f"SkinnedMeshRenderer {rid} materials"
+        else:
+            assert staged["mesh_index"] is None, f"inactive SkinnedMeshRenderer {rid} was baked"
+        if tid is not None:
+            raw_world, staged_world = world(tid), staged["world_matrix_row_major"]
+            for i in range(4):
+                for j in range(4):
+                    max_error = max(max_error, abs(raw_world[i][j]-staged_world[i][j])); skinned_fields += 1
+                    assert close(raw_world[i][j], staged_world[i][j]), f"SkinnedMeshRenderer {rid} matrix [{i},{j}]"
     digest = hashlib.sha256(scene.read_bytes()).hexdigest()
-    return digest, len(transforms), len(renderers), checked_transform_fields, renderer_fields, max_error
+    return digest, len(transforms), len(renderers), len(skinned_renderers), checked_transform_fields, renderer_fields, skinned_fields, max_error
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data", type=Path, help="raw Unity data directory containing level1, or the level1 file")
+    parser.add_argument("--manifest", type=Path, default=MANIFEST, help="world manifest to compare; defaults to the Android staged manifest")
     args = parser.parse_args()
-    data = json.loads(MANIFEST.read_text())
+    data = json.loads(args.manifest.read_text())
     transforms = {t["path_id"]: t for t in data["transforms"]}
     renderers = data["renderers"]
     assert len(transforms) == data["counts"]["transforms"]
@@ -161,7 +187,7 @@ def main():
     # source matrix convention used by WorldRenderer.matrix/transformBounds.
     checked = 0
     for renderer in renderers:
-        if not renderer["active_in_hierarchy"] or renderer["mesh_index"] < 0:
+        if not renderer["active_in_hierarchy"] or renderer["mesh_index"] is None or renderer["mesh_index"] < 0:
             continue
         source_bounds = data["meshes"][renderer["mesh_index"]]["local_bounds"]
         world = renderer["world_matrix_row_major"]
@@ -183,10 +209,10 @@ def main():
         for side in ("min", "max"):
             assert all(close(a, b) for a, b in zip(expected[side], converted_bounds[side])), renderer["renderer_path_id"]
         checked += 1
-    assert checked >= 100
+    assert checked >= (80 if args.data else 100)
     if args.data:
-        digest, transform_count, renderer_count, transform_fields, renderer_fields, max_error = audit_raw(args.data, data)
-        print(f"raw-source audit passed: scene_sha256={digest}; transforms={transform_count}; MeshRenderers={renderer_count}; transform_fields={transform_fields}; renderer_matrix_fields={renderer_fields}; max_abs_error={max_error:.9g}")
+        digest, transform_count, renderer_count, skinned_count, transform_fields, renderer_fields, skinned_fields, max_error = audit_raw(args.data, data)
+        print(f"raw-source audit passed: scene_sha256={digest}; transforms={transform_count}; MeshRenderers={renderer_count}; SkinnedMeshRenderers={skinned_count}; transform_fields={transform_fields}; renderer_matrix_fields={renderer_fields}; skinned_matrix_fields={skinned_fields}; max_abs_error={max_error:.9g}")
     else:
         print("raw-source audit skipped: no --data supplied")
     print(f"manifest-consistency audit passed: camera PathID 2060; {len(active)} active renderers; {checked} source bounds")
